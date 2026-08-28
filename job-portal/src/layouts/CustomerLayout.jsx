@@ -2,14 +2,13 @@ import { Outlet } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
 
+import { LayoutDashboard, Briefcase, ClipboardList, FolderKanban } from 'lucide-react';
+
 const links = [
-  { to: '/customer/dashboard', label: 'Dashboard', icon: '📊' },
-  { to: '/customer/jobs', label: 'Jobs', icon: '💼' },
-  { to: '/customer/applications', label: 'My Applied Jobs', icon: '📋' },
-  //{ to: '/customer/profile', label: 'My Profile', icon: '👤' },
-  // { to: '/customer/edit-profile', label: 'Edit Details', icon: '✏️' },
-  // { to: '/customer/change-password', label: 'Change Password', icon: '🔒' },
-   { to: '/customer/documents', label: 'My Documents', icon: '📁' },
+  { to: '/customer/dashboard', label: 'Dashboard', icon: <LayoutDashboard className="w-5 h-5" /> },
+  { to: '/customer/jobs', label: 'Jobs', icon: <Briefcase className="w-5 h-5" /> },
+  { to: '/customer/applications', label: 'My Applied Jobs', icon: <ClipboardList className="w-5 h-5" /> },
+  { to: '/customer/documents', label: 'My Documents', icon: <FolderKanban className="w-5 h-5" /> },
 ];
 
 export default function CustomerLayout() {

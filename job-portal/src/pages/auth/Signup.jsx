@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { signup } from '../../api/authApi';
+import { User, Briefcase, Mail, Lock, Phone, MapPin, Loader2 } from 'lucide-react';
 
 const initialForm = {
   firstName: '',
@@ -62,11 +63,7 @@ export default function Signup() {
               value={form.firstName}
               onChange={handleChange}
               required
-              icon={
-                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                </svg>
-              }
+              icon={<User className="w-4 h-4 text-gray-400" />}
               placeholder="John"
             />
             <Field
@@ -74,11 +71,7 @@ export default function Signup() {
               name="middleName"
               value={form.middleName}
               onChange={handleChange}
-              icon={
-                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                </svg>
-              }
+              icon={<User className="w-4 h-4 text-gray-400" />}
               placeholder="(optional)"
             />
             <Field
@@ -87,11 +80,7 @@ export default function Signup() {
               value={form.lastName}
               onChange={handleChange}
               required
-              icon={
-                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                </svg>
-              }
+              icon={<User className="w-4 h-4 text-gray-400" />}
               placeholder="Doe"
             />
             <Field
@@ -101,11 +90,7 @@ export default function Signup() {
               value={form.age}
               onChange={handleChange}
               required
-              icon={
-                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                </svg>
-              }
+              icon={<Briefcase className="w-4 h-4 text-gray-400" />}
               placeholder="25"
             />
             <Field
@@ -116,11 +101,7 @@ export default function Signup() {
               onChange={handleChange}
               required
               className="sm:col-span-2"
-              icon={
-                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                </svg>
-              }
+              icon={<Mail className="w-4 h-4 text-gray-400" />}
               placeholder="you@example.com"
             />
             <Field
@@ -130,11 +111,7 @@ export default function Signup() {
               value={form.password}
               onChange={handleChange}
               required
-              icon={
-                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                </svg>
-              }
+              icon={<Lock className="w-4 h-4 text-gray-400" />}
               placeholder="••••••••"
             />
             <Field
@@ -143,11 +120,7 @@ export default function Signup() {
               value={form.phoneNumber}
               onChange={handleChange}
               required
-              icon={
-                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                </svg>
-              }
+              icon={<Phone className="w-4 h-4 text-gray-400" />}
               placeholder="+977 98XXXXXXXX"
             />
             <Field
@@ -157,12 +130,7 @@ export default function Signup() {
               onChange={handleChange}
               required
               className="sm:col-span-2"
-              icon={
-                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-              }
+              icon={<MapPin className="w-4 h-4 text-gray-400" />}
               placeholder="Kathmandu, Nepal"
             />
 
@@ -173,10 +141,7 @@ export default function Signup() {
             >
               {loading ? (
                 <span className="flex items-center justify-center gap-2">
-                  <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
+                  <Loader2 className="animate-spin h-5 w-5" />
                   Creating account...
                 </span>
               ) : (

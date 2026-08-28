@@ -2,15 +2,14 @@ import { Outlet } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
 
+import { LayoutDashboard, Users, Briefcase, ClipboardList, Building2 } from 'lucide-react';
+
 const links = [
-  { to: '/admin/dashboard', label: 'Dashboard', icon: '📊' },
-  { to: '/admin/users', label: 'Users', icon: '👥' },
-  { to: '/admin/jobs', label: 'Manage Jobs', icon: '💼' },
-  { to: '/admin/applications', label: 'Applied Jobs', icon: '📋' },
-  { to: '/admin/companies', label: 'Company Info', icon: '🏢' },
-  // { to: '/admin/profile', label: 'My Profile', icon: '👤' },
-  // { to: '/admin/edit-profile', label: 'Edit Details', icon: '✏️' },
-  // { to: '/admin/change-password', label: 'Change Password', icon: '🔒' },
+  { to: '/admin/dashboard', label: 'Dashboard', icon: <LayoutDashboard className="w-5 h-5" /> },
+  { to: '/admin/users', label: 'Users', icon: <Users className="w-5 h-5" /> },
+  { to: '/admin/jobs', label: 'Manage Jobs', icon: <Briefcase className="w-5 h-5" /> },
+  { to: '/admin/applications', label: 'Applied Jobs', icon: <ClipboardList className="w-5 h-5" /> },
+  { to: '/admin/companies', label: 'Company Info', icon: <Building2 className="w-5 h-5" /> },
 ];
 
 export default function AdminLayout() {

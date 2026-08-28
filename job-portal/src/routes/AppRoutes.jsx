@@ -9,7 +9,6 @@ import AdminLayout from '../layouts/AdminLayout'
 import CompanyAdminLayout from '../layouts/CompanyAdminLayout'
 import ProtectedRoute from '../components/ProtectedRoute'
 
-// ✅ Uncomment these imports
 import MyProfile from '../pages/shared/MyProfile'
 import EditProfile from '../pages/shared/EditProfile'
 import ChangePassword from '../pages/shared/ChangePassword'
@@ -52,7 +51,7 @@ export default function AppRoutes() {
         <Route path="dashboard" element={<CustomerDashboard />} />
         <Route path="jobs" element={<JobList />} />
         <Route path="applications" element={<MyApplications />} />
-        {/* ✅ Uncommented profile routes */}
+        {/* Profile routes */}
         <Route path="profile" element={<MyProfile />} />
         <Route path="edit-profile" element={<EditProfile />} />
         <Route path="change-password" element={<ChangePassword />} />
@@ -74,7 +73,7 @@ export default function AppRoutes() {
         <Route path="jobs" element={<JobCrud />} />
         <Route path="applications" element={<Applications />} />
         <Route path="companies" element={<Companies />} />
-        {/* ✅ Uncommented profile routes */}
+        {/* Profile routes */}
         <Route path="profile" element={<MyProfile />} />
         <Route path="edit-profile" element={<EditProfile />} />
         <Route path="change-password" element={<ChangePassword />} />
@@ -94,7 +93,7 @@ export default function AppRoutes() {
         <Route path="users" element={<CompanyUserList />} />
         <Route path="jobs" element={<CompanyManageJobs />} />
         <Route path="applications" element={<CompanyApplications />} />
-        {/* ✅ Uncommented profile routes */}
+        {/* Profile routes */}
         <Route path="profile" element={<MyProfile />} />
         <Route path="edit-profile" element={<EditProfile />} />
         <Route path="change-password" element={<ChangePassword />} />

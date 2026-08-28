@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { getMyProfile } from '../../api/profileApi';
+import { User, Type, Mail, Phone, Calendar, MapPin } from 'lucide-react';
 
 export default function MyProfile() {
   const [profile, setProfile] = useState(null);
@@ -44,13 +45,13 @@ export default function MyProfile() {
 
   // Prepare rows with icons for better visual appeal
   const fields = [
-    { label: 'First Name', value: profile.first_name, icon: '👤' },
-    { label: 'Middle Name', value: profile.middle_name || '-', icon: '🔤' },
-    { label: 'Last Name', value: profile.last_name, icon: '👤' },
-    { label: 'Email', value: profile.email, icon: '📧' },
-    { label: 'Phone', value: profile.phone_number, icon: '📱' },
-    { label: 'Age', value: profile.age, icon: '🎂' },
-    { label: 'Address', value: profile.address, icon: '📍' },
+    { label: 'First Name', value: profile.first_name, icon: <User className="w-4 h-4 text-blue-500" /> },
+    { label: 'Middle Name', value: profile.middle_name || '-', icon: <Type className="w-4 h-4 text-purple-500" /> },
+    { label: 'Last Name', value: profile.last_name, icon: <User className="w-4 h-4 text-blue-500" /> },
+    { label: 'Email', value: profile.email, icon: <Mail className="w-4 h-4 text-pink-500" /> },
+    { label: 'Phone', value: profile.phone_number, icon: <Phone className="w-4 h-4 text-green-500" /> },
+    { label: 'Age', value: profile.age, icon: <Calendar className="w-4 h-4 text-amber-500" /> },
+    { label: 'Address', value: profile.address, icon: <MapPin className="w-4 h-4 text-red-500" /> },
   ];
 
   return (

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import toast from 'react-hot-toast'
 import { addCompany } from '../api/companiesApi'
 import { INDUSTRY_TYPES, COMPANY_TYPES, COMPANY_SIZES } from '../api/companyOptions'
+import { X } from 'lucide-react'
 
 const emptyForm = {
   company_name: '',
@@ -89,9 +90,7 @@ export default function AddCompanyModal({ isOpen, onClose }) {
             onClick={onClose}
             className="text-white/80 hover:text-white bg-white/10 hover:bg-white/20 rounded-full p-2 transition"
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
+            <X className="w-5 h-5" />
           </button>
         </div>
 

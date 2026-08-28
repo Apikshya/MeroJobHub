@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import { getMyApplications } from '../../api/applicationsApi';
+import { Search, CalendarDays, Clock, Send, Star, Award, XCircle, Undo2, Folder, Pin } from 'lucide-react';
 
 const STATUS_CONFIG = {
   APPLIED: {
     label: 'Applied',
-    emoji: '📩',
+    icon: Send,
     bg: 'bg-blue-50',
     text: 'text-blue-700',
     border: 'border-blue-200',
@@ -13,7 +14,7 @@ const STATUS_CONFIG = {
   },
   SHORTLISTED: {
     label: 'Shortlisted',
-    emoji: '⭐',
+    icon: Star,
     bg: 'bg-amber-50',
     text: 'text-amber-700',
     border: 'border-amber-200',
@@ -21,7 +22,7 @@ const STATUS_CONFIG = {
   },
   SELECTED: {
     label: 'Selected',
-    emoji: '🎉',
+    icon: Award,
     bg: 'bg-green-50',
     text: 'text-green-700',
     border: 'border-green-200',
@@ -29,7 +30,7 @@ const STATUS_CONFIG = {
   },
   REJECTED: {
     label: 'Rejected',
-    emoji: '❌',
+    icon: XCircle,
     bg: 'bg-red-50',
     text: 'text-red-600',
     border: 'border-red-200',
@@ -37,7 +38,7 @@ const STATUS_CONFIG = {
   },
   WITHDRAWN: {
     label: 'Withdrawn',
-    emoji: '↩️',
+    icon: Undo2,
     bg: 'bg-gray-50',
     text: 'text-gray-500',
     border: 'border-gray-200',
@@ -86,14 +87,7 @@ export default function MyApplications() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
-            <svg
-              className="absolute left-3 top-2.5 h-4 w-4 text-gray-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
+            <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
           </div>
           <select
             className="w-full sm:w-44 px-4 py-2 bg-white border border-gray-300 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -105,7 +99,7 @@ export default function MyApplications() {
               const config = STATUS_CONFIG[s] || { label: s };
               return (
                 <option key={s} value={s}>
-                  {config.emoji || ''} {config.label || s}
+                  {config.label || s}
                 </option>
               );
             })}
@@ -140,7 +134,8 @@ export default function MyApplications() {
         <div className="space-y-4">
           {visibleApplications.map((app) => {
             const status = app.status;
-            const config = STATUS_CONFIG[status] || { label: status, emoji: '📌', bg: 'bg-gray-50', text: 'text-gray-700', border: 'border-gray-200', dot: 'bg-gray-400' };
+            const config = STATUS_CONFIG[status] || { label: status, icon: Pin, bg: 'bg-gray-50', text: 'text-gray-700', border: 'border-gray-200', dot: 'bg-gray-400' };
+            const StatusIcon = config.icon || Pin;
             return (
               <div
                 key={app.id}
@@ -155,17 +150,18 @@ export default function MyApplications() {
                     <div className="flex flex-wrap items-start justify-between gap-2">
                       <h3 className="font-semibold text-gray-800 text-lg truncate">{app.job_title}</h3>
                       <span
-                        className={`inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full border ${config.bg} ${config.text} ${config.border} whitespace-nowrap`}
+                        className={`inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full border ${config.bg} ${config.text} ${config.border} whitespace-nowrap`}
                       >
-                        <span className={`w-1.5 h-1.5 rounded-full ${config.dot}`}></span>
-                        {config.emoji} {config.label}
+                        <StatusIcon className="w-3.5 h-3.5" />
+                        {config.label}
                       </span>
                     </div>
                     {/* Category and Description */}
                     <div className="mt-2 space-y-1">
                       {app.category && (
-                        <span className="inline-block text-xs bg-gray-100 text-gray-600 px-2.5 py-0.5 rounded-full border border-gray-200">
-                          📂 {app.category}
+                        <span className="inline-flex items-center gap-1 text-xs bg-gray-100 text-gray-600 px-2.5 py-0.5 rounded-full border border-gray-200">
+                          <Folder className="w-3 h-3 text-gray-500" />
+                          {app.category}
                         </span>
                       )}
                       {app.description && (
@@ -174,9 +170,7 @@ export default function MyApplications() {
                     </div>
                     <div className="flex items-center gap-3 mt-2 text-sm text-gray-500">
                       <span className="flex items-center gap-1">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
+                        <CalendarDays className="w-4 h-4" />
                         {new Date(app.applied_date).toLocaleDateString('en-US', {
                           year: 'numeric',
                           month: 'short',
@@ -185,9 +179,7 @@ export default function MyApplications() {
                       </span>
                       <span className="text-gray-300">|</span>
                       <span className="flex items-center gap-1">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
+                        <Clock className="w-4 h-4" />
                         {new Date(app.applied_date).toLocaleTimeString('en-US', {
                           hour: '2-digit',
                           minute: '2-digit',

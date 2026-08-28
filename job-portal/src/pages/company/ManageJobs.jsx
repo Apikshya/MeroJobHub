@@ -3,6 +3,7 @@ import toast from 'react-hot-toast';
 import { getJobs, createJob, updateJob, deleteJob, JOB_TYPES, JOB_STATUSES } from '../../api/jobsApi';
 import { getCompanyByCode } from '../../api/companiesApi';
 import { useAuth } from '../../context/AuthContext';
+import { Plus, Search, AlignLeft, MapPin, Briefcase, Tag, Clock, CheckCircle, BookOpen, Zap, DollarSign, Users, CalendarDays, Info, Folder, Banknote, Target, GraduationCap, Calendar } from 'lucide-react';
 
 function buildEmptyForm(companyCode, companyName) {
   return {
@@ -207,9 +208,7 @@ export default function ManageJobs() {
             onClick={openAddModal}
             className="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white font-medium px-4 py-2 rounded-full shadow-sm transition flex items-center gap-1"
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-            </svg>
+            <Plus className="w-4 h-4" />
             Create Job
           </button>
         </div>
@@ -265,20 +264,34 @@ export default function ManageJobs() {
                           {job.job_type?.replace('_', ' ')}
                         </span>
                         {job.category && (
-                          <span className="text-xs bg-blue-50 text-blue-600 px-2.5 py-0.5 rounded-full border border-blue-100">
-                            📂 {job.category}
+                          <span className="inline-flex items-center gap-1 text-xs bg-blue-50 text-blue-600 px-2.5 py-0.5 rounded-full border border-blue-100">
+                            <Folder className="w-3 h-3 text-blue-500" />
+                            {job.category}
                           </span>
                         )}
                       </div>
                       <p className="text-sm text-gray-600 mt-2 line-clamp-2">{job.description}</p>
                       <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-500 mt-2">
-                        <span className="flex items-center gap-1">
-                          💰 NPR {formatSalary(job.min_salary)} – {formatSalary(job.max_salary)}
+                        <span className="inline-flex items-center gap-1">
+                          <Banknote className="w-3.5 h-3.5 text-emerald-600" />
+                          NPR {formatSalary(job.min_salary)} – {formatSalary(job.max_salary)}
                         </span>
-                        <span>🎯 {job.experience_required || 'Any'}</span>
-                        <span>📚 {job.qualification || 'N/A'}</span>
-                        <span>👥 {job.vacancy_count}</span>
-                        <span>📅 Expires: {job.expiry_date?.substring(0, 10) || '-'}</span>
+                        <span className="inline-flex items-center gap-1">
+                          <Target className="w-3.5 h-3.5 text-rose-500" />
+                          {job.experience_required || 'Any'}
+                        </span>
+                        <span className="inline-flex items-center gap-1">
+                          <GraduationCap className="w-3.5 h-3.5 text-indigo-500" />
+                          {job.qualification || 'N/A'}
+                        </span>
+                        <span className="inline-flex items-center gap-1">
+                          <Users className="w-3.5 h-3.5 text-purple-500" />
+                          {job.vacancy_count}
+                        </span>
+                        <span className="inline-flex items-center gap-1">
+                          <Calendar className="w-3.5 h-3.5 text-amber-500" />
+                          Expires: {job.expiry_date?.substring(0, 10) || '-'}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -328,7 +341,7 @@ export default function ManageJobs() {
             onChange={handleChange}
             required
             className="sm:col-span-2 lg:col-span-3"
-            icon={<svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>}
+            icon={<Search className="w-4 h-4 text-gray-400" />}
           />
 
           {/* Description – full width */}
@@ -339,7 +352,7 @@ export default function ManageJobs() {
             onChange={handleChange}
             required
             className="sm:col-span-2 lg:col-span-3"
-            icon={<svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h7" /></svg>}
+            icon={<AlignLeft className="w-4 h-4 text-gray-400" />}
           />
 
           {/* Company info – full width, more compact */}
@@ -357,13 +370,13 @@ export default function ManageJobs() {
             onChange={handleChange}
             required
             className="sm:col-span-2 lg:col-span-3"
-            icon={<svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>}
+            icon={<MapPin className="w-4 h-4 text-gray-400" />}
           />
 
           {/* Job type */}
           <div>
             <label className="text-sm font-medium text-gray-700 flex items-center gap-1.5">
-              <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+              <Briefcase className="w-4 h-4 text-gray-400" />
               Job type
             </label>
             <select
@@ -386,7 +399,7 @@ export default function ManageJobs() {
             onChange={handleChange}
             placeholder="e.g. Software"
             required
-            icon={<svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" /></svg>}
+            icon={<Tag className="w-4 h-4 text-gray-400" />}
           />
 
           {/* Experience required */}
@@ -396,14 +409,14 @@ export default function ManageJobs() {
             value={form.experience_Required}
             onChange={handleChange}
             placeholder="e.g. 3-5 years"
-            icon={<svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>}
+            icon={<Clock className="w-4 h-4 text-gray-400" />}
           />
 
           {/* Status (only when editing) – can be in same row */}
           {editingJob && (
             <div>
               <label className="text-sm font-medium text-gray-700 flex items-center gap-1.5">
-                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                <CheckCircle className="w-4 h-4 text-gray-400" />
                 Status
               </label>
               <select
@@ -428,7 +441,7 @@ export default function ManageJobs() {
             value={form.qualification}
             onChange={handleChange}
             className="sm:col-span-2 lg:col-span-3"
-            icon={<svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>}
+            icon={<BookOpen className="w-4 h-4 text-gray-400" />}
           />
 
           {/* Skills required – full width */}
@@ -439,7 +452,7 @@ export default function ManageJobs() {
             onChange={handleChange}
             placeholder="Comma separated"
             className="sm:col-span-2 lg:col-span-3"
-            icon={<svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>}
+            icon={<Zap className="w-4 h-4 text-gray-400" />}
           />
 
           {/* Min salary, Max salary, Vacancy count – all in one row */}
@@ -453,7 +466,7 @@ export default function ManageJobs() {
             value={form.min_Salary}
             onChange={handleChange}
             required
-            icon={<svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>}
+            icon={<DollarSign className="w-4 h-4 text-gray-400" />}
           />
           <Field
             label="Max salary"
@@ -465,7 +478,7 @@ export default function ManageJobs() {
             value={form.max_Salary}
             onChange={handleChange}
             required
-            icon={<svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>}
+            icon={<DollarSign className="w-4 h-4 text-gray-400" />}
           />
           <Field
             label="Vacancy count"
@@ -477,7 +490,7 @@ export default function ManageJobs() {
             value={form.vacancy_Count}
             onChange={handleChange}
             required
-            icon={<svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>}
+            icon={<Users className="w-4 h-4 text-gray-400" />}
           />
 
           {/* Expiry date – can be alone or alongside other fields; we'll make it full width for date picker, or we can put it in a 3rd column with something else? */}
@@ -490,7 +503,7 @@ export default function ManageJobs() {
             onChange={handleChange}
             required
             className="sm:col-span-2 lg:col-span-3"
-            icon={<svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>}
+            icon={<CalendarDays className="w-4 h-4 text-gray-400" />}
           />
 
           {/* Action buttons – full width */}
@@ -534,8 +547,9 @@ export default function ManageJobs() {
                   {viewingJob.job_type?.replace('_', ' ')}
                 </span>
                 {viewingJob.category && (
-                  <span className="text-xs bg-blue-50 text-blue-600 px-2.5 py-0.5 rounded-full border border-blue-100">
-                    📂 {viewingJob.category}
+                  <span className="inline-flex items-center gap-1 text-xs bg-blue-50 text-blue-600 px-2.5 py-0.5 rounded-full border border-blue-100">
+                    <Folder className="w-3 h-3 text-blue-500" />
+                    {viewingJob.category}
                   </span>
                 )}
               </div>
@@ -593,9 +607,7 @@ export default function ManageJobs() {
                 action cannot be undone.
               </p>
               <label className="text-sm font-medium text-gray-700 flex items-center gap-1.5">
-                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+                <Info className="w-4 h-4 text-gray-400" />
                 Reason for deletion
               </label>
               <textarea

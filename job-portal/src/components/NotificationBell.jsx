@@ -6,6 +6,7 @@ import {
   markAllNotificationsAsRead,
 } from '../api/notificationsApi';
 import { useAuth } from '../context/AuthContext';
+import { Bell, Clock } from 'lucide-react';
 
 export default function NotificationBell() {
   const { user } = useAuth();
@@ -83,7 +84,7 @@ export default function NotificationBell() {
         className="relative w-10 h-10 rounded-full hover:bg-gray-100 flex items-center justify-center text-gray-600 transition-colors duration-200"
         aria-label="Notifications"
       >
-        <BellIcon />
+        <Bell className="w-5 h-5 text-gray-600" />
         {unreadCount > 0 && (
           <span className="absolute -top-0.5 -right-0.5 min-w-[20px] h-[20px] px-1 rounded-full bg-gradient-to-r from-red-500 to-red-600 text-white text-[10px] font-bold flex items-center justify-center shadow-sm ring-2 ring-white">
             {unreadCount > 9 ? '9+' : unreadCount}
@@ -121,8 +122,8 @@ export default function NotificationBell() {
               </div>
             ) : notifications.length === 0 ? (
               <div className="py-8 text-center">
-                <div className="w-12 h-12 mx-auto bg-gray-100 rounded-full flex items-center justify-center text-2xl">
-                  🔔
+                <div className="w-12 h-12 mx-auto bg-gray-100 rounded-full flex items-center justify-center">
+                  <Bell className="w-6 h-6 text-gray-400" />
                 </div>
                 <p className="text-sm text-gray-400 mt-2">No notifications yet.</p>
               </div>
@@ -152,9 +153,7 @@ export default function NotificationBell() {
                       </p>
                       <p className="text-xs text-gray-500 mt-0.5 line-clamp-2">{n.message}</p>
                       <p className="text-[11px] text-gray-400 mt-1 flex items-center gap-1">
-                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
+                        <Clock className="w-3 h-3" />
                         {new Date(n.created_date).toLocaleString(undefined, {
                           month: 'short',
                           day: 'numeric',
@@ -178,22 +177,4 @@ export default function NotificationBell() {
     </div>
   );
 }
-
-function BellIcon() {
-  return (
-    <svg
-      width="22"
-      height="22"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className="text-gray-600"
-    >
-      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-      <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-    </svg>
-  );
-}
+

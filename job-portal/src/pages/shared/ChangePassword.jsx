@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { resetPassword } from '../../api/profileApi';
+import { Lock, KeyRound, CheckCircle2 } from 'lucide-react';
 
 export default function ChangePassword() {
   const [form, setForm] = useState({ oldPassword: '', newPassword: '', confirmPassword: '' });
@@ -36,9 +37,7 @@ export default function ChangePassword() {
         {/* Header with gradient and icon */}
         <div className="h-24 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 flex items-center justify-center">
           <div className="bg-white/20 backdrop-blur-sm p-3 rounded-full">
-            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-            </svg>
+            <Lock className="w-8 h-8 text-white" />
           </div>
         </div>
 
@@ -56,21 +55,21 @@ export default function ChangePassword() {
               name="oldPassword"
               value={form.oldPassword}
               onChange={handleChange}
-              icon="🔒"
+              icon={<Lock className="w-4 h-4 text-gray-400" />}
             />
             <Field
               label="New Password"
               name="newPassword"
               value={form.newPassword}
               onChange={handleChange}
-              icon="🔑"
+              icon={<KeyRound className="w-4 h-4 text-gray-400" />}
             />
             <Field
               label="Confirm New Password"
               name="confirmPassword"
               value={form.confirmPassword}
               onChange={handleChange}
-              icon="✅"
+              icon={<CheckCircle2 className="w-4 h-4 text-gray-400" />}
             />
           </div>
 

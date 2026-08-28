@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
+import { Plus, Search, Info } from 'lucide-react';
 import { getUsers, createUser, updateUser, deleteUser } from '../../api/usersApi';
 
 const emptyAddForm = {
@@ -171,9 +172,7 @@ export default function UserList() {
             onClick={openAddModal}
             className="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white font-medium px-4 py-2 rounded-full shadow-sm transition flex items-center gap-1"
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-            </svg>
+            <Plus className="w-4 h-4" />
             Add User
           </button>
         </div>
@@ -187,9 +186,7 @@ export default function UserList() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
-            <svg className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
+            <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
           </div>
           <select
             className="w-full sm:w-48 px-4 py-2 bg-white border border-gray-300 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -369,9 +366,7 @@ export default function UserList() {
                 You're about to delete <span className="font-semibold text-gray-800">“{deletingUser.full_name}”</span>. This action cannot be undone.
               </p>
               <label className="text-sm font-medium text-gray-700 flex items-center gap-1.5">
-                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+                <Info className="w-4 h-4 text-gray-400" />
                 Reason for deletion
               </label>
               <textarea

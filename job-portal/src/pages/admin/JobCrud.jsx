@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import { getJobs, createJob, updateJob, deleteJob, JOB_TYPES, JOB_STATUSES } from '../../api/jobsApi'
 import { getAllCompanies } from '../../api/companiesApi'
+import { Plus } from 'lucide-react'
 
 const emptyForm = {
   title: '',
@@ -179,9 +180,7 @@ export default function JobCrud() {
           onClick={openAddModal}
           className="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white font-medium px-4 py-2 rounded-full shadow-sm transition flex items-center gap-1"
         >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-          </svg>
+          <Plus className="w-4 h-4" />
           Create Job 
         </button>
       </div>

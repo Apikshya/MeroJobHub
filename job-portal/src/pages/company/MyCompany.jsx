@@ -2,6 +2,22 @@ import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { getCompanyByCode } from '../../api/companiesApi';
 import { useAuth } from '../../context/AuthContext';
+import {
+  Mail,
+  Phone,
+  Globe,
+  Factory,
+  Building2,
+  BarChart3,
+  Users,
+  Calendar,
+  FileText,
+  Receipt,
+  User,
+  Briefcase,
+  Link2,
+  Share2,
+} from 'lucide-react';
 
 // The COMPANY_ADMIN user object returns a "system_code" that maps to a company's
 // company_code — that's the link used to look up their company below.
@@ -65,21 +81,21 @@ export default function MyCompany() {
 
   // Fields configuration with icons
   const fields = [
-    { label: 'Email', value: company.email_id, icon: '📧' },
-    { label: 'Phone', value: company.phone_number, icon: '📱' },
-    { label: 'Website', value: company.website, icon: '🌐' },
-    { label: 'Industry', value: company.industry_type, icon: '🏭' },
-    { label: 'Company Type', value: company.company_type, icon: '🏢' },
-    { label: 'Company Size', value: company.company_size, icon: '📊' },
-    { label: 'Employees', value: company.employee_count, icon: '👥' },
-    { label: 'Founded', value: company.founded_year, icon: '📅' },
-    { label: 'Registration #', value: company.registration_number, icon: '📄' },
-    { label: 'Tax #', value: company.tax_number, icon: '🧾' },
-    { label: 'Contact Person', value: company.contact_person_name, icon: '👤' },
-    { label: 'Contact Designation', value: company.contact_person_designation, icon: '💼' },
-    { label: 'LinkedIn', value: company.linkedin_url, icon: '🔗', className: 'sm:col-span-2' },
-    { label: 'Facebook', value: company.facebook_url, icon: '📘' },
-    { label: 'Twitter', value: company.twitter_url, icon: '🐦' },
+    { label: 'Email', value: company.email_id, icon: <Mail className="w-4 h-4 text-blue-500" /> },
+    { label: 'Phone', value: company.phone_number, icon: <Phone className="w-4 h-4 text-green-500" /> },
+    { label: 'Website', value: company.website, icon: <Globe className="w-4 h-4 text-indigo-500" /> },
+    { label: 'Industry', value: company.industry_type, icon: <Factory className="w-4 h-4 text-amber-500" /> },
+    { label: 'Company Type', value: company.company_type, icon: <Building2 className="w-4 h-4 text-purple-500" /> },
+    { label: 'Company Size', value: company.company_size, icon: <BarChart3 className="w-4 h-4 text-cyan-500" /> },
+    { label: 'Employees', value: company.employee_count, icon: <Users className="w-4 h-4 text-pink-500" /> },
+    { label: 'Founded', value: company.founded_year, icon: <Calendar className="w-4 h-4 text-orange-500" /> },
+    { label: 'Registration #', value: company.registration_number, icon: <FileText className="w-4 h-4 text-slate-500" /> },
+    { label: 'Tax #', value: company.tax_number, icon: <Receipt className="w-4 h-4 text-emerald-500" /> },
+    { label: 'Contact Person', value: company.contact_person_name, icon: <User className="w-4 h-4 text-blue-500" /> },
+    { label: 'Contact Designation', value: company.contact_person_designation, icon: <Briefcase className="w-4 h-4 text-violet-500" /> },
+    { label: 'LinkedIn', value: company.linkedin_url, icon: <Link2 className="w-4 h-4 text-blue-600" />, className: 'sm:col-span-2' },
+    { label: 'Facebook', value: company.facebook_url, icon: <Share2 className="w-4 h-4 text-blue-700" /> },
+    { label: 'Twitter', value: company.twitter_url, icon: <Share2 className="w-4 h-4 text-sky-500" /> },
   ];
 
   return (
@@ -89,32 +105,31 @@ export default function MyCompany() {
         <div className="h-32 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500"></div>
 
         {/* Company header */}
-     {/* Company header */}
-<div className="relative px-6 pb-6 m-4">   {/* 👈 added m-4 for spacing around */}
-  <div className="flex flex-col items-center -mt-12 sm:flex-row sm:items-end sm:gap-5">
-    {/* Avatar */}
-    <div className="w-24 h-24 rounded-full border-4 border-white bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-3xl font-bold shadow-md">
-      {initial}
-    </div>
-    <div className="mt-3 sm:mt-0 text-center sm:text-left flex-1">
-      <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
-        <h1 className="text-3xl font-bold text-gray-800">  {/* 👈 increased from text-2xl to text-3xl */}
-          {company.company_name}
-        </h1>
-        <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-blue-100 text-blue-700 border border-blue-200">
-          {company.company_code}
-        </span>
-      </div>
-      <p className="text-base text-gray-500 mt-1">  {/* 👈 increased from text-sm to text-base */}
-        {company.address}, {company.city}, {company.state}, {company.country} {company.postal_code}
-      </p>
-    </div>
-  </div>
-</div>
-{/* Description */}
-<div className="m-4 border-t border-gray-100 px-6 py-4 bg-gray-50/50">
-  <p className="text-base text-gray-700">{company.description}</p>  {/* increased from text-sm */}
-</div>
+        <div className="relative px-6 pb-6 m-4">
+          <div className="flex flex-col items-center -mt-12 sm:flex-row sm:items-end sm:gap-5">
+            {/* Avatar */}
+            <div className="w-24 h-24 rounded-full border-4 border-white bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-3xl font-bold shadow-md">
+              {initial}
+            </div>
+            <div className="mt-3 sm:mt-0 text-center sm:text-left flex-1">
+              <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+                <h1 className="text-3xl font-bold text-gray-800">
+                  {company.company_name}
+                </h1>
+                <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-blue-100 text-blue-700 border border-blue-200">
+                  {company.company_code}
+                </span>
+              </div>
+              <p className="text-base text-gray-500 mt-1">
+                {company.address}, {company.city}, {company.state}, {company.country} {company.postal_code}
+              </p>
+            </div>
+          </div>
+        </div>
+        {/* Description */}
+        <div className="m-4 border-t border-gray-100 px-6 py-4 bg-gray-50/50">
+          <p className="text-base text-gray-700">{company.description}</p>
+        </div>
 
 {/* Details grid */}
 <div className="m-4 px-6 py-5 bg-white">

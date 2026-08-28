@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts'
 import { getAdminDashboard } from '../../api/dashboardApi'
+import { Users, Briefcase, FileSpreadsheet, Building2 } from 'lucide-react'
 
 const JOB_STATUS_COLORS = { OPEN: '#059669', CLOSED: '#94a3b8', EXPIRED: '#dc2626' }
 const APP_STATUS_COLORS = {
@@ -39,10 +40,10 @@ export default function AdminDashboard() {
           <h1 className="text-2xl font-bold text-white">Dashboard</h1>
           </div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 m-4">
-  <MetricCard icon="👥" label="Total users" value={summary.total_users} />
-  <MetricCard icon="💼" label="Total jobs" value={summary.total_jobs} />
-  <MetricCard icon="📄" label="Total applications" value={summary.total_applications} />
-  <MetricCard icon="🏢" label="Total companies" value={summary.total_companies} />
+  <MetricCard icon={<Users className="w-5 h-5 text-blue-500" />} label="Total users" value={summary.total_users} />
+  <MetricCard icon={<Briefcase className="w-5 h-5 text-purple-500" />} label="Total jobs" value={summary.total_jobs} />
+  <MetricCard icon={<FileSpreadsheet className="w-5 h-5 text-green-500" />} label="Total applications" value={summary.total_applications} />
+  <MetricCard icon={<Building2 className="w-5 h-5 text-amber-500" />} label="Total companies" value={summary.total_companies} />
 </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6  m-4">

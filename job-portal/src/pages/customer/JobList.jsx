@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import { getJobs, applyToJob } from '../../api/jobsApi';
 import { useAuth } from '../../context/AuthContext';
+import { Search, CheckCircle, X, Banknote, Target, GraduationCap, CalendarDays } from 'lucide-react';
 
 export default function JobList() {
   const [jobs, setJobs] = useState([]);
@@ -90,20 +91,7 @@ export default function JobList() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-          <svg
-            className="absolute left-3 top-2.5 h-4 w-4 text-gray-400"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-            />
-          </svg>
+          <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
         </div>
       </div>
 
@@ -164,17 +152,17 @@ export default function JobList() {
 
               {/* Details as chips */}
               <div className="flex flex-wrap gap-2 mt-3">
-                <span className="inline-flex items-center text-xs bg-gray-100 text-gray-700 px-3 py-1 rounded-full">
-                  💰 NPR {job.min_salary?.toLocaleString()} – {job.max_salary?.toLocaleString()}
+                <span className="inline-flex items-center gap-1 text-xs bg-gray-100 text-gray-700 px-3 py-1 rounded-full">
+                  <Banknote className="w-3.5 h-3.5 text-emerald-600" /> NPR {job.min_salary?.toLocaleString()} – {job.max_salary?.toLocaleString()}
                 </span>
-                <span className="inline-flex items-center text-xs bg-gray-100 text-gray-700 px-3 py-1 rounded-full">
-                  🎯 {job.experience_required || 'No exp.'}
+                <span className="inline-flex items-center gap-1 text-xs bg-gray-100 text-gray-700 px-3 py-1 rounded-full">
+                  <Target className="w-3.5 h-3.5 text-rose-500" /> {job.experience_required || 'No exp.'}
                 </span>
-                <span className="inline-flex items-center text-xs bg-gray-100 text-gray-700 px-3 py-1 rounded-full">
-                  📚 {job.qualification || 'Not specified'}
+                <span className="inline-flex items-center gap-1 text-xs bg-gray-100 text-gray-700 px-3 py-1 rounded-full">
+                  <GraduationCap className="w-3.5 h-3.5 text-indigo-500" /> {job.qualification || 'Not specified'}
                 </span>
-                <span className="inline-flex items-center text-xs bg-gray-100 text-gray-700 px-3 py-1 rounded-full">
-                  🗓️ Apply by {job.expiry_date?.substring(0, 10) || 'N/A'}
+                <span className="inline-flex items-center gap-1 text-xs bg-gray-100 text-gray-700 px-3 py-1 rounded-full">
+                  <CalendarDays className="w-3.5 h-3.5 text-amber-500" /> Apply by {job.expiry_date?.substring(0, 10) || 'N/A'}
                 </span>
               </div>
 
@@ -201,20 +189,7 @@ export default function JobList() {
                   onClick={() => openApplyModal(job)}
                   className="inline-flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-5 py-2 rounded-full transition shadow-sm"
                 >
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
+                  <CheckCircle className="w-4 h-4" />
                   Apply Now
                 </button>
               </div>
@@ -233,9 +208,7 @@ export default function JobList() {
         onClick={() => setApplyingJob(null)}
         className="absolute top-3 right-3 text-gray-400 hover:text-gray-600"
       >
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-        </svg>
+        <X className="w-6 h-6" />
       </button>
 
       {/* Header */}

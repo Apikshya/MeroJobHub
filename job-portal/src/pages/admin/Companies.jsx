@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import toast from 'react-hot-toast'
 import { addCompany, getAllCompanies, updateCompany, deleteCompany } from '../../api/companiesApi'
 import { INDUSTRY_TYPES, COMPANY_TYPES, COMPANY_SIZES } from '../../api/companyOptions'
+import { Plus } from 'lucide-react'
 
 const emptyForm = {
   company_name: '',
@@ -160,9 +161,7 @@ export default function Companies() {
           onClick={openAddModal}
           className="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white font-medium px-4 py-2 rounded-full shadow-sm transition flex items-center gap-1"
         >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-          </svg>
+          <Plus className="w-4 h-4" />
           Add Company
         </button>
       </div>

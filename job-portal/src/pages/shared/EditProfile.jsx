@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { getMyProfile, updateMyProfile } from '../../api/profileApi';
 import { useAuth } from '../../context/AuthContext';
+import { User, Type, Calendar, Phone, MapPin } from 'lucide-react';
 
 export default function EditProfile() {
   const [form, setForm] = useState(null);
@@ -100,21 +101,21 @@ export default function EditProfile() {
               name="first_name"
               value={form.first_name}
               onChange={handleChange}
-              icon="👤"
+              icon={<User className="w-4 h-4 text-gray-400" />}
             />
             <Field
               label="Middle Name"
               name="middle_name"
               value={form.middle_name}
               onChange={handleChange}
-              icon="🔤"
+              icon={<Type className="w-4 h-4 text-gray-400" />}
             />
             <Field
               label="Last Name"
               name="last_name"
               value={form.last_name}
               onChange={handleChange}
-              icon="👤"
+              icon={<User className="w-4 h-4 text-gray-400" />}
             />
             <Field
               label="Age"
@@ -122,21 +123,21 @@ export default function EditProfile() {
               type="number"
               value={form.age}
               onChange={handleChange}
-              icon="🎂"
+              icon={<Calendar className="w-4 h-4 text-gray-400" />}
             />
             <Field
               label="Phone Number"
               name="phone_number"
               value={form.phone_number}
               onChange={handleChange}
-              icon="📱"
+              icon={<Phone className="w-4 h-4 text-gray-400" />}
             />
             <Field
               label="Address"
               name="address"
               value={form.address}
               onChange={handleChange}
-              icon="📍"
+              icon={<MapPin className="w-4 h-4 text-gray-400" />}
               className="sm:col-span-2"
             />
           </div>
