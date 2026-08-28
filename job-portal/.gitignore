@@ -1,0 +1,25 @@
+# Frontend (job-portal) Gitignore
+# Dependency directories
+node_modules/
+
+# Environment files
+.env
+.env.*
+
+# Build output
+dist/
+/.vite/
+/build/
+
+# IDE files
+.idea/
+.vscode/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS files
+.DS_Store
+Thumbs.db
