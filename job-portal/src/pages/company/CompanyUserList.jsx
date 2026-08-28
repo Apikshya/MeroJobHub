@@ -276,7 +276,7 @@ export default function UserList() {
                     <Field label="First name" name="first_Name" value={form.first_Name} onChange={handleFormChange} placeholder="John" required />
                     <Field label="Middle name" name="middle_Name" value={form.middle_Name} onChange={handleFormChange} placeholder="Michael" />
                     <Field label="Last name" name="last_Name" value={form.last_Name} onChange={handleFormChange} placeholder="Smith" required />
-                    <Field label="Age" name="age" type="number" min={18} max={100} value={form.age} onChange={handleFormChange} placeholder="25" required />
+                    <Field label="Age" name="age" type="number" min={16} max={100} value={form.age} onChange={handleFormChange} placeholder="25" required />
                     <Field label="Phone number" name="phone_Number" type="tel" value={form.phone_Number} onChange={handleFormChange} placeholder="+1 555 123 4567" required />
                     <Field label="Address" name="address" value={form.address} onChange={handleFormChange} placeholder="123 Main Street" required />
                   </>
@@ -417,10 +417,10 @@ export default function UserList() {
 }
 
 // Helper components (unchanged)
-function Field({ label, name, value, onChange, type = 'text', required = false, placeholder = '', minLength, maxLength }) {
+function Field({ label, name, value, onChange, type = 'text', required = false, placeholder = '', minLength, maxLength, min=0, max=99 }) {
   return (
     <div>
-      <label className="text-sm font-medium text-gray-700">{label}</label>
+      <label className="text-sm font-medium text-gray-700">{label} {required && <span className="text-red-500">*</span>}</label>
       <input
         type={type}
         name={name}
@@ -430,6 +430,8 @@ function Field({ label, name, value, onChange, type = 'text', required = false, 
         placeholder={placeholder}
         minLength={minLength}
         maxLength={maxLength}
+        min={min}
+        max={max}
         className="mt-1 w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
       />
     </div>

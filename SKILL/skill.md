@@ -33,7 +33,8 @@ pasword: admin123
 
 user
 aakash
-password : username@123
+vibeviv406@mediseat.com
+password : 12345678
 
 
 company

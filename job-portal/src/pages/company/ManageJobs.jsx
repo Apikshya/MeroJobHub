@@ -656,6 +656,7 @@ function Field({ label, name, value, onChange, type = 'text', required = false, 
       <label className="text-sm font-medium text-gray-700 flex items-center gap-1.5">
         {icon && <span className="text-gray-400">{icon}</span>}
         {label}
+        {required && <span className="text-red-500">*</span>}
       </label>
       <input
         type={type}
@@ -676,6 +677,7 @@ function TextArea({ label, name, value, onChange, required = false, className = 
       <label className="text-sm font-medium text-gray-700 flex items-center gap-1.5">
         {icon && <span className="text-gray-400">{icon}</span>}
         {label}
+        {required && <span className="text-red-500">*</span>}
       </label>
       <textarea
         name={name}
