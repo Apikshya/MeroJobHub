@@ -194,6 +194,7 @@ export default function AddCompanyModal({ isOpen, onClose }) {
               value={form.employee_count}
               onChange={handleChange}
               placeholder="150"
+              min={1}
               required
             />
 
@@ -344,7 +345,7 @@ export default function AddCompanyModal({ isOpen, onClose }) {
 function Select({ label, name, value, onChange, options, required = false, className = '' }) {
   return (
     <div className={className}>
-      <label className="text-sm font-medium text-gray-700">{label}</label>
+      <label className="text-sm font-medium text-gray-700">{label} {required && <span className="text-red-500">*</span>}</label>
       <select
         name={name}
         value={value ?? ''}
@@ -367,10 +368,10 @@ function Select({ label, name, value, onChange, options, required = false, class
   )
 }
 
-function Field({ label, name, value, onChange, type = 'text', required = false, placeholder = '', className = '' }) {
+function Field({ label, name, value, onChange, type = 'text', required = false, placeholder = '', className = '', min = 0 }) {
   return (
     <div className={className}>
-      <label className="text-sm font-medium text-gray-700">{label}</label>
+      <label className="text-sm font-medium text-gray-700">{label} {required && <span className="text-red-500">*</span>}</label>
       <input
         type={type}
         name={name}
@@ -378,6 +379,7 @@ function Field({ label, name, value, onChange, type = 'text', required = false, 
         onChange={onChange}
         required={required}
         placeholder={placeholder}
+        min={min}
         className="mt-1 w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-800"
       />
     </div>
