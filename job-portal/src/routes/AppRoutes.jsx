@@ -26,6 +26,7 @@ import Companies from '../pages/admin/Companies'
 
 import CompanyDashboard from '../pages/company/CompanyDashboard'
 import MyCompany from '../pages/company/MyCompany'
+import EditCompany from '../pages/company/EditCompany'
 import CompanyManageJobs from '../pages/company/ManageJobs'
 import CompanyApplications from '../pages/company/Applications'
 import CompanyUserList from '../pages/company/CompanyUserList'
@@ -90,6 +91,7 @@ export default function AppRoutes() {
       >
         <Route path="dashboard" element={<CompanyDashboard />} />
         <Route path="company-info" element={<MyCompany />} />
+        <Route path="edit-company" element={<EditCompany />} />
         <Route path="users" element={<CompanyUserList />} />
         <Route path="jobs" element={<CompanyManageJobs />} />
         <Route path="applications" element={<CompanyApplications />} />

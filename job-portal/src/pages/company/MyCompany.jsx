@@ -132,11 +132,11 @@ export default function MyCompany() {
             </div>
 
             <button
-              onClick={() => navigate('/company/edit-profile')}
+              onClick={() => navigate('/company/edit-company')}
               className="border border-slate-200 hover:bg-slate-50 text-slate-700 font-medium px-4 py-2 rounded-xl text-sm flex items-center gap-2 shadow-sm transition-colors self-start sm:self-end"
             >
               <Edit3 className="w-4 h-4 text-slate-500" />
-              Edit Profile
+              Edit Company
             </button>
           </div>
 
