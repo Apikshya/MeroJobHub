@@ -162,11 +162,11 @@ export default function Companies() {
   return (
     <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">
       {/* ——— Gradient header ——— */}
-      <div className="h-24 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 flex items-center justify-between px-6 rounded-t-2xl mb-4">
-        <h1 className="text-2xl font-bold text-white">Company Info</h1>
+      <div className="h-24  flex items-center justify-between px-6 rounded-t-2xl mb-4">
+        <h1 className="text-2xl font-bold text-black">Company Info</h1>
         <button
           onClick={openAddModal}
-          className="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white font-medium px-4 py-2 rounded-full shadow-sm transition flex items-center gap-1"
+          className="bg-white/20 backdrop-blur-sm hover:bg-black/30 text-black border border-black font-medium px-4 py-2 rounded-full shadow-sm transition flex items-center gap-1"
         >
           <Plus className="w-4 h-4" />
           Add Company
@@ -239,18 +239,18 @@ export default function Companies() {
         </div>
       )}
 
-      {/* ——— Add / Edit Modal (gradient header) ——— */}
+      {/* Add / Edit Modal */}
       {modalOpen && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-5xl my-8 max-h-[90vh] overflow-y-auto animate-fade-in-up">
-            <div className="sticky top-0 z-10 h-20 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 rounded-t-2xl flex items-center px-6 m-4">
-              <h2 className="text-xl font-bold text-white">
-                {editingCompany ? 'Update Company' : 'Add Company'}
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl my-8 max-h-[90vh] overflow-y-auto animate-fade-in-up overflow-hidden">
+            <div className="sticky top-0 z-10 h-16 bg-gradient-to-r from-[#1d4ed8] to-[#2563eb] flex items-center px-6">
+              <h2 className="text-lg font-bold text-white">
+                {editingCompany ? 'Update Company Details' : 'Add New Company'}
               </h2>
             </div>
-            <form onSubmit={handleSave} className="p-6 bg-gray-50/50">
+            <form onSubmit={handleSave} className="p-6 space-y-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {/* Full width fields */}
+                {/* Full width field */}
                 <Field
                   label="Company name"
                   name="company_name"
@@ -276,7 +276,7 @@ export default function Companies() {
                   name="phone_number"
                   value={form.phone_number}
                   onChange={handleChange}
-                  placeholder="+1 555 123 4567"
+                  placeholder="98XXXXXXXX"
                   required
                 />
 
@@ -397,7 +397,7 @@ export default function Companies() {
                   name="city"
                   value={form.city}
                   onChange={handleChange}
-                  placeholder="New York"
+                  placeholder="Kathmandu"
                 />
 
                 <Field
@@ -405,7 +405,7 @@ export default function Companies() {
                   name="state"
                   value={form.state}
                   onChange={handleChange}
-                  placeholder="California"
+                  placeholder="Bagmati"
                 />
 
                 <Field
@@ -413,7 +413,7 @@ export default function Companies() {
                   name="country"
                   value={form.country}
                   onChange={handleChange}
-                  placeholder="United States"
+                  placeholder="Nepal"
                   required
                 />
 
@@ -422,7 +422,7 @@ export default function Companies() {
                   name="postal_code"
                   value={form.postal_code}
                   onChange={handleChange}
-                  placeholder="10001"
+                  placeholder="44600"
                 />
 
                 <TextArea
@@ -458,50 +458,53 @@ export default function Companies() {
                   onChange={handleChange}
                   placeholder="https://x.com/acme"
                 />
+              </div>
 
-                {/* Buttons – full width */}
-                <div className="flex gap-2 mt-2 sm:col-span-2 lg:col-span-3">
-                  <button
-                    type="submit"
-                    disabled={saving}
-                    className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:opacity-50 text-white font-semibold py-2.5 rounded-xl shadow-sm transition"
-                  >
-                    {saving ? 'Saving...' : 'Save'}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setModalOpen(false)}
-                    className="flex-1 border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium py-2.5 rounded-xl transition"
-                  >
-                    Cancel
-                  </button>
-                </div>
+              {/* Action Buttons */}
+              <div className="flex gap-3 pt-4 border-t border-gray-100">
+                <button
+                  type="submit"
+                  disabled={saving}
+                  className="flex-1 bg-[#1d4ed8] hover:bg-[#1e40af] disabled:opacity-50 text-white font-semibold py-2.5 rounded-xl shadow-sm transition"
+                >
+                  {saving ? 'Saving...' : 'Save Company Details'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setModalOpen(false)}
+                  className="flex-1 border border-gray-200 hover:bg-gray-50 text-gray-700 font-medium py-2.5 rounded-xl transition"
+                >
+                  Cancel
+                </button>
               </div>
             </form>
           </div>
         </div>
       )}
 
-      {/* ——— View Modal (gradient header) ——— */}
+      {/* View Modal */}
       {viewingCompany && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl my-8 max-h-[90vh] overflow-y-auto animate-fade-in-up">
-            <div className="sticky top-0 z-10 h-20 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 rounded-t-2xl flex items-center px-6">
-              <div className="flex items-center justify-between w-full">
-                <h2 className="text-xl font-bold text-white">{viewingCompany.company_name}</h2>
-                <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-white/20 backdrop-blur-sm text-white border border-white/30">
-                  {viewingCompany.company_code}
-                </span>
-              </div>
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl my-8 max-h-[90vh] overflow-y-auto animate-fade-in-up overflow-hidden">
+            <div className="sticky top-0 z-10 h-16 bg-gradient-to-r from-[#1d4ed8] to-[#2563eb] flex items-center justify-between px-6">
+              <h2 className="text-lg font-bold text-white">{viewingCompany.company_name}</h2>
+              <span className="text-xs font-semibold px-3 py-1 rounded-full bg-white/20 text-white border border-white/30">
+                Code: {viewingCompany.company_code}
+              </span>
             </div>
-            <div className="p-6 bg-gray-50/50">
-              <p className="text-sm text-gray-500 mb-4">
-                {viewingCompany.address}, {viewingCompany.city}, {viewingCompany.state}, {viewingCompany.country}{' '}
-                {viewingCompany.postal_code}
-              </p>
-              <p className="text-sm text-gray-700 mb-5">{viewingCompany.description}</p>
 
-              <dl className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="p-6 space-y-6">
+              {/* Header Overview Card */}
+              <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 space-y-2">
+                <p className="text-xs font-semibold uppercase tracking-wider text-blue-600">Company Overview</p>
+                <p className="text-sm text-gray-700 leading-relaxed">{viewingCompany.description || 'No description provided.'}</p>
+                <p className="text-xs text-gray-500 font-medium pt-1 border-t border-gray-200/60">
+                  Address: {[viewingCompany.address, viewingCompany.city, viewingCompany.state, viewingCompany.country, viewingCompany.postal_code].filter(Boolean).join(', ')}
+                </p>
+              </div>
+
+              {/* Grid of Details */}
+              <dl className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-white p-4 rounded-xl border border-gray-100">
                 <DetailRow label="Email" value={viewingCompany.email_id} />
                 <DetailRow label="Phone" value={viewingCompany.phone_number} />
                 <DetailRow label="Website" value={viewingCompany.website} />
@@ -516,22 +519,23 @@ export default function Companies() {
                 <DetailRow label="Contact designation" value={viewingCompany.contact_person_designation} />
                 <DetailRow label="LinkedIn" value={viewingCompany.linkedin_url} className="sm:col-span-2" />
                 <DetailRow label="Facebook" value={viewingCompany.facebook_url} />
-                <DetailRow label="Twitter" value={viewingCompany.twitter_url} />
+                <DetailRow label="Twitter / X" value={viewingCompany.twitter_url} />
               </dl>
 
-              <div className="flex gap-2 mt-6">
+              {/* Footer Actions */}
+              <div className="flex gap-3 pt-2 border-t border-gray-100">
                 <button
                   onClick={() => {
-                    setViewingCompany(null)
-                    openEditModal(viewingCompany)
+                    setViewingCompany(null);
+                    openEditModal(viewingCompany);
                   }}
-                  className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-2.5 rounded-xl shadow-sm transition"
+                  className="flex-1 bg-[#1d4ed8] hover:bg-[#1e40af] text-white font-semibold py-2.5 rounded-xl shadow-sm transition"
                 >
-                  Edit this company
+                  Edit Company Details
                 </button>
                 <button
                   onClick={() => setViewingCompany(null)}
-                  className="flex-1 border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium py-2.5 rounded-xl transition"
+                  className="flex-1 border border-gray-200 hover:bg-gray-50 text-gray-700 font-medium py-2.5 rounded-xl transition"
                 >
                   Close
                 </button>
@@ -541,38 +545,39 @@ export default function Companies() {
         </div>
       )}
 
-      {/* ——— Delete Modal (red gradient header) ——— */}
+      {/* Delete Modal */}
       {deletingCompany && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md animate-fade-in-up">
-            <div className="h-16 bg-gradient-to-r from-red-400 to-red-600 rounded-t-2xl flex items-center px-6">
-              <h2 className="text-xl font-bold text-white">Delete this company?</h2>
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md animate-fade-in-up overflow-hidden">
+            <div className="h-16 bg-gradient-to-r from-red-500 to-red-600 flex items-center px-6">
+              <h2 className="text-lg font-bold text-white">Delete Company Record</h2>
             </div>
-            <div className="p-6 bg-gray-50/50">
-              <p className="text-sm text-gray-600 mb-4">
-                You're about to delete{' '}
-                <span className="font-semibold text-gray-800">“{deletingCompany.company_name}”</span>. This can't be undone.
+            <div className="p-6 space-y-4">
+              <p className="text-sm text-gray-600">
+                You are about to delete <span className="font-semibold text-gray-900">“{deletingCompany.company_name}”</span>. This action cannot be undone.
               </p>
-              <label className="text-sm font-medium text-gray-700">Reason for deletion</label>
-              <textarea
-                className="input-field mt-1 w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent bg-white"
-                rows={3}
-                value={deleteRemarks}
-                onChange={(e) => setDeleteRemarks(e.target.value)}
-                placeholder="e.g. Duplicate entry, company closed"
-                autoFocus
-              />
-              <div className="flex gap-2 mt-4">
+              <div>
+                <label className="text-xs font-semibold uppercase tracking-wider text-gray-500 block mb-1">Reason for deletion <span className="text-red-500">*</span></label>
+                <textarea
+                  className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent bg-white"
+                  rows={3}
+                  value={deleteRemarks}
+                  onChange={(e) => setDeleteRemarks(e.target.value)}
+                  placeholder="e.g. Duplicate account, company requested removal"
+                  autoFocus
+                />
+              </div>
+              <div className="flex gap-3 pt-2">
                 <button
                   onClick={confirmDelete}
                   disabled={deleting}
                   className="flex-1 bg-red-600 hover:bg-red-700 disabled:opacity-50 text-white font-semibold py-2.5 rounded-xl shadow-sm transition"
                 >
-                  {deleting ? 'Deleting...' : 'Delete company'}
+                  {deleting ? 'Deleting...' : 'Delete Company'}
                 </button>
                 <button
                   onClick={() => setDeletingCompany(null)}
-                  className="flex-1 border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium py-2.5 rounded-xl transition"
+                  className="flex-1 border border-gray-200 hover:bg-gray-50 text-gray-700 font-medium py-2.5 rounded-xl transition"
                 >
                   Cancel
                 </button>
@@ -601,7 +606,7 @@ export default function Companies() {
 function Select({ label, name, value, onChange, options, required = false, className = '' }) {
   return (
     <div className={className}>
-      <label className="text-sm font-medium text-gray-700">{label}</label>
+      <label className="text-sm font-medium text-gray-700">{label} {required && <span className="text-red-500">*</span>}</label>
       <select
         name={name}
         value={value ?? ''}
@@ -627,7 +632,7 @@ function Select({ label, name, value, onChange, options, required = false, class
 function Field({ label, name, value, onChange, type = 'text', required = false, placeholder = '', className = '' }) {
   return (
     <div className={className}>
-      <label className="text-sm font-medium text-gray-700">{label}</label>
+      <label className="text-sm font-medium text-gray-700">{label} {required && <span className="text-red-500">*</span>}</label>
       <input
         type={type}
         name={name}
@@ -644,7 +649,7 @@ function Field({ label, name, value, onChange, type = 'text', required = false, 
 function TextArea({ label, name, value, onChange, required = false, className = '' }) {
   return (
     <div className={className}>
-      <label className="text-sm font-medium text-gray-700">{label}</label>
+      <label className="text-sm font-medium text-gray-700">{label} {required && <span className="text-red-500">*</span>}</label>
       <textarea
         name={name}
         value={value ?? ''}

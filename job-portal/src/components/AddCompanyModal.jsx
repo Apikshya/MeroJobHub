@@ -130,7 +130,7 @@ export default function AddCompanyModal({ isOpen, onClose }) {
               name="phone_number"
               value={form.phone_number}
               onChange={handleChange}
-              placeholder="+1 555 123 4567"
+              placeholder="98XXXXXXXX"
               required
             />
 

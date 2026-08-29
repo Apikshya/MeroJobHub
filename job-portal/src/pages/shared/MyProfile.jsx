@@ -64,10 +64,10 @@ export default function MyProfile() {
       {/* Profile card */}
       <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">
         {/* Cover image (gradient placeholder) */}
-        <div className="h-32 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500"></div>
+     
 
         {/* Avatar & name section */}
-        <div className="relative px-6 pb-6">
+        <div className="relative px-6 pb-6 pt-14">
           <div className="flex flex-col items-center -mt-12 sm:flex-row sm:items-end sm:gap-5">
             {/* Avatar */}
             <div className="w-24 h-24 rounded-full border-4 border-white bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-3xl font-bold shadow-md">

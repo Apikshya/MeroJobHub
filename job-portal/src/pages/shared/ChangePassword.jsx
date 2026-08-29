@@ -34,12 +34,6 @@ export default function ChangePassword() {
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
       <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">
-        {/* Header with gradient and icon */}
-        <div className="h-24 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 flex items-center justify-center">
-          <div className="bg-white/20 backdrop-blur-sm p-3 rounded-full">
-            <Lock className="w-8 h-8 text-white" />
-          </div>
-        </div>
 
         {/* Title */}
         <div className="px-6 pt-4 pb-2">
@@ -54,6 +48,7 @@ export default function ChangePassword() {
               label="Current Password"
               name="oldPassword"
               value={form.oldPassword}
+              required
               onChange={handleChange}
               icon={<Lock className="w-4 h-4 text-gray-400" />}
             />
@@ -62,6 +57,7 @@ export default function ChangePassword() {
               name="newPassword"
               value={form.newPassword}
               onChange={handleChange}
+              required
               icon={<KeyRound className="w-4 h-4 text-gray-400" />}
             />
             <Field
@@ -69,6 +65,7 @@ export default function ChangePassword() {
               name="confirmPassword"
               value={form.confirmPassword}
               onChange={handleChange}
+              required
               icon={<CheckCircle2 className="w-4 h-4 text-gray-400" />}
             />
           </div>
@@ -86,19 +83,20 @@ export default function ChangePassword() {
   );
 }
 
-function Field({ label, name, value, onChange, icon }) {
+function Field({ label, name, value, onChange, icon, required }) {
   return (
     <div>
       <label className="text-sm font-medium text-gray-700 flex items-center gap-1.5">
         {icon && <span className="text-base">{icon}</span>}
         {label}
+        {required && <span className="text-red-500">*</span>}
       </label>
       <input
         type="password"
         name={name}
         value={value}
         onChange={onChange}
-        required
+        required={required}
         className="mt-1 w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition bg-white"
       />
     </div>

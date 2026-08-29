@@ -172,65 +172,82 @@ export default function JobCrud() {
   }
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">
-      {/* ——— Gradient header ——— */}
-      <div className="h-24 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 flex items-center justify-between px-6 rounded-t-2xl mb-4">
-        <h1 className="text-2xl font-bold text-white">Manage Jobs</h1>
+    <div className="space-y-6">
+      {/* Top Header Card */}
+      <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Job Listing Management</h1>
+          <p className="text-sm text-gray-500 mt-1">Create, inspect, update, and manage job openings across companies.</p>
+        </div>
         <button
           onClick={openAddModal}
-          className="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white font-medium px-4 py-2 rounded-full shadow-sm transition flex items-center gap-1"
+          className="inline-flex items-center justify-center gap-2 bg-[#1d4ed8] hover:bg-[#1e40af] text-white text-sm font-semibold px-5 py-2.5 rounded-xl shadow-md transition"
         >
           <Plus className="w-4 h-4" />
-          Create Job 
+          Create Job
         </button>
       </div>
 
-      {/* ——— Job cards ——— */}
+      {/* Job Cards Grid */}
       {loading ? (
-        <p className="text-slate-500 m-4">Loading jobs...</p>
+        <div className="p-12 text-center bg-white rounded-2xl border border-gray-100">
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#1d4ed8]"></div>
+          <p className="text-sm text-gray-500 mt-2">Loading jobs...</p>
+        </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 m-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {jobs.map((job) => (
             <div
               key={job.id}
-              className="bg-white rounded-2xl shadow-lg border border-gray-100 p-5 hover:shadow-xl transition-shadow duration-200 flex flex-col"
+              className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition flex flex-col justify-between"
             >
-              <div className="flex items-start justify-between gap-2">
-                <h2 className="font-bold text-gray-800">{job.title}</h2>
-                {statusBadge(job.status)}
+              <div>
+                <div className="flex items-start justify-between gap-3 mb-2">
+                  <h2 className="font-bold text-gray-900 text-base line-clamp-1">{job.title}</h2>
+                  {statusBadge(job.status)}
+                </div>
+                <p className="text-xs font-medium text-blue-600 mb-3">
+                  {job.company_name} · <span className="text-gray-500">{job.location}</span>
+                </p>
+
+                <div className="flex flex-wrap gap-1.5 mb-3">
+                  <span className="text-xs px-2.5 py-0.5 rounded-md bg-gray-100 text-gray-700 font-medium">
+                    {job.job_type?.replace('_', ' ')}
+                  </span>
+                  <span className="text-xs px-2.5 py-0.5 rounded-md bg-blue-50 text-blue-700 font-medium">
+                    {job.category}
+                  </span>
+                </div>
+
+                <p className="text-xs text-gray-600 line-clamp-3 bg-gray-50 p-3 rounded-xl border border-gray-100 mb-3">
+                  {job.description}
+                </p>
+
+                <div className="text-xs text-gray-500 space-y-1 bg-gray-50/50 p-3 rounded-xl">
+                  <p className="font-semibold text-gray-800">
+                    Salary: NPR {job.min_salary?.toLocaleString()} - {job.max_salary?.toLocaleString()}
+                  </p>
+                  <p>Experience: {job.experience_required || 'Not specified'}</p>
+                  <p>Vacancies: {job.vacancy_count} positions</p>
+                </div>
               </div>
-              <p className="text-sm text-gray-500 mt-1">
-                {job.company_name} · {job.location}
-              </p>
-              <p className="text-xs text-gray-400 mt-1">
-                {job.job_type?.replace('_', ' ')} · {job.category}
-              </p>
-              <p className="text-sm text-gray-600 mt-3 line-clamp-3">{job.description}</p>
-              <div className="text-xs text-gray-500 mt-3 space-y-0.5">
-                <p>Salary: NPR {job.min_salary?.toLocaleString()} - {job.max_salary?.toLocaleString()}</p>
-                <p>Experience: {job.experience_required || '-'}</p>
-                <p>Qualification: {job.qualification || '-'}</p>
-                <p className="line-clamp-1">Skills: {job.skills_required || '-'}</p>
-                <p>Vacancies: {job.vacancy_count}</p>
-                <p>Posted: {job.posted_date?.substring(0, 10) || '-'}</p>
-                <p>Expires: {job.expiry_date?.substring(0, 10) || '-'}</p>
-              </div>
-              <div className="flex gap-3 mt-4 pt-3 border-t border-gray-100">
+
+              <div className="flex items-center gap-2 mt-4 pt-3 border-t border-gray-100">
                 <button
                   onClick={() => setViewingJob(job)}
-                  className="text-blue-600 hover:text-blue-800 text-sm font-semibold transition px-2 py-1 rounded-full hover:bg-blue-50"
+                  className="flex-1 text-center text-blue-600 hover:text-blue-800 text-xs font-semibold py-1.5 rounded-lg hover:bg-blue-50 transition"
                 >
                   View
                 </button>
                 <button
                   onClick={() => openEditModal(job)}
-                  className="text-amber-600 hover:text-amber-800 text-sm font-semibold transition px-2 py-1 rounded-full hover:bg-amber-50"
+                  className="flex-1 text-center text-amber-600 hover:text-amber-800 text-xs font-semibold py-1.5 rounded-lg hover:bg-amber-50 transition"
                 >
                   Edit
                 </button>
                 <button
                   onClick={() => openDeleteModal(job)}
-                  className="text-red-600 hover:text-red-800 text-sm font-semibold transition px-2 py-1 rounded-full hover:bg-red-50"
+                  className="flex-1 text-center text-red-600 hover:text-red-800 text-xs font-semibold py-1.5 rounded-lg hover:bg-red-50 transition"
                 >
                   Delete
                 </button>
@@ -238,18 +255,20 @@ export default function JobCrud() {
             </div>
           ))}
           {jobs.length === 0 && (
-            <p className="text-gray-400 col-span-full text-center py-8">No jobs created yet.</p>
+            <div className="bg-white rounded-2xl p-12 text-center col-span-full border border-gray-100">
+              <p className="text-gray-400">No jobs created yet.</p>
+            </div>
           )}
         </div>
       )}
 
-      {/* ——— Add / Edit Modal (gradient header) ——— */}
+      {/* Add / Edit Modal */}
       {modalOpen && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl my-8 max-h-[90vh] overflow-y-auto animate-fade-in-up">
-            <div className="sticky top-0 z-10 h-20 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 rounded-t-2xl flex items-center px-6 m-4">
-              <h2 className="text-xl font-bold text-white">
-                {editingJob ? 'Update Job' : 'Create Job'}
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl my-8 max-h-[90vh] overflow-y-auto animate-fade-in-up overflow-hidden">
+            <div className="sticky top-0 z-10 h-16 bg-gradient-to-r from-[#1d4ed8] to-[#2563eb] flex items-center px-6">
+              <h2 className="text-lg font-bold text-white">
+                {editingJob ? 'Update Job Details' : 'Create New Job Listing'}
               </h2>
             </div>
             <form onSubmit={handleSave} className="p-6 bg-gray-50/50">
@@ -278,7 +297,7 @@ export default function JobCrud() {
 
                 {/* Company selection */}
                 <div>
-                  <label className="text-sm font-medium text-gray-700">Company</label>
+                  <label className="text-sm font-medium text-gray-700">Company <span className="text-red-500">*</span></label>
                   <select
                     name="company_code"
                     value={form.company_code}
@@ -317,7 +336,7 @@ export default function JobCrud() {
 
                 {/* Job type */}
                 <div>
-                  <label className="text-sm font-medium text-gray-700">Job type</label>
+                  <label className="text-sm font-medium text-gray-700">Job type <span className="text-red-500">*</span></label>
                   <select
                     name="job_Type"
                     value={form.job_Type}
@@ -583,7 +602,7 @@ function DetailRow({ label, value, className = '' }) {
 function Field({ label, name, value, onChange, type = 'text', required = false, placeholder = '', className = '' }) {
   return (
     <div className={className}>
-      <label className="text-sm font-medium text-gray-700">{label}</label>
+      <label className="text-sm font-medium text-gray-700">{label} {required && <span className="text-red-500">*</span> }</label>
       <input
         type={type}
         name={name}
@@ -600,7 +619,7 @@ function Field({ label, name, value, onChange, type = 'text', required = false, 
 function TextArea({ label, name, value, onChange, required = false, placeholder = '', className = '' }) {
   return (
     <div className={className}>
-      <label className="text-sm font-medium text-gray-700">{label}</label>
+      <label className="text-sm font-medium text-gray-700">{label} {required && <span className="text-red-500">*</span> }</label>
       <textarea
         name={name}
         value={value ?? ''}
