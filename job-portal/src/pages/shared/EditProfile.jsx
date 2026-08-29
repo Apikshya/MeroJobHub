@@ -3,6 +3,7 @@ import toast from 'react-hot-toast';
 import { getMyProfile, updateMyProfile } from '../../api/profileApi';
 import { useAuth } from '../../context/AuthContext';
 import { User, Type, Calendar, Phone, MapPin } from 'lucide-react';
+import { validatePhoneNumber } from '../../utils/validators';
 
 export default function EditProfile() {
   const [form, setForm] = useState(null);
@@ -17,10 +18,22 @@ export default function EditProfile() {
       .finally(() => setLoading(false));
   }, []);
 
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    if (name === 'phone_number') {
+      if (!/^\+?\d*$/.test(value)) return;
+    }
+    setForm({ ...form, [name]: value });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const phoneError = validatePhoneNumber(form.phone_number);
+    if (phoneError) {
+      toast.error(phoneError);
+      return;
+    }
+
     setSaving(true);
     try {
       const payload = {
@@ -101,12 +114,14 @@ export default function EditProfile() {
               name="first_name"
               value={form.first_name}
               onChange={handleChange}
+              required
               icon={<User className="w-4 h-4 text-gray-400" />}
             />
             <Field
               label="Middle Name"
               name="middle_name"
               value={form.middle_name}
+
               onChange={handleChange}
               icon={<Type className="w-4 h-4 text-gray-400" />}
             />
@@ -115,6 +130,7 @@ export default function EditProfile() {
               name="last_name"
               value={form.last_name}
               onChange={handleChange}
+              required
               icon={<User className="w-4 h-4 text-gray-400" />}
             />
             <Field
@@ -122,6 +138,8 @@ export default function EditProfile() {
               name="age"
               type="number"
               value={form.age}
+              min={1}
+              max={99}
               onChange={handleChange}
               icon={<Calendar className="w-4 h-4 text-gray-400" />}
             />
@@ -130,6 +148,7 @@ export default function EditProfile() {
               name="phone_number"
               value={form.phone_number}
               onChange={handleChange}
+              required
               icon={<Phone className="w-4 h-4 text-gray-400" />}
             />
             <Field
@@ -137,6 +156,7 @@ export default function EditProfile() {
               name="address"
               value={form.address}
               onChange={handleChange}
+              required
               icon={<MapPin className="w-4 h-4 text-gray-400" />}
               className="sm:col-span-2"
             />
@@ -165,17 +185,21 @@ export default function EditProfile() {
 }
 
 // Enhanced field with icon
-function Field({ label, name, value, onChange, type = 'text', icon, className = '' }) {
+function Field({ label, name, value, onChange, type = 'text', icon, className = '', min = 0, max = 99, required }) {
   return (
     <div className={className}>
       <label className="text-sm font-medium text-gray-700 flex items-center gap-1.5">
         {icon && <span className="text-base">{icon}</span>}
         {label}
+        {required && <span className="text-red-500">*</span>}
       </label>
       <input
         type={type}
         name={name}
         value={value ?? ''}
+        min={min}
+        max={max}
+        required={required}
         onChange={onChange}
         className="mt-1 w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition bg-white"
       />

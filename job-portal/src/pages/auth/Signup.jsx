@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { signup } from '../../api/authApi';
 import { User, Briefcase, Mail, Lock, Phone, MapPin, Loader2 } from 'lucide-react';
+import { validatePhoneNumber } from '../../utils/validators';
 
 const initialForm = {
   firstName: '',
@@ -20,10 +21,22 @@ export default function Signup() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    if (name === 'phoneNumber') {
+      if (!/^\+?\d*$/.test(value)) return;
+    }
+    setForm({ ...form, [name]: value });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const phoneError = validatePhoneNumber(form.phoneNumber);
+    if (phoneError) {
+      toast.error(phoneError);
+      return;
+    }
+
     setLoading(true);
     try {
       const payload = { ...form, age: Number(form.age) };

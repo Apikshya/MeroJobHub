@@ -3,6 +3,7 @@ import toast from 'react-hot-toast'
 import { addCompany, getAllCompanies, updateCompany, deleteCompany } from '../../api/companiesApi'
 import { INDUSTRY_TYPES, COMPANY_TYPES, COMPANY_SIZES } from '../../api/companyOptions'
 import { Plus } from 'lucide-react'
+import { validatePhoneNumber } from '../../utils/validators'
 
 const emptyForm = {
   company_name: '',
@@ -80,6 +81,12 @@ export default function Companies() {
   }
 
   const validateForm = () => {
+    const phoneError = validatePhoneNumber(form.phone_number)
+    if (phoneError) {
+      toast.error(phoneError)
+      return false
+    }
+
     const nameParts = form.contact_person_name.trim().split(/\s+/)
     if (nameParts.length < 2) {
       toast.error('Please enter at least first and last name at Contact Person')

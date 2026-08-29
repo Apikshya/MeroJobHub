@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import toast from 'react-hot-toast'
 import { getUsers, createUser, updateUser, deleteUser } from '../../api/usersApi'
 import { Plus, Search, Info } from 'lucide-react'
+import { validatePhoneNumber } from '../../utils/validators'
 
 const emptyAddForm = {
   firstName: '',
@@ -97,6 +98,13 @@ export default function UserList() {
 
   const handleSave = async (e) => {
     e.preventDefault()
+    const phoneToValidate = editingUser ? form.phone_Number : form.phoneNumber;
+    const phoneError = validatePhoneNumber(phoneToValidate);
+    if (phoneError) {
+      toast.error(phoneError);
+      return;
+    }
+
     setSaving(true)
     try {
       if (editingUser) {
