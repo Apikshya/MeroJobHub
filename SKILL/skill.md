@@ -16,6 +16,8 @@ npm run dev
 
 ### TO WORK ON 
 DONE - company creation (itself using existing api used by Admin) 
+profile picture upload functionality
+admin approval functionality
 FE input validation 
 DONE (partially) -required field must be marked with * 
 DONE (partially) -easy UI
