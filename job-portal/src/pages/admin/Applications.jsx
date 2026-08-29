@@ -4,6 +4,7 @@ import { getApplications, updateApplicationStatus, APPLICATION_STATUSES } from '
 import { getJobs } from '../../api/jobsApi'
 import { getDocumentsByEmail } from '../../api/documentsApi'
 import DocumentViewButton from '../../components/DocumentViewButton'
+import { Search } from 'lucide-react'
 
 // Helper: status badge with consistent colors (like userTypeBadge)
 const statusBadge = (status) => {
@@ -107,125 +108,137 @@ export default function Applications() {
   const allStatuses = ['', ...new Set(['APPLIED', ...APPLICATION_STATUSES])]
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">
-      {/* ——— Gradient header ——— */}
-      <div className="h-24 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 flex items-center px-6 rounded-t-2xl mb-4">
-        <h1 className="text-2xl font-bold text-white">Applied Jobs</h1>
+    <div className="space-y-6">
+      {/* Top Header Card */}
+      <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Job Applications Overview</h1>
+          <p className="text-sm text-gray-500 mt-1">Inspect candidate applications, uploaded resumes, documents, and manage status updates.</p>
+        </div>
       </div>
 
-      {/* ——— Search & filter (with margin and same input styling) ——— */}
-      <div className="flex flex-col sm:flex-row gap-3 m-4">
-        <input
-          className="input-field flex-1 sm:max-w-xs rounded-full pl-10 pr-4 py-2 bg-white border border-gray-300 text-sm focus:ring-2 focus:ring-blue-500"
-          placeholder="Search applicant or job title"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
+      {/* Search & Filter Bar */}
+      <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex flex-col sm:flex-row gap-3">
+        <div className="relative flex-1">
+          <input
+            className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2563eb] focus:bg-white transition"
+            placeholder="Search by applicant name, email, or job title..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <Search className="absolute left-3.5 top-2.5 h-4 w-4 text-gray-400" />
+        </div>
         <select
-          className="input-field sm:w-48 rounded-full px-4 py-2 bg-white border border-gray-300 text-sm focus:ring-2 focus:ring-blue-500"
+          className="w-full sm:w-52 px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2563eb] focus:bg-white transition text-gray-700 font-medium"
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
         >
-          <option value="">All statuses</option>
+          <option value="">All Statuses</option>
           {allStatuses.filter(s => s !== '').map((s) => (
             <option key={s} value={s}>{s}</option>
           ))}
         </select>
       </div>
 
-      {/* ——— Table (card with rounded corners and shadow) ——— */}
-      <div className="card overflow-x-auto rounded-2xl shadow-lg border border-gray-100 m-4">
+      {/* Applications Table */}
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
         {loading ? (
-          <p className="text-slate-500 p-4">Loading applications...</p>
+          <div className="p-12 text-center">
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#1d4ed8]"></div>
+            <p className="text-sm text-gray-500 mt-2">Loading applications...</p>
+          </div>
         ) : (
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="text-left text-slate-400 uppercase text-xs border-b border-slate-100">
-                <th className="py-3 pr-4 pl-4">Applicant</th>
-                <th className="py-3 pr-4">Job</th>
-                <th className="py-3 pr-4">Resume</th>
-                <th className="py-3 pr-4">Status</th>
-                <th className="py-3 pr-4 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {visibleApps.map((app) => (
-                <tr key={app.id} className="border-b border-slate-50 hover:bg-slate-50/80 transition">
-                  <td className="py-3 pr-4 pl-4">
-                    <p className="font-medium text-slate-800">{app.applicant_name}</p>
-                    <p className="text-xs text-slate-400">{app.applicant_email}</p>
-                  </td>
-                  <td className="py-3 pr-4">
-                    {jobsById[app.job_id]?.title || `Job #${app.job_id}`}
-                  </td>
-                  <td className="py-3 pr-4 text-xs text-slate-500">
-                    {app.resume_file_name || '-'}
-                  </td>
-                  <td className="py-3 pr-4">{statusBadge(app.status)}</td>
-                  <td className="py-3 pr-4 text-right">
-                    <button
-                      onClick={() => openView(app)}
-                      className="text-blue-600 hover:text-blue-800 transition px-2 py-1 rounded-full hover:bg-blue-50"
-                    >
-                      View
-                    </button>
-                  </td>
-                </tr>
-              ))}
-              {visibleApps.length === 0 && (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm text-left">
+              <thead className="bg-gray-50 text-gray-500 uppercase text-xs font-semibold border-b border-gray-100">
                 <tr>
-                  <td colSpan={5} className="py-6 text-center text-slate-400">
-                    No applications found.
-                  </td>
+                  <th className="py-3.5 px-6">Applicant</th>
+                  <th className="py-3.5 px-4">Applied Job</th>
+                  <th className="py-3.5 px-4">Resume File</th>
+                  <th className="py-3.5 px-4">Status</th>
+                  <th className="py-3.5 px-6 text-right">Actions</th>
                 </tr>
-              )}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {visibleApps.map((app) => (
+                  <tr key={app.id} className="hover:bg-blue-50/30 transition">
+                    <td className="py-3.5 px-6">
+                      <p className="font-semibold text-gray-900">{app.applicant_name}</p>
+                      <p className="text-xs text-gray-500">{app.applicant_email}</p>
+                    </td>
+                    <td className="py-3.5 px-4">
+                      <p className="font-medium text-gray-800">{jobsById[app.job_id]?.title || `Job #${app.job_id}`}</p>
+                      {jobsById[app.job_id]?.company_name && (
+                        <p className="text-xs text-gray-400">{jobsById[app.job_id].company_name}</p>
+                      )}
+                    </td>
+                    <td className="py-3.5 px-4 text-xs text-gray-600 font-mono">
+                      {app.resume_file_name || 'No file attached'}
+                    </td>
+                    <td className="py-3.5 px-4">{statusBadge(app.status)}</td>
+                    <td className="py-3.5 px-6 text-right">
+                      <button
+                        onClick={() => openView(app)}
+                        className="text-blue-600 hover:text-blue-800 text-xs font-semibold px-3 py-1.5 rounded-lg hover:bg-blue-50 transition"
+                      >
+                        Inspect Application
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+                {visibleApps.length === 0 && (
+                  <tr>
+                    <td colSpan={5} className="py-12 text-center text-gray-400">
+                      No applications match your search filters.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
 
-      {/* ——— View/Edit Modal (gradient header, full-width layout) ——— */}
+      {/* View/Edit Modal */}
       {viewingApp && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl my-8 max-h-[90vh] overflow-y-auto animate-fade-in-up">
-            <div className="sticky top-0 z-10 h-20 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 rounded-t-2xl flex items-center px-6">
-              <div className="flex items-center justify-between w-full">
-                <h2 className="text-xl font-bold text-white">{viewingApp.applicant_name}</h2>
-                {statusBadge(viewingApp.status)}
-              </div>
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl my-8 max-h-[90vh] overflow-y-auto animate-fade-in-up overflow-hidden">
+            <div className="sticky top-0 z-10 h-16 bg-gradient-to-r from-[#1d4ed8] to-[#2563eb] flex items-center justify-between px-6">
+              <h2 className="text-lg font-bold text-white">{viewingApp.applicant_name}</h2>
+              {statusBadge(viewingApp.status)}
             </div>
 
-            <div className="p-6 bg-gray-50/50">
-              <p className="text-sm text-gray-500 mb-4">
-                Applied for <span className="font-medium text-gray-700">{jobsById[viewingApp.job_id]?.title || `Job #${viewingApp.job_id}`}</span>
-                {jobsById[viewingApp.job_id]?.company_name && ` · ${jobsById[viewingApp.job_id].company_name}`}
+            <div className="p-6 bg-gray-50/50 space-y-4">
+              <p className="text-sm text-gray-600">
+                Applied for <span className="font-semibold text-gray-900">{jobsById[viewingApp.job_id]?.title || `Job #${viewingApp.job_id}`}</span>
+                {jobsById[viewingApp.job_id]?.company_name && ` at ${jobsById[viewingApp.job_id].company_name}`}
               </p>
 
-              <dl className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+              <dl className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-white p-4 rounded-xl border border-gray-100">
                 <DetailRow label="Application ID" value={viewingApp.id} />
                 <DetailRow label="Applicant ID" value={viewingApp.applicant_id} />
                 <DetailRow label="Email" value={viewingApp.applicant_email} />
                 <DetailRow label="Phone" value={viewingApp.applicant_phone} />
-                <DetailRow label="Resume file" value={viewingApp.resume_file_name} className="sm:col-span-2" />
+                <DetailRow label="Resume File" value={viewingApp.resume_file_name} className="sm:col-span-2 font-mono text-xs" />
               </dl>
 
-              <div className="mb-4">
-                <dt className="text-xs uppercase tracking-wide text-gray-400 font-semibold mb-1">Cover letter</dt>
-                <dd className="text-sm text-gray-700 whitespace-pre-line bg-white rounded-lg p-3 border border-gray-200 max-h-40 overflow-y-auto">
-                  {viewingApp.cover_letter || '-'}
+              <div>
+                <dt className="text-xs uppercase tracking-wide text-gray-500 font-semibold mb-1">Cover letter</dt>
+                <dd className="text-sm text-gray-700 whitespace-pre-line bg-white rounded-xl p-4 border border-gray-100 max-h-40 overflow-y-auto">
+                  {viewingApp.cover_letter || 'No cover letter submitted.'}
                 </dd>
               </div>
 
-              <div className="mb-4">
-                <dt className="text-xs uppercase tracking-wide text-gray-400 font-semibold mb-2">
-                  Documents on file
+              <div>
+                <dt className="text-xs uppercase tracking-wide text-gray-500 font-semibold mb-2">
+                  Applicant Documents
                 </dt>
                 {docsLoading ? (
                   <p className="text-sm text-gray-400">Loading documents...</p>
                 ) : applicantDocs.length === 0 ? (
-                  <p className="text-sm text-gray-400">No documents uploaded by this applicant.</p>
+                  <p className="text-sm text-gray-400 bg-white p-3 rounded-xl border border-gray-100">No documents uploaded by this applicant.</p>
                 ) : (
-                  <div className="border border-gray-200 rounded-lg divide-y divide-gray-100 bg-white">
+                  <div className="border border-gray-100 rounded-xl divide-y divide-gray-100 bg-white">
                     {applicantDocs.map((doc) => (
                       <div key={doc.id} className="flex items-center justify-between gap-2 px-4 py-3">
                         <div className="min-w-0">
@@ -241,31 +254,31 @@ export default function Applications() {
                 )}
               </div>
 
-              <div>
-                <label className="text-sm font-medium text-gray-700">Update status</label>
+              <div className="pt-2">
+                <label className="text-xs uppercase tracking-wide text-gray-500 font-semibold mb-1 block">Update Application Status</label>
                 <select
-                  className="input-field mt-1 w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 bg-white"
+                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#2563eb] bg-white font-medium text-gray-800"
                   value={selectedStatus}
                   onChange={(e) => setSelectedStatus(e.target.value)}
                 >
-                  <option value={viewingApp.status}>{viewingApp.status} (current)</option>
+                  <option value={viewingApp.status}>{viewingApp.status} (current status)</option>
                   {APPLICATION_STATUSES.filter((s) => s !== viewingApp.status).map((s) => (
                     <option key={s} value={s}>{s}</option>
                   ))}
                 </select>
               </div>
 
-              <div className="flex gap-2 mt-5">
+              <div className="flex gap-3 pt-4 border-t border-gray-100">
                 <button
                   onClick={handleStatusSave}
                   disabled={saving}
-                  className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:opacity-50 text-white font-semibold py-2.5 rounded-xl shadow-sm transition"
+                  className="flex-1 bg-[#1d4ed8] hover:bg-[#1e40af] disabled:opacity-50 text-white font-semibold py-2.5 rounded-xl shadow-sm transition"
                 >
-                  {saving ? 'Saving...' : 'Save status'}
+                  {saving ? 'Saving Status...' : 'Save Status'}
                 </button>
                 <button
                   onClick={() => setViewingApp(null)}
-                  className="flex-1 border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium py-2.5 rounded-xl transition"
+                  className="flex-1 border border-gray-200 hover:bg-gray-50 text-gray-700 font-medium py-2.5 rounded-xl transition"
                 >
                   Close
                 </button>

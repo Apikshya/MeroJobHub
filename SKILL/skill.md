@@ -15,19 +15,23 @@ npm run dev
 
 
 ### TO WORK ON 
-DONE - company creation (itself using existing api used by Admin) 
-profile picture upload functionality
-admin approval functionality
-FE input validation 
-DONE (partially) -required field must be marked with * 
-DONE (partially) -easy UI (company , ,)
-dashboard ( attractive analytics, totals )
-report
+dashboard ( attractive analytics, totals ) (check for error)
+Data and funtionality correctness
 
+profile picture upload functionality
+admin approval functionality (while creating a company)
+
+report
+At last UI check
+
+DONE- FE input validation 
+DONE -required field must be marked with * 
+DONE - easy UI (company ,job seeker ,admin)
+DONE - Company info update option
+DONE - company creation (itself using existing api used by Admin) 
 
 
 #### donot remove these CREDENTIALS 
-
 admin
 email : admin@admin.com
 pasword: admin123

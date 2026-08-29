@@ -169,153 +169,159 @@ export default function UserList() {
   }
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">
-      {/* ——— Gradient header ——— */}
-      <div className="h-24 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 flex items-center justify-between px-6">
-          <h1 className="text-2xl font-bold text-white">Users</h1>
-          <button
-            onClick={openAddModal}
-            className="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white font-medium px-4 py-2 rounded-full shadow-sm transition flex items-center gap-1"
-          >
-            <Plus className="w-4 h-4" />
-            Add User
-          </button>
+    <div className="space-y-6">
+      {/* Top Header Card */}
+      <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 tracking-tight">User Management</h1>
+          <p className="text-sm text-gray-500 mt-1">Manage system users, customer accounts, and company administrators.</p>
         </div>
+        <button
+          onClick={openAddModal}
+          className="inline-flex items-center justify-center gap-2 bg-[#1d4ed8] hover:bg-[#1e40af] text-white text-sm font-semibold px-5 py-2.5 rounded-xl shadow-md transition"
+        >
+          <Plus className="w-4 h-4" />
+          Add User
+        </button>
+      </div>
 
-      {/* ——— Search & filter ——— */}   
-      <div className="p-6 bg-gray-50/50 border-b border-gray-100 flex flex-col sm:flex-row gap-3 m-4">
-          <div className="relative flex-1 sm:max-w-xs">
-            <input
-              className="w-full pl-10 pr-4 py-2 bg-white border border-gray-300 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Search by name or email"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-            <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
-          </div>
-          <select
-            className="w-full sm:w-48 px-4 py-2 bg-white border border-gray-300 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            value={userType}
-            onChange={(e) => setUserType(e.target.value)}
-          >
-             <option value="ALL">All</option>
+      {/* Search & Filter Bar */}
+      <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex flex-col sm:flex-row gap-3">
+        <div className="relative flex-1">
+          <input
+            className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2563eb] focus:bg-white transition"
+            placeholder="Search by user name or email address..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <Search className="absolute left-3.5 top-2.5 h-4 w-4 text-gray-400" />
+        </div>
+        <select
+          className="w-full sm:w-52 px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2563eb] focus:bg-white transition text-gray-700 font-medium"
+          value={userType}
+          onChange={(e) => setUserType(e.target.value)}
+        >
+          <option value="ALL">All User Types</option>
           <option value="ADMIN">ADMIN</option>
           <option value="CUSTOMER">CUSTOMER</option>
           <option value="COMPANY_ADMIN">COMPANY ADMIN</option>
-          </select>
-        </div>
+        </select>
+      </div>
 
-      {/* ——— Table (with modern styling) ——— */}
-      <div className="card overflow-x-auto rounded-2xl shadow-lg border border-gray-100 m-4">
+      {/* Table Container */}
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
         {loading ? (
-          <p className="text-slate-500 p-4">Loading users...</p>
+          <div className="p-12 text-center">
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#1d4ed8]"></div>
+            <p className="text-sm text-gray-500 mt-2">Loading users...</p>
+          </div>
         ) : (
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="text-left text-slate-400 uppercase text-xs border-b border-slate-100">
-                <th className="py-3 pr-4 pl-4">User</th>
-                <th className="py-3 pr-4">Email</th>
-                <th className="py-3 pr-4">Type</th>
-                <th className="py-3 pr-4">Phone</th>
-                <th className="py-3 pr-4">Age</th>
-                <th className="py-3 pr-4 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {visibleUsers.map((u) => (
-                <tr key={u.id} className="border-b border-slate-50 hover:bg-slate-50/80 transition">
-                  <td className="py-3 pr-4 pl-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white font-bold text-sm">
-                        {getInitials(u.full_name)}
-                      </div>
-                      <span className="font-medium text-slate-800">{u.full_name}</span>
-                    </div>
-                  </td>
-                  <td className="py-3 pr-4">{u.email}</td>
-                  <td className="py-3 pr-4">{userTypeBadge(u.user_type)}</td>
-                  <td className="py-3 pr-4">{u.phone_number || '-'}</td>
-                  <td className="py-3 pr-4">{u.age}</td>
-                  <td className="py-3 pr-4 text-right whitespace-nowrap">
-                    <button
-                      onClick={() => setViewingUser(u)}
-                      className="text-blue-600 hover:text-blue-800 transition px-2 py-1 rounded-full hover:bg-blue-50 mr-1"
-                    >
-                      View
-                    </button>
-                    <button
-                      onClick={() => openEditModal(u)}
-                      className="text-amber-600 hover:text-amber-800 transition px-2 py-1 rounded-full hover:bg-amber-50 mr-1"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => openDeleteModal(u)}
-                      className="text-red-600 hover:text-red-800 transition px-2 py-1 rounded-full hover:bg-red-50"
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-              {visibleUsers.length === 0 && (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm text-left">
+              <thead className="bg-gray-50 text-gray-500 uppercase text-xs font-semibold border-b border-gray-100">
                 <tr>
-                  <td colSpan={6} className="py-6 text-center text-slate-400">
-                    No users found.
-                  </td>
+                  <th className="py-3.5 px-6">User</th>
+                  <th className="py-3.5 px-4">Email</th>
+                  <th className="py-3.5 px-4">Role</th>
+                  <th className="py-3.5 px-4">Phone</th>
+                  <th className="py-3.5 px-4">Age</th>
+                  <th className="py-3.5 px-6 text-right">Actions</th>
                 </tr>
-              )}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {visibleUsers.map((u) => (
+                  <tr key={u.id} className="hover:bg-blue-50/30 transition">
+                    <td className="py-3.5 px-6">
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-sm shadow-sm">
+                          {getInitials(u.full_name)}
+                        </div>
+                        <span className="font-semibold text-gray-900">{u.full_name}</span>
+                      </div>
+                    </td>
+                    <td className="py-3.5 px-4 text-gray-600">{u.email}</td>
+                    <td className="py-3.5 px-4">{userTypeBadge(u.user_type)}</td>
+                    <td className="py-3.5 px-4 text-gray-600">{u.phone_number || '-'}</td>
+                    <td className="py-3.5 px-4 text-gray-600">{u.age}</td>
+                    <td className="py-3.5 px-6 text-right whitespace-nowrap space-x-2">
+                      <button
+                        onClick={() => setViewingUser(u)}
+                        className="text-blue-600 hover:text-blue-800 text-xs font-semibold px-2.5 py-1 rounded-lg hover:bg-blue-50 transition"
+                      >
+                        View
+                      </button>
+                      <button
+                        onClick={() => openEditModal(u)}
+                        className="text-amber-600 hover:text-amber-800 text-xs font-semibold px-2.5 py-1 rounded-lg hover:bg-amber-50 transition"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => openDeleteModal(u)}
+                        className="text-red-600 hover:text-red-800 text-xs font-semibold px-2.5 py-1 rounded-lg hover:bg-red-50 transition"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+                {visibleUsers.length === 0 && (
+                  <tr>
+                    <td colSpan={6} className="py-12 text-center text-gray-400">
+                      No users match your criteria.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
 
-      {/* ——— Add / Edit Modal (gradient header) ——— */}
-         {/* Add / Edit Modal — with gradient header and button colors */}
-         {modalOpen && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md my-8 animate-fade-in-up">
-            <div className="h-20 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 rounded-t-2xl flex items-center px-6">
-              <h2 className="text-xl font-bold text-white">
-                {editingUser ? 'Update User' : 'Add User'}
+      {/* Add / Edit Modal */}
+      {modalOpen && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md my-8 animate-fade-in-up overflow-hidden">
+            <div className="h-16 bg-gradient-to-r from-[#1d4ed8] to-[#2563eb] flex items-center px-6">
+              <h2 className="text-lg font-bold text-white">
+                {editingUser ? 'Update User Account' : 'Add New User'}
               </h2>
             </div>
-            <form onSubmit={handleSave} className="p-6 bg-gray-50/50">
-              <div className="space-y-4">
-                {editingUser ? (
-                  <>
-                    <Field label="First name" name="first_Name" value={form.first_Name} onChange={handleFormChange} placeholder="John" required />
-                    <Field label="Middle name" name="middle_Name" value={form.middle_Name} onChange={handleFormChange} placeholder="Michael" />
-                    <Field label="Last name" name="last_Name" value={form.last_Name} onChange={handleFormChange} placeholder="Smith" required />
-                    <Field label="Age" name="age" type="number" min={18} max={100} value={form.age} onChange={handleFormChange} placeholder="25" required />
-                    <Field label="Phone number" name="phone_Number" type="tel" value={form.phone_Number} onChange={handleFormChange} placeholder="+1 555 123 4567" required />
-                    <Field label="Address" name="address" value={form.address} onChange={handleFormChange} placeholder="123 Main Street" required />
-                  </>
-                ) : (
-                  <>
-                    <Field label="First name" name="firstName" value={form.firstName} onChange={handleFormChange} placeholder="John" required />
-                    <Field label="Middle name" name="middleName" value={form.middleName} onChange={handleFormChange} placeholder="Michael" />
-                    <Field label="Last name" name="lastName" value={form.lastName} onChange={handleFormChange} placeholder="Smith" required />
-                    <Field label="Age" name="age" type="number" min={18} max={100} value={form.age} onChange={handleFormChange} placeholder="25" required />
-                    <Field label="Email" name="email" type="email" value={form.email} onChange={handleFormChange} placeholder="john@example.com" required />
-                    <Field label="Phone number" name="phoneNumber" type="tel" value={form.phoneNumber} onChange={handleFormChange} placeholder="+1 555 123 4567" required />
-                    <Field label="Address" name="address" value={form.address} onChange={handleFormChange} placeholder="123 Main Street" required />
-                    <Field label="Password" name="password" type="password" value={form.password} onChange={handleFormChange} placeholder="Min 8 chars" minLength={8} required />
-                  </>
-                )}
-              </div>
-              <div className="flex gap-2 mt-5">
+            <form onSubmit={handleSave} className="p-6 space-y-4">
+              {editingUser ? (
+                <>
+                  <Field label="First name" name="first_Name" value={form.first_Name} onChange={handleFormChange} placeholder="John" required />
+                  <Field label="Middle name" name="middle_Name" value={form.middle_Name} onChange={handleFormChange} placeholder="Michael" />
+                  <Field label="Last name" name="last_Name" value={form.last_Name} onChange={handleFormChange} placeholder="Smith" required />
+                  <Field label="Age" name="age" type="number" min={18} max={100} value={form.age} onChange={handleFormChange} placeholder="25" required />
+                  <Field label="Phone number" name="phone_Number" type="tel" value={form.phone_Number} onChange={handleFormChange} placeholder="98XXXXXXXX" required />
+                  <Field label="Address" name="address" value={form.address} onChange={handleFormChange} placeholder="City, Country" required />
+                </>
+              ) : (
+                <>
+                  <Field label="First name" name="firstName" value={form.firstName} onChange={handleFormChange} placeholder="John" required />
+                  <Field label="Middle name" name="middleName" value={form.middleName} onChange={handleFormChange} placeholder="Michael" />
+                  <Field label="Last name" name="lastName" value={form.lastName} onChange={handleFormChange} placeholder="Smith" required />
+                  <Field label="Age" name="age" type="number" min={18} max={100} value={form.age} onChange={handleFormChange} placeholder="25" required />
+                  <Field label="Email" name="email" type="email" value={form.email} onChange={handleFormChange} placeholder="john@example.com" required />
+                  <Field label="Phone number" name="phoneNumber" type="tel" value={form.phoneNumber} onChange={handleFormChange} placeholder="98XXXXXXXX" required />
+                  <Field label="Address" name="address" value={form.address} onChange={handleFormChange} placeholder="City, Country" required />
+                  <Field label="Password" name="password" type="password" value={form.password} onChange={handleFormChange} placeholder="Min 8 chars" minLength={8} required />
+                </>
+              )}
+
+              <div className="flex gap-3 pt-4 border-t border-gray-100">
                 <button
                   type="submit"
                   disabled={saving}
-                  className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:opacity-50 text-white font-semibold py-2.5 rounded-xl shadow-sm transition"
+                  className="flex-1 bg-[#1d4ed8] hover:bg-[#1e40af] disabled:opacity-50 text-white font-semibold py-2.5 rounded-xl shadow-sm transition"
                 >
-                  {saving ? 'Saving...' : 'Save'}
+                  {saving ? 'Saving...' : 'Save User'}
                 </button>
                 <button
                   type="button"
                   onClick={() => setModalOpen(false)}
-                  className="flex-1 border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium py-2.5 rounded-xl transition"
+                  className="flex-1 border border-gray-200 hover:bg-gray-50 text-gray-700 font-medium py-2.5 rounded-xl transition"
                 >
                   Cancel
                 </button>
@@ -427,7 +433,7 @@ export default function UserList() {
 function Field({ label, name, value, onChange, type = 'text', required = false, placeholder = '', minLength, maxLength }) {
   return (
     <div>
-      <label className="text-sm font-medium text-slate-700">{label}</label>
+      <label className="text-sm font-medium text-slate-700">{label} {required && <span className="text-red-500">*</span>}</label>
       <input
         type={type}
         name={name}
