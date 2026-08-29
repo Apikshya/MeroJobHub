@@ -94,7 +94,7 @@ export default function Login() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:opacity-50 text-white font-semibold py-2.5 rounded-xl shadow-md transition duration-200"
+              className="w-full bg-[#0005B5] hover:from-blue-700 hover:to-purple-700 disabled:opacity-50 text-white font-semibold py-2.5 rounded-xl shadow-md transition duration-200"
             >
               {loading ? (
                 <span className="flex items-center justify-center gap-2">
@@ -124,7 +124,7 @@ export default function Login() {
             <button
               type="button"
               onClick={() => setCompanyModalOpen(true)}
-              className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-semibold py-2.5 rounded-xl shadow-md transition duration-200 text-sm"
+              className="w-full bg-[#294FE6] hover:from-purple-700 hover:to-indigo-700 text-white font-semibold py-2.5 rounded-xl shadow-md transition duration-200 text-sm"
             >
               Register Company
             </button>
