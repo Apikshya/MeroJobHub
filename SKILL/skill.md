@@ -20,7 +20,7 @@ profile picture upload functionality
 admin approval functionality
 FE input validation 
 DONE (partially) -required field must be marked with * 
-DONE (partially) -easy UI
+DONE (partially) -easy UI (company , ,)
 dashboard ( attractive analytics, totals )
 report
 
