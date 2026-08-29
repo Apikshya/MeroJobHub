@@ -199,341 +199,355 @@ export default function ManageJobs() {
   const formatSalary = (num) => num?.toLocaleString() || '';
 
   return (
-    <div className="">
-      <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">
-        {/* Gradient header */}
-        <div className="h-24 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 flex items-center justify-between px-6">
-          <h1 className="text-2xl font-bold text-white">Manage Jobs</h1>
+    <>
+      <div className="space-y-6">
+        {/* old UI header */}
+        {/* Royal Blue Hero Banner */}
+        {/* <div className="rounded-2xl px-8 py-6 text-white shadow-sm bg-gradient-to-r from-[#1d4ed8] to-[#2563eb] flex items-center justify-between">
+          <h1 className="text-3xl font-bold text-white tracking-tight">Manage Jobs</h1>
           <button
             onClick={openAddModal}
-            className="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white font-medium px-4 py-2 rounded-full shadow-sm transition flex items-center gap-1"
+            className="bg-white text-[#2563eb] hover:bg-slate-50 font-semibold px-5 py-2.5 rounded-full shadow-sm transition flex items-center gap-2 text-sm"
           >
             <Plus className="w-4 h-4" />
             Create Job
           </button>
-        </div>
+        </div> */}
 
-        {/* Content */}
-        <div className="p-6 bg-gray-50/50">
-          {loading ? (
-            <div className="space-y-4">
-              {[...Array(3)].map((_, i) => (
-                <div key={i} className="bg-white rounded-xl shadow-sm p-5 animate-pulse border border-gray-100">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-gray-200 rounded-full"></div>
-                    <div className="flex-1">
-                      <div className="h-4 bg-gray-200 rounded w-1/3"></div>
-                      <div className="h-3 bg-gray-200 rounded w-1/4 mt-1"></div>
+         {/* Top Header Row with Title and + Add Job button */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Manage Jobs</h1>
+          <p className="text-sm text-slate-500 mt-0.5">Manage  the jobs that you have posted on our company portal.</p>
+        </div>
+        <button
+          onClick={openAddModal}
+          className="bg-[#2563eb] hover:bg-[#1d4ed8] text-white font-medium px-4 py-2.5 rounded-xl shadow-sm transition flex items-center gap-2 text-sm self-start sm:self-auto"
+        >
+          <Plus className="w-4 h-4" />
+          Create Job
+        </button>
+      </div>
+
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+          {/* Content */}
+          <div className="p-5">
+            {loading ? (
+              <div className="space-y-3">
+                {[...Array(3)].map((_, i) => (
+                  <div key={i} className="bg-slate-50 rounded-xl p-5 animate-pulse border border-slate-100">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-slate-200 rounded-full"></div>
+                      <div className="flex-1">
+                        <div className="h-4 bg-slate-200 rounded w-1/3"></div>
+                        <div className="h-3 bg-slate-200 rounded w-1/4 mt-1"></div>
+                      </div>
                     </div>
                   </div>
-                  <div className="flex justify-between items-center mt-3">
-                    <div className="h-3 bg-gray-200 rounded w-1/4"></div>
-                    <div className="h-6 bg-gray-200 rounded-full w-20"></div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : jobs.length === 0 ? (
-            <div className="text-center py-12">
-              <p className="text-gray-500 text-lg">No jobs created yet.</p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {jobs.map((job) => (
-                <div
-                  key={job.id}
-                  className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200 p-5 border border-gray-100"
-                >
-                  <div className="flex items-start gap-3">
-                    {/* Avatar */}
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white font-bold text-lg flex-shrink-0">
-                      {getInitials(job.title)}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex flex-wrap items-start justify-between gap-2">
-                        <h2 className="font-semibold text-gray-800 text-lg truncate">{job.title}</h2>
-                        {statusBadge(job.status)}
+                ))}
+              </div>
+            ) : jobs.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-slate-400 text-lg">No jobs created yet.</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {jobs.map((job) => (
+                  <div
+                    key={job.id}
+                    className="bg-white rounded-xl border border-slate-100 hover:border-slate-200 hover:shadow-sm transition-all duration-200 p-5"
+                  >
+                    <div className="flex items-start gap-3">
+                      {/* Avatar */}
+                      <div className="w-10 h-10 rounded-full bg-[#dbeafe] text-[#2563eb] flex items-center justify-center font-bold text-sm flex-shrink-0">
+                        {getInitials(job.title)}
                       </div>
-                      <div className="flex flex-wrap items-center gap-2 mt-0.5">
-                        <span className="text-sm text-gray-500">{job.company_name}</span>
-                        <span className="text-gray-300">·</span>
-                        <span className="text-sm text-gray-500">{job.location}</span>
-                      </div>
-                      <div className="flex flex-wrap gap-2 mt-2">
-                        <span className="text-xs bg-gray-100 text-gray-600 px-2.5 py-0.5 rounded-full">
-                          {job.job_type?.replace('_', ' ')}
-                        </span>
-                        {job.category && (
-                          <span className="inline-flex items-center gap-1 text-xs bg-blue-50 text-blue-600 px-2.5 py-0.5 rounded-full border border-blue-100">
-                            <Folder className="w-3 h-3 text-blue-500" />
-                            {job.category}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex flex-wrap items-start justify-between gap-2">
+                          <h2 className="font-semibold text-slate-900 text-base truncate">{job.title}</h2>
+                          {statusBadge(job.status)}
+                        </div>
+                        <div className="flex flex-wrap items-center gap-2 mt-0.5">
+                          <span className="text-sm text-slate-500">{job.company_name}</span>
+                          <span className="text-slate-300">·</span>
+                          <span className="text-sm text-slate-500">{job.location}</span>
+                        </div>
+                        <div className="flex flex-wrap gap-2 mt-2">
+                          <span className="text-xs bg-slate-100 text-slate-600 px-2.5 py-0.5 rounded-full">
+                            {job.job_type?.replace('_', ' ')}
                           </span>
-                        )}
-                      </div>
-                      <p className="text-sm text-gray-600 mt-2 line-clamp-2">{job.description}</p>
-                      <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-500 mt-2">
-                        <span className="inline-flex items-center gap-1">
-                          <Banknote className="w-3.5 h-3.5 text-emerald-600" />
-                          NPR {formatSalary(job.min_salary)} – {formatSalary(job.max_salary)}
-                        </span>
-                        <span className="inline-flex items-center gap-1">
-                          <Target className="w-3.5 h-3.5 text-rose-500" />
-                          {job.experience_required || 'Any'}
-                        </span>
-                        <span className="inline-flex items-center gap-1">
-                          <GraduationCap className="w-3.5 h-3.5 text-indigo-500" />
-                          {job.qualification || 'N/A'}
-                        </span>
-                        <span className="inline-flex items-center gap-1">
-                          <Users className="w-3.5 h-3.5 text-purple-500" />
-                          {job.vacancy_count}
-                        </span>
-                        <span className="inline-flex items-center gap-1">
-                          <Calendar className="w-3.5 h-3.5 text-amber-500" />
-                          Expires: {job.expiry_date?.substring(0, 10) || '-'}
-                        </span>
+                          {job.category && (
+                            <span className="inline-flex items-center gap-1 text-xs bg-[#eff6ff] text-[#2563eb] px-2.5 py-0.5 rounded-full border border-[#bfdbfe]">
+                              <Folder className="w-3 h-3" />
+                              {job.category}
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-sm text-slate-600 mt-2 line-clamp-2">{job.description}</p>
+                        <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-500 mt-2">
+                          <span className="inline-flex items-center gap-1">
+                            <Banknote className="w-3.5 h-3.5 text-emerald-600" />
+                            NPR {formatSalary(job.min_salary)} – {formatSalary(job.max_salary)}
+                          </span>
+                          <span className="inline-flex items-center gap-1">
+                            <Target className="w-3.5 h-3.5 text-rose-500" />
+                            {job.experience_required || 'Any'}
+                          </span>
+                          <span className="inline-flex items-center gap-1">
+                            <GraduationCap className="w-3.5 h-3.5 text-indigo-500" />
+                            {job.qualification || 'N/A'}
+                          </span>
+                          <span className="inline-flex items-center gap-1">
+                            <Users className="w-3.5 h-3.5 text-purple-500" />
+                            {job.vacancy_count}
+                          </span>
+                          <span className="inline-flex items-center gap-1">
+                            <Calendar className="w-3.5 h-3.5 text-amber-500" />
+                            Expires: {job.expiry_date?.substring(0, 10) || '-'}
+                          </span>
+                        </div>
                       </div>
                     </div>
+                    <div className="flex items-center gap-3 mt-4 pt-3 border-t border-slate-100">
+                      <button
+                        onClick={() => setViewingJob(job)}
+                        className="text-sm font-semibold text-[#2563eb] hover:text-[#1d4ed8] transition"
+                      >
+                        View
+                      </button>
+                      <button
+                        onClick={() => openEditModal(job)}
+                        className="text-sm font-semibold text-amber-600 hover:text-amber-700 transition"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => openDeleteModal(job)}
+                        className="text-sm font-semibold text-red-600 hover:text-red-700 transition"
+                      >
+                        Delete
+                      </button>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-3 mt-4 pt-3 border-t border-gray-100">
-                    <button
-                      onClick={() => setViewingJob(job)}
-                      className="text-sm font-medium text-blue-600 hover:text-blue-800 transition"
-                    >
-                      View
-                    </button>
-                    <button
-                      onClick={() => openEditModal(job)}
-                      className="text-sm font-medium text-amber-600 hover:text-amber-800 transition"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => openDeleteModal(job)}
-                      className="text-sm font-medium text-red-600 hover:text-red-800 transition"
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
       {/* Add/Edit Modal */}
-{modalOpen && (
-  <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl my-4 max-h-[90vh] overflow-y-auto animate-fade-in-up ">
-      <div className="sticky top-0 z-10 h-16 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 rounded-t-2xl flex items-center px-6 m-4">
-        <h2 className="text-xl font-bold text-white">
-          {editingJob ? 'Update Job' : 'Create Job'}
-        </h2>
-      </div>
-      <form onSubmit={handleSave} className="p-5 bg-gray-50/50 m-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          {/* Title – full width */}
-          <Field
-            label="Title"
-            name="title"
-            value={form.title}
-            onChange={handleChange}
-            required
-            className="sm:col-span-2 lg:col-span-3"
-            icon={<Search className="w-4 h-4 text-gray-400" />}
-          />
-
-          {/* Description – full width */}
-          <TextArea
-            label="Description"
-            name="description"
-            value={form.description}
-            onChange={handleChange}
-            required
-            className="sm:col-span-2 lg:col-span-3"
-            icon={<AlignLeft className="w-4 h-4 text-gray-400" />}
-          />
-
-          {/* Company info – full width, more compact */}
-          <div className="sm:col-span-2 lg:col-span-3 bg-blue-50 border border-blue-200 rounded-xl px-3 py-2 text-sm text-gray-700 flex flex-wrap items-center gap-1">
-            <span>Posting as</span>
-            <span className="font-semibold text-gray-800">{form.company_Name || '—'}</span>
-            <span className="text-gray-400">({form.company_code || '—'})</span>
-          </div>
-
-          {/* Location – full width */}
-          <Field
-            label="Location"
-            name="location"
-            value={form.location}
-            onChange={handleChange}
-            required
-            className="sm:col-span-2 lg:col-span-3"
-            icon={<MapPin className="w-4 h-4 text-gray-400" />}
-          />
-
-          {/* Job type */}
-          <div>
-            <label className="text-sm font-medium text-gray-700 flex items-center gap-1.5">
-              <Briefcase className="w-4 h-4 text-gray-400" />
-              Job type
-            </label>
-            <select
-              name="job_Type"
-              value={form.job_Type}
-              onChange={handleChange}
-              className="mt-1 w-full border border-gray-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
-            >
-              {JOB_TYPES.map((t) => (
-                <option key={t} value={t}>{t.replace('_', ' ')}</option>
-              ))}
-            </select>
-          </div>
-
-          {/* Category */}
-          <Field
-            label="Category"
-            name="category"
-            value={form.category}
-            onChange={handleChange}
-            placeholder="e.g. Software"
-            required
-            icon={<Tag className="w-4 h-4 text-gray-400" />}
-          />
-
-          {/* Experience required */}
-          <Field
-            label="Experience"
-            name="experience_Required"
-            value={form.experience_Required}
-            onChange={handleChange}
-            placeholder="e.g. 3-5 years"
-            icon={<Clock className="w-4 h-4 text-gray-400" />}
-          />
-
-          {/* Status (only when editing) – can be in same row */}
-          {editingJob && (
-            <div>
-              <label className="text-sm font-medium text-gray-700 flex items-center gap-1.5">
-                <CheckCircle className="w-4 h-4 text-gray-400" />
-                Status
-              </label>
-              <select
-                name="status"
-                value={form.status}
-                onChange={handleChange}
-                className="mt-1 w-full border border-gray-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
-              >
-                {JOB_STATUSES.map((s) => (
-                  <option key={s} value={s}>{s}</option>
-                ))}
-              </select>
+      {modalOpen && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl my-4 max-h-[90vh] overflow-y-auto animate-fade-in-up">
+            <div className="sticky top-0 z-10 h-16 bg-gradient-to-r from-[#1d4ed8] to-[#2563eb] rounded-t-2xl flex items-center px-6">
+              <h2 className="text-xl font-bold text-white">
+                {editingJob ? 'Update Job' : 'Create Job'}
+              </h2>
             </div>
-          )}
+            <form onSubmit={handleSave} className="p-5 bg-gray-50/50 m-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {/* Title – full width */}
+                <Field
+                  label="Title"
+                  name="title"
+                  value={form.title}
+                  onChange={handleChange}
+                  required
+                  className="sm:col-span-2 lg:col-span-3"
+                  icon={<Search className="w-4 h-4 text-gray-400" />}
+                />
 
-          {/* If not editing, we can push vacancy count to third column? We'll put qualification full-width later */}
+                {/* Description – full width */}
+                <TextArea
+                  label="Description"
+                  name="description"
+                  value={form.description}
+                  onChange={handleChange}
+                  required
+                  className="sm:col-span-2 lg:col-span-3"
+                  icon={<AlignLeft className="w-4 h-4 text-gray-400" />}
+                />
 
-          {/* Qualification – full width */}
-          <Field
-            label="Qualification"
-            name="qualification"
-            value={form.qualification}
-            onChange={handleChange}
-            className="sm:col-span-2 lg:col-span-3"
-            icon={<BookOpen className="w-4 h-4 text-gray-400" />}
-          />
+                {/* Company info – full width, more compact */}
+                <div className="sm:col-span-2 lg:col-span-3 bg-blue-50 border border-blue-200 rounded-xl px-3 py-2 text-sm text-gray-700 flex flex-wrap items-center gap-1">
+                  <span>Posting as</span>
+                  <span className="font-semibold text-gray-800">{form.company_Name || '—'}</span>
+                  <span className="text-gray-400">({form.company_code || '—'})</span>
+                </div>
 
-          {/* Skills required – full width */}
-          <Field
-            label="Skills required"
-            name="skills_Required"
-            value={form.skills_Required}
-            onChange={handleChange}
-            placeholder="Comma separated"
-            className="sm:col-span-2 lg:col-span-3"
-            icon={<Zap className="w-4 h-4 text-gray-400" />}
-          />
+                {/* Location – full width */}
+                <Field
+                  label="Location"
+                  name="location"
+                  value={form.location}
+                  onChange={handleChange}
+                  required
+                  className="sm:col-span-2 lg:col-span-3"
+                  icon={<MapPin className="w-4 h-4 text-gray-400" />}
+                />
 
-          {/* Min salary, Max salary, Vacancy count – all in one row */}
-          <Field
-            label="Min salary"
-            name="min_Salary"
-            type="number"
-            min={0}
-            max={10000000}
-            step="1"
-            value={form.min_Salary}
-            onChange={handleChange}
-            required
-            icon={<DollarSign className="w-4 h-4 text-gray-400" />}
-          />
-          <Field
-            label="Max salary"
-            name="max_Salary"
-            type="number"
-            min={0}
-            max={10000000}
-            step="1"
-            value={form.max_Salary}
-            onChange={handleChange}
-            required
-            icon={<DollarSign className="w-4 h-4 text-gray-400" />}
-          />
-          <Field
-            label="Vacancy count"
-            name="vacancy_Count"
-            type="number"
-            min={1}
-            max={10000}
-            step="1"
-            value={form.vacancy_Count}
-            onChange={handleChange}
-            required
-            icon={<Users className="w-4 h-4 text-gray-400" />}
-          />
+                {/* Job type */}
+                <div>
+                  <label className="text-sm font-medium text-gray-700 flex items-center gap-1.5">
+                    <Briefcase className="w-4 h-4 text-gray-400" />
+                    Job type
+                  </label>
+                  <select
+                    name="job_Type"
+                    value={form.job_Type}
+                    onChange={handleChange}
+                    className="mt-1 w-full border border-gray-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                  >
+                    {JOB_TYPES.map((t) => (
+                      <option key={t} value={t}>{t.replace('_', ' ')}</option>
+                    ))}
+                  </select>
+                </div>
 
-          {/* Expiry date – can be alone or alongside other fields; we'll make it full width for date picker, or we can put it in a 3rd column with something else? */}
-          <Field
-            label="Expiry date"
-            name="expiry_Date"
-            type="date"
-            min={new Date().toISOString().split('T')[0]}
-            value={form.expiry_Date}
-            onChange={handleChange}
-            required
-            className="sm:col-span-2 lg:col-span-3"
-            icon={<CalendarDays className="w-4 h-4 text-gray-400" />}
-          />
+                {/* Category */}
+                <Field
+                  label="Category"
+                  name="category"
+                  value={form.category}
+                  onChange={handleChange}
+                  placeholder="e.g. Software"
+                  required
+                  icon={<Tag className="w-4 h-4 text-gray-400" />}
+                />
 
-          {/* Action buttons – full width */}
-          <div className="flex gap-2 mt-2 sm:col-span-2 lg:col-span-3">
-            <button
-              type="submit"
-              disabled={saving}
-              className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:opacity-50 text-white font-semibold py-2.5 rounded-xl shadow-sm transition"
-            >
-              {saving ? 'Saving...' : 'Save'}
-            </button>
-            <button
-              type="button"
-              onClick={() => setModalOpen(false)}
-              className="flex-1 border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium py-2.5 rounded-xl transition"
-            >
-              Cancel
-            </button>
+                {/* Experience required */}
+                <Field
+                  label="Experience"
+                  name="experience_Required"
+                  value={form.experience_Required}
+                  onChange={handleChange}
+                  placeholder="e.g. 3-5 years"
+                  icon={<Clock className="w-4 h-4 text-gray-400" />}
+                />
+
+                {/* Status (only when editing) – can be in same row */}
+                {editingJob && (
+                  <div>
+                    <label className="text-sm font-medium text-gray-700 flex items-center gap-1.5">
+                      <CheckCircle className="w-4 h-4 text-gray-400" />
+                      Status
+                    </label>
+                    <select
+                      name="status"
+                      value={form.status}
+                      onChange={handleChange}
+                      className="mt-1 w-full border border-gray-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                    >
+                      {JOB_STATUSES.map((s) => (
+                        <option key={s} value={s}>{s}</option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
+                {/* If not editing, we can push vacancy count to third column? We'll put qualification full-width later */}
+
+                {/* Qualification – full width */}
+                <Field
+                  label="Qualification"
+                  name="qualification"
+                  value={form.qualification}
+                  onChange={handleChange}
+                  className="sm:col-span-2 lg:col-span-3"
+                  icon={<BookOpen className="w-4 h-4 text-gray-400" />}
+                />
+
+                {/* Skills required – full width */}
+                <Field
+                  label="Skills required"
+                  name="skills_Required"
+                  value={form.skills_Required}
+                  onChange={handleChange}
+                  placeholder="Comma separated"
+                  className="sm:col-span-2 lg:col-span-3"
+                  icon={<Zap className="w-4 h-4 text-gray-400" />}
+                />
+
+                {/* Min salary, Max salary, Vacancy count – all in one row */}
+                <Field
+                  label="Min salary"
+                  name="min_Salary"
+                  type="number"
+                  min={0}
+                  max={10000000}
+                  step="1"
+                  value={form.min_Salary}
+                  onChange={handleChange}
+                  required
+                  icon={<DollarSign className="w-4 h-4 text-gray-400" />}
+                />
+                <Field
+                  label="Max salary"
+                  name="max_Salary"
+                  type="number"
+                  min={0}
+                  max={10000000}
+                  step="1"
+                  value={form.max_Salary}
+                  onChange={handleChange}
+                  required
+                  icon={<DollarSign className="w-4 h-4 text-gray-400" />}
+                />
+                <Field
+                  label="Vacancy count"
+                  name="vacancy_Count"
+                  type="number"
+                  min={1}
+                  max={10000}
+                  step="1"
+                  value={form.vacancy_Count}
+                  onChange={handleChange}
+                  required
+                  icon={<Users className="w-4 h-4 text-gray-400" />}
+                />
+
+                {/* Expiry date – can be alone or alongside other fields; we'll make it full width for date picker, or we can put it in a 3rd column with something else? */}
+                <Field
+                  label="Expiry date"
+                  name="expiry_Date"
+                  type="date"
+                  min={new Date().toISOString().split('T')[0]}
+                  value={form.expiry_Date}
+                  onChange={handleChange}
+                  required
+                  className="sm:col-span-2 lg:col-span-3"
+                  icon={<CalendarDays className="w-4 h-4 text-gray-400" />}
+                />
+
+                {/* Action buttons – full width */}
+                <div className="flex gap-2 mt-2 sm:col-span-2 lg:col-span-3">
+                  <button
+                    type="submit"
+                    disabled={saving}
+                    className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:opacity-50 text-white font-semibold py-2.5 rounded-xl shadow-sm transition"
+                  >
+                    {saving ? 'Saving...' : 'Save'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setModalOpen(false)}
+                    className="flex-1 border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium py-2.5 rounded-xl transition"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </form>
           </div>
         </div>
-      </form>
-    </div>
-  </div>
-)}
+      )}
 
       {/* View Modal */}
       {viewingJob && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl my-8 animate-fade-in-up">
-            <div className="h-20 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 rounded-t-2xl flex items-center justify-between px-6">
+            <div className="h-20 bg-gradient-to-r from-[#1d4ed8] to-[#2563eb] rounded-t-2xl flex items-center justify-between px-6">
               <h2 className="text-xl font-bold text-white truncate">{viewingJob.title}</h2>
               {statusBadge(viewingJob.status)}
             </div>
@@ -648,7 +662,7 @@ export default function ManageJobs() {
           animation: fadeInUp 0.2s ease-out;
         }
       `}</style>
-    </div>
+    </>
   );
 }
 

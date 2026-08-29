@@ -14,15 +14,21 @@ const links = [
 
 export default function CompanyAdminLayout() {
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Navbar portalLabel="Company Portal" />
-      <div className="flex">
-        {/* Sidebar – sticky and slightly elevated */}
-        <Sidebar links={links} />
+    <div className="min-h-screen bg-[#f4f5fa] flex">
+      {/* Sidebar – full-height dark theme */}
+      <Sidebar
+        links={links}
+        dark
+        brandName="MeroJobHub"
+        brandSubtitle="Recruitment Management"
+      />
 
-        {/* Main content – centred and spacious */}
-        <main className="flex-1 min-h-[calc(100vh-4rem)] p-4 md:p-6 lg:p-8 bg-gray-50">
-          <div className="mx-auto">
+      {/* Main Column */}
+      <div className="flex-1 flex flex-col min-w-0 min-h-screen">
+        <Navbar portalLabel="Company Portal" variant="light" />
+
+        <main className="flex-1 p-4 md:p-6 lg:p-8 bg-[#f4f5fa] overflow-y-auto">
+          <div className="max-w-7xl mx-auto">
             <Outlet />
           </div>
         </main>

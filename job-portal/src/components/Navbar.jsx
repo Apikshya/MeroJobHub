@@ -4,7 +4,7 @@ import NotificationBell from './NotificationBell';
 import { useState, useRef, useEffect } from 'react';
 import { ChevronDown, User, UserPen, Lock, LogOut } from 'lucide-react';
 
-export default function Navbar({ portalLabel }) {
+export default function Navbar({ portalLabel, variant = 'default' }) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -41,25 +41,104 @@ export default function Navbar({ portalLabel }) {
     if (user?.user_type === 'ADMIN') return '/admin';
     if (user?.user_type === 'COMPANY_ADMIN') return '/company';
     
-    // 3. Ultimate fallback – assume customer (should not happen on protected pages)
-    console.warn('Navbar: Could not determine base path, defaulting to /customer');
     return '/customer';
   };
 
   const basePath = getBasePath();
 
-  // Debug – remove this after confirming it works
-  console.log(`Navbar: basePath = "${basePath}" (from URL: "${location.pathname}")`);
-
   const navigateTo = (path) => {
     setDropdownOpen(false);
-    // Build absolute path – ensure no double slashes
     const fullPath = `${basePath}${path}`;
-    console.log(`Navigating to: ${fullPath}`);
     navigate(fullPath);
   };
 
   const userInitial = user?.full_name?.charAt(0)?.toUpperCase() || user?.first_name?.charAt(0)?.toUpperCase() || '?';
+  const userName = user?.full_name || `${user?.first_name || ''} ${user?.last_name || ''}`.trim() || 'John Smith';
+
+  if (variant === 'light') {
+    return (
+      <header className="sticky top-0 z-30 bg-white border-b border-gray-100 shadow-none">
+        <div className="w-full px-6 sm:px-8 h-16 flex items-center justify-between">
+          {/* Left: Portal Title */}
+          <h1 className="text-xl font-bold text-slate-800 tracking-tight">{portalLabel}</h1>
+
+          {/* Right: User area & notifications */}
+          <div className="flex items-center gap-4">
+            <NotificationBell />
+
+            <div className="relative" ref={dropdownRef}>
+              <button
+                onClick={() => setDropdownOpen(!dropdownOpen)}
+                className="flex items-center gap-2.5 bg-white hover:bg-slate-50 rounded-full pl-1.5 pr-3.5 py-1 transition-all duration-150 border border-slate-200 shadow-sm"
+              >
+                <div className="w-8 h-8 rounded-full bg-slate-200 overflow-hidden flex items-center justify-center text-slate-700 font-bold text-xs shadow-inner">
+                  {userInitial}
+                </div>
+                <span className="hidden sm:inline text-sm font-semibold text-slate-700 truncate max-w-[130px]">
+                  {userName}
+                </span>
+                <ChevronDown
+                  className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`}
+                />
+              </button>
+
+              {dropdownOpen && (
+                <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden py-1 z-50 animate-fade-in-up">
+                  <div className="px-4 py-2 border-b border-gray-100">
+                    <p className="text-xs text-gray-400">Signed in as</p>
+                    <p className="text-sm font-semibold text-gray-800 truncate">{userName}</p>
+                    <p className="text-xs text-gray-500 truncate">{user?.email}</p>
+                  </div>
+
+                  <button
+                    onClick={() => navigateTo('/profile')}
+                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 transition-colors flex items-center gap-2"
+                  >
+                    <User className="w-4 h-4 text-gray-500" />
+                    My Profile
+                  </button>
+                  <button
+                    onClick={() => navigateTo('/edit-profile')}
+                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 transition-colors flex items-center gap-2"
+                  >
+                    <UserPen className="w-4 h-4 text-gray-500" />
+                    Edit Profile
+                  </button>
+                  <button
+                    onClick={() => navigateTo('/change-password')}
+                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 transition-colors flex items-center gap-2"
+                  >
+                    <Lock className="w-4 h-4 text-gray-500" />
+                    Change Password
+                  </button>
+
+                  <div className="border-t border-gray-100 my-1"></div>
+
+                  <button
+                    onClick={handleLogout}
+                    className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors flex items-center gap-2"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    Log out
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <style>{`
+          @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(-8px) scale(0.96); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+          }
+          .animate-fade-in-up {
+            animation: fadeInUp 0.15s ease-out;
+          }
+        `}</style>
+      </header>
+    );
+  }
 
   return (
     <header className="sticky top-0 z-50 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 shadow-lg">
@@ -91,7 +170,7 @@ export default function Navbar({ portalLabel }) {
                 {userInitial}
               </div>
               <span className="hidden sm:inline text-sm font-medium text-white truncate max-w-[120px]">
-                {user?.full_name || `${user?.first_name || ''} ${user?.last_name || ''}` || 'User'}
+                {userName}
               </span>
               <ChevronDown
                 className={`w-4 h-4 text-white transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`}
@@ -102,7 +181,7 @@ export default function Navbar({ portalLabel }) {
               <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden py-1 z-10 animate-fade-in-up">
                 <div className="px-4 py-2 border-b border-gray-100">
                   <p className="text-xs text-gray-400">Signed in as</p>
-                  <p className="text-sm font-semibold text-gray-800 truncate">{user?.full_name || 'User'}</p>
+                  <p className="text-sm font-semibold text-gray-800 truncate">{userName}</p>
                   <p className="text-xs text-gray-500 truncate">{user?.email}</p>
                 </div>
 

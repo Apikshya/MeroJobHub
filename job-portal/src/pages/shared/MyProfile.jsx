@@ -44,10 +44,15 @@ export default function MyProfile() {
   }
 
   // Prepare rows with icons for better visual appeal
+
+  const fullName = [profile.first_name, profile.middle_name, profile.last_name]
+    .filter(Boolean) // drops null, undefined, ''
+    .join(' ');
+
   const fields = [
-    { label: 'First Name', value: profile.first_name, icon: <User className="w-4 h-4 text-blue-500" /> },
-    { label: 'Middle Name', value: profile.middle_name || '-', icon: <Type className="w-4 h-4 text-purple-500" /> },
-    { label: 'Last Name', value: profile.last_name, icon: <User className="w-4 h-4 text-blue-500" /> },
+    { label: 'Full Name', value: fullName, icon: <User className="w-4 h-4 text-blue-500" /> },
+    // { label: 'Middle Name', value: profile.middle_name || '-', icon: <Type className="w-4 h-4 text-purple-500" /> },
+    // { label: 'Last Name', value: profile.last_name, icon: <User className="w-4 h-4 text-blue-500" /> },
     { label: 'Email', value: profile.email, icon: <Mail className="w-4 h-4 text-pink-500" /> },
     { label: 'Phone', value: profile.phone_number, icon: <Phone className="w-4 h-4 text-green-500" /> },
     { label: 'Age', value: profile.age, icon: <Calendar className="w-4 h-4 text-amber-500" /> },

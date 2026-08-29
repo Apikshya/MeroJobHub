@@ -5,21 +5,23 @@ import { getCompanyByCode } from '../../api/companiesApi';
 import { getJobs } from '../../api/jobsApi';
 import { getApplications } from '../../api/applicationsApi';
 import { useAuth } from '../../context/AuthContext';
-import { Briefcase, CheckCircle, Users, FileText } from 'lucide-react';
+import { Briefcase, CheckCircle, Users, User, MapPin, TrendingUp, Building2, Hash } from 'lucide-react';
 
 const APP_STATUS_COLORS = {
-  APPLIED: '#2563eb',
+  APPLIED: '#3146d9',
   SHORTLISTED: '#d97706',
-  SELECTED: '#059669',
+  SELECTED: '#22c55e',
   REJECTED: '#dc2626',
   WITHDRAWN: '#94a3b8',
 };
 
-const JOB_STATUS_COLORS = { OPEN: '#059669', CLOSED: '#94a3b8', EXPIRED: '#dc2626' };
+const JOB_STATUS_COLORS = {
+  OPEN: '#2563eb',
+  CLOSED: '#94a3b8',
+  EXPIRED: '#dc2626',
+};
 
-// Built entirely from data already available elsewhere in the app — no dedicated
-// dashboard-summary endpoint. Company details from /company/code/{code}, jobs from
-// /job/get-all, applications from /job-application/get-all — all aggregated client-side.
+// Aggregates company, jobs, and applications client-side for company dashboard
 export default function CompanyDashboard() {
   const { user } = useAuth();
   const [company, setCompany] = useState(null);
@@ -55,7 +57,6 @@ export default function CompanyDashboard() {
         toast.error('Could not load application data');
       })
       .finally(() => setLoading(false));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.system_code]);
 
   const stats = useMemo(() => {
@@ -72,173 +73,249 @@ export default function CompanyDashboard() {
     });
     const appsByStatus = Object.entries(appsByStatusMap).map(([status, count]) => ({ status, count }));
 
-    const jobTitleById = Object.fromEntries(jobs.map((j) => [j.id, j.title]));
-    const appsPerJobMap = {};
-    applications.forEach((a) => {
-      appsPerJobMap[a.job_id] = (appsPerJobMap[a.job_id] || 0) + 1;
-    });
-    const appsPerJob = Object.entries(appsPerJobMap)
-      .map(([jobId, count]) => ({ job: jobTitleById[jobId] || `Job #${jobId}`, count }))
-      .sort((a, b) => b.count - a.count)
-      .slice(0, 6);
-
     return {
       totalJobs: jobs.length,
       openJobsCount: openJobs.length,
       openVacancies,
       totalApplicants: applications.length,
-      jobsByStatus,
-      appsByStatus,
-      appsPerJob,
+      jobsByStatus: jobsByStatus.length > 0 ? jobsByStatus : [{ status: 'OPEN', count: 0 }],
+      appsByStatus: appsByStatus.length > 0 ? appsByStatus : [{ status: 'SELECTED', count: 0 }],
     };
   }, [jobs, applications]);
 
+  const companyInitial =
+    company?.company_name?.charAt(0)?.toUpperCase() ||
+    user?.first_name?.charAt(0)?.toUpperCase() ||
+    'A';
+
+  const companyCode = company?.company_code || user?.system_code || 'ANN01';
+
   if (loading) {
     return (
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        <div className="bg-white rounded-2xl shadow-md p-6 animate-pulse">
-          <div className="h-8 bg-gray-200 rounded w-48 mb-6"></div>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            {[...Array(4)].map((_, i) => (
-              <div key={i} className="bg-gray-100 rounded-xl p-4">
-                <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                <div className="h-6 bg-gray-200 rounded w-1/2 mt-2"></div>
-              </div>
-            ))}
-          </div>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-6">
-            <div className="bg-gray-100 rounded-xl p-4 h-48"></div>
-            <div className="bg-gray-100 rounded-xl p-4 h-48"></div>
-          </div>
+      <div className="space-y-6 animate-pulse">
+        <div className="h-40 bg-blue-100/80 rounded-2xl w-full"></div>
+        <div className="h-28 bg-gray-200/80 rounded-2xl w-full"></div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="h-28 bg-gray-200/80 rounded-2xl"></div>
+          ))}
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="h-80 bg-gray-200/80 rounded-2xl"></div>
+          <div className="h-80 bg-gray-200/80 rounded-2xl"></div>
         </div>
       </div>
     );
   }
 
-  // Helper for company avatar initial
-  const companyInitial = company?.company_name?.charAt(0).toUpperCase() || '?';
-
   return (
-    <div className="">
-      <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">
-        {/* Gradient header */}
-        <div className="h-24 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 flex items-center justify-between px-6">
-          <h1 className="text-2xl font-bold text-white">Dashboard</h1>
-          {company?.company_code && (
-            <span className="text-xs font-semibold px-3 py-1 rounded-full bg-white/20 backdrop-blur-sm text-white border border-white/30">
-              {company.company_code}
+    <div className="space-y-6">
+      {/* 1. Hero Blue Banner — with inline stat pills */}
+      <div className="rounded-2xl p-7 text-white shadow-md bg-gradient-to-br from-[#1d4ed8] via-[#2054e8] to-[#3b6af5] relative overflow-hidden">
+        {/* Decorative circles */}
+        <div className="absolute -top-10 -right-10 w-52 h-52 bg-white/5 rounded-full pointer-events-none" />
+        <div className="absolute -bottom-12 -left-8 w-40 h-40 bg-white/5 rounded-full pointer-events-none" />
+
+        <div className="relative flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+          <div>
+            <p className="text-white/70 text-xs font-semibold uppercase tracking-widest mb-1">Company Portal</p>
+            <h1 className="text-3xl font-extrabold text-white tracking-tight">Dashboard</h1>
+            <p className="text-white/70 text-sm mt-1">Overview of your recruitment activities</p>
+          </div>
+
+          {/* Quick stats inside banner */}
+          <div className="flex flex-wrap gap-3">
+            <div className="bg-white/10 backdrop-blur border border-white/20 rounded-xl px-4 py-3 text-center min-w-[80px]">
+              <p className="text-2xl font-extrabold text-white">{stats.totalJobs}</p>
+              <p className="text-[11px] text-white/70 font-medium mt-0.5">Total Jobs</p>
+            </div>
+            <div className="bg-white/10 backdrop-blur border border-white/20 rounded-xl px-4 py-3 text-center min-w-[80px]">
+              <p className="text-2xl font-extrabold text-white">{stats.openJobsCount}</p>
+              <p className="text-[11px] text-white/70 font-medium mt-0.5">Open Jobs</p>
+            </div>
+            <div className="bg-white/10 backdrop-blur border border-white/20 rounded-xl px-4 py-3 text-center min-w-[80px]">
+              <p className="text-2xl font-extrabold text-white">{stats.totalApplicants}</p>
+              <p className="text-[11px] text-white/70 font-medium mt-0.5">Applicants</p>
+            </div>
+            <div className="bg-white/10 backdrop-blur border border-white/20 rounded-xl px-4 py-3 text-center min-w-[80px]">
+              <p className="text-2xl font-extrabold text-white">{stats.openVacancies}</p>
+              <p className="text-[11px] text-white/70 font-medium mt-0.5">Vacancies</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 2. Company Info Card */}
+      <div className="bg-white border border-slate-100 rounded-2xl p-5 shadow-sm flex flex-col sm:flex-row sm:items-center gap-5">
+        <div className="w-14 h-14 rounded-xl bg-[#dbeafe] text-[#1d4ed8] flex items-center justify-center text-2xl font-extrabold flex-shrink-0 shadow-inner">
+          {companyInitial}
+        </div>
+        <div className="flex-1 min-w-0">
+          <h2 className="text-lg font-bold text-slate-900 leading-tight">
+            {company?.company_name || 'Annapurna Training Center'}
+          </h2>
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1.5">
+            {(company?.industry_type || company?.company_type) && (
+              <span className="inline-flex items-center gap-1.5 text-xs text-slate-500">
+                <Building2 className="w-3.5 h-3.5 text-[#2563eb]" />
+                {[company?.industry_type, company?.company_type].filter(Boolean).join(' · ')}
+              </span>
+            )}
+            {(company?.country || company?.city) && (
+              <span className="inline-flex items-center gap-1.5 text-xs text-slate-500">
+                <MapPin className="w-3.5 h-3.5 text-[#2563eb]" />
+                {company?.city || company?.country}
+              </span>
+            )}
+            <span className="inline-flex items-center gap-1.5 text-xs text-slate-500">
+              <Hash className="w-3.5 h-3.5 text-[#2563eb]" />
+              {companyCode}
             </span>
-          )}
+          </div>
+        </div>
+        <div className="sm:text-right">
+          <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#2563eb] bg-[#eff6ff] border border-[#bfdbfe] px-3 py-1.5 rounded-full">
+            <TrendingUp className="w-3.5 h-3.5" />
+            Active Account
+          </span>
+        </div>
+      </div>
+
+      {/* 3. Metric Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <MetricCard
+          icon={<Briefcase className="w-5 h-5" />}
+          label="Total Jobs"
+          value={stats.totalJobs}
+          accent="#2563eb"
+          bg="#eff6ff"
+        />
+        <MetricCard
+          icon={<CheckCircle className="w-5 h-5" />}
+          label="Open Jobs"
+          value={stats.openJobsCount}
+          accent="#22c55e"
+          bg="#f0fdf4"
+        />
+        <MetricCard
+          icon={<Users className="w-5 h-5" />}
+          label="Open Vacancies"
+          value={stats.openVacancies}
+          accent="#f59e0b"
+          bg="#fffbeb"
+        />
+        <MetricCard
+          icon={<User className="w-5 h-5" />}
+          label="Total Applicants"
+          value={stats.totalApplicants}
+          accent="#8b5cf6"
+          bg="#f5f3ff"
+        />
+      </div>
+
+      {/* 4. Charts */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Jobs by status */}
+        <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
+          <div className="flex items-center justify-between mb-5">
+            <h2 className="text-sm font-bold text-slate-800">Jobs by Status</h2>
+            <div className="flex items-center gap-3">
+              {stats.jobsByStatus.map((e) => (
+                <span key={e.status} className="flex items-center gap-1.5 text-xs text-slate-500">
+                  <span
+                    className="w-2.5 h-2.5 rounded-full inline-block"
+                    style={{ background: JOB_STATUS_COLORS[e.status] || '#b4c6fc' }}
+                  />
+                  {e.status}
+                </span>
+              ))}
+            </div>
+          </div>
+          <div className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={stats.jobsByStatus} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                <XAxis
+                  dataKey="status"
+                  axisLine={{ stroke: '#f1f5f9' }}
+                  tickLine={false}
+                  tick={{ fontSize: 11, fill: '#64748b', fontWeight: 500 }}
+                />
+                <YAxis
+                  allowDecimals={false}
+                  axisLine={false}
+                  tickLine={false}
+                  domain={[0, (dataMax) => Math.max(dataMax, 4)]}
+                  tick={{ fontSize: 11, fill: '#64748b' }}
+                />
+                <Tooltip
+                  cursor={{ fill: '#f8fafc' }}
+                  contentStyle={{
+                    borderRadius: '10px',
+                    border: '1px solid #e2e8f0',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.06)',
+                    fontSize: '12px',
+                  }}
+                />
+                <Bar dataKey="count" radius={[4, 4, 0, 0]} maxBarSize={48}>
+                  {stats.jobsByStatus.map((entry) => (
+                    <Cell key={entry.status} fill={JOB_STATUS_COLORS[entry.status] || '#b4c6fc'} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </div>
 
-        {/* Content */}
-        <div className="p-6 bg-gray-50/50">
-          {/* Company info card */}
-          {company && (
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-6 flex flex-col sm:flex-row items-start sm:items-center gap-4">
-              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white text-2xl font-bold flex-shrink-0 shadow-sm">
-                {companyInitial}
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className="font-bold text-gray-800 text-lg">{company.company_name}</p>
-                <p className="text-sm text-gray-500 truncate">
-                  {company.industry_type} · {company.company_type} · {company.city}, {company.country}
-                </p>
-              </div>
-            </div>
-          )}
-
-          {/* Metric cards */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            <MetricCard
-              icon={<Briefcase className="w-5 h-5 text-blue-500" />}
-              label="Total jobs"
-              value={stats.totalJobs}
-            />
-            <MetricCard
-              icon={<CheckCircle className="w-5 h-5 text-green-500" />}
-              label="Open jobs"
-              value={stats.openJobsCount}
-            />
-            <MetricCard
-              icon={<Users className="w-5 h-5 text-purple-500" />}
-              label="Open vacancies"
-              value={stats.openVacancies}
-            />
-            <MetricCard
-              icon={<FileText className="w-5 h-5 text-amber-500" />}
-              label="Applicants"
-              value={stats.totalApplicants}
-            />
-          </div>
-
-          {/* Charts: two-column layout */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
-              <h2 className="font-semibold text-gray-800 mb-3">Jobs by status</h2>
-              {stats.jobsByStatus.length === 0 ? (
-                <p className="text-sm text-gray-400 py-4 text-center">No jobs posted yet.</p>
-              ) : (
-                <div className="h-56">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={stats.jobsByStatus}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-                      <XAxis dataKey="status" tick={{ fontSize: 12, fill: '#64748b' }} />
-                      <YAxis allowDecimals={false} tick={{ fontSize: 12, fill: '#64748b' }} />
-                      <Tooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
-                      <Bar dataKey="count" radius={[4, 4, 0, 0]} maxBarSize={40}>
-                        {stats.jobsByStatus.map((entry) => (
-                          <Cell key={entry.status} fill={JOB_STATUS_COLORS[entry.status] || '#3b82f6'} />
-                        ))}
-                      </Bar>
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
-              )}
-            </div>
-
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
-              <h2 className="font-semibold text-gray-800 mb-3">Applications by status</h2>
-              {stats.appsByStatus.length === 0 ? (
-                <p className="text-sm text-gray-400 py-4 text-center">No applications received yet.</p>
-              ) : (
-                <div className="h-56">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={stats.appsByStatus}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-                      <XAxis dataKey="status" tick={{ fontSize: 11, fill: '#64748b' }} interval={0} angle={-15} textAnchor="end" height={50} />
-                      <YAxis allowDecimals={false} tick={{ fontSize: 12, fill: '#64748b' }} />
-                      <Tooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
-                      <Bar dataKey="count" radius={[4, 4, 0, 0]} maxBarSize={40}>
-                        {stats.appsByStatus.map((entry) => (
-                          <Cell key={entry.status} fill={APP_STATUS_COLORS[entry.status] || '#3b82f6'} />
-                        ))}
-                      </Bar>
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
-              )}
+        {/* Applications by status */}
+        <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
+          <div className="flex items-center justify-between mb-5">
+            <h2 className="text-sm font-bold text-slate-800">Applications by Status</h2>
+            <div className="flex flex-wrap items-center gap-3">
+              {stats.appsByStatus.map((e) => (
+                <span key={e.status} className="flex items-center gap-1.5 text-xs text-slate-500">
+                  <span
+                    className="w-2.5 h-2.5 rounded-full inline-block"
+                    style={{ background: APP_STATUS_COLORS[e.status] || '#3146d9' }}
+                  />
+                  {e.status}
+                </span>
+              ))}
             </div>
           </div>
-
-          {/* Most applied-to jobs chart */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mt-6">
-            <h2 className="font-semibold text-gray-800 mb-3">Most applied-to jobs</h2>
-            {stats.appsPerJob.length === 0 ? (
-              <p className="text-sm text-gray-400 py-4 text-center">No applications received yet.</p>
-            ) : (
-              <div className="h-64">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={stats.appsPerJob} layout="vertical" margin={{ left: 24 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" horizontal={false} />
-                    <XAxis type="number" allowDecimals={false} tick={{ fontSize: 12, fill: '#64748b' }} />
-                    <YAxis type="category" dataKey="job" width={140} tick={{ fontSize: 12, fill: '#64748b' }} />
-                    <Tooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
-                    <Bar dataKey="count" fill="#2563eb" radius={[0, 4, 4, 0]} maxBarSize={18} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            )}
+          <div className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={stats.appsByStatus} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                <XAxis
+                  dataKey="status"
+                  axisLine={{ stroke: '#f1f5f9' }}
+                  tickLine={false}
+                  tick={{ fontSize: 11, fill: '#64748b', fontWeight: 500 }}
+                />
+                <YAxis
+                  allowDecimals={false}
+                  axisLine={false}
+                  tickLine={false}
+                  domain={[0, (dataMax) => Math.max(dataMax, 4)]}
+                  tick={{ fontSize: 11, fill: '#64748b' }}
+                />
+                <Tooltip
+                  cursor={{ fill: '#f8fafc' }}
+                  contentStyle={{
+                    borderRadius: '10px',
+                    border: '1px solid #e2e8f0',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.06)',
+                    fontSize: '12px',
+                  }}
+                />
+                <Bar dataKey="count" radius={[4, 4, 0, 0]} maxBarSize={48}>
+                  {stats.appsByStatus.map((entry) => (
+                    <Cell key={entry.status} fill={APP_STATUS_COLORS[entry.status] || '#3146d9'} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
           </div>
         </div>
       </div>
@@ -246,14 +323,23 @@ export default function CompanyDashboard() {
   );
 }
 
-function MetricCard({ icon, label, value }) {
+function MetricCard({ icon, label, value, accent = '#2563eb', bg = '#eff6ff' }) {
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 hover:shadow-md transition-shadow">
-      <div className="flex items-center gap-2 mb-1">
-        {icon}
-        <span className="text-sm text-gray-500">{label}</span>
+    <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm hover:shadow-md transition-shadow group">
+      <div className="flex items-center justify-between mb-4">
+        <div
+          className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform group-hover:scale-105"
+          style={{ background: bg, color: accent }}
+        >
+          {icon}
+        </div>
+        <TrendingUp className="w-3.5 h-3.5 text-slate-300" />
       </div>
-      <p className="text-2xl font-bold text-gray-800">{value ?? '-'}</p>
+      <p className="text-3xl font-extrabold text-slate-900 tracking-tight">{value ?? 0}</p>
+      <p className="text-xs font-medium text-slate-500 mt-1">{label}</p>
+      <div className="mt-3 h-1 rounded-full w-full" style={{ background: bg }}>
+        <div className="h-1 rounded-full w-2/3" style={{ background: accent, opacity: 0.4 }} />
+      </div>
     </div>
   );
 }

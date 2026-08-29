@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { getCompanyByCode } from '../../api/companiesApi';
 import { useAuth } from '../../context/AuthContext';
@@ -8,7 +9,7 @@ import {
   Globe,
   Factory,
   Building2,
-  BarChart3,
+  PieChart,
   Users,
   Calendar,
   FileText,
@@ -17,12 +18,13 @@ import {
   Briefcase,
   Link2,
   Share2,
+  MapPin,
+  Edit3,
 } from 'lucide-react';
 
-// The COMPANY_ADMIN user object returns a "system_code" that maps to a company's
-// company_code — that's the link used to look up their company below.
 export default function MyCompany() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [company, setCompany] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -38,24 +40,24 @@ export default function MyCompany() {
       .then((res) => setCompany(res.data?.data?.dto || null))
       .catch(() => toast.error('Could not load your company details'))
       .finally(() => setLoading(false));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.system_code]);
 
   if (loading) {
     return (
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        <div className="bg-white rounded-2xl shadow-md p-6 animate-pulse">
-          <div className="h-32 bg-gray-200 rounded-xl"></div>
-          <div className="flex flex-col items-center -mt-12">
-            <div className="w-24 h-24 bg-gray-200 rounded-full border-4 border-white"></div>
-            <div className="h-6 bg-gray-200 rounded w-48 mt-4"></div>
-            <div className="h-4 bg-gray-200 rounded w-32 mt-2"></div>
+      <div className="space-y-6 animate-pulse">
+        <div className="bg-white rounded-2xl p-6 shadow-sm">
+          <div className="h-36 bg-gray-200 rounded-xl"></div>
+          <div className="flex items-end gap-5 -mt-10 ml-6">
+            <div className="w-24 h-24 bg-gray-300 rounded-full border-4 border-white"></div>
+            <div className="h-6 bg-gray-200 rounded w-48 mb-2"></div>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-8">
-            <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-            <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-            <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-            <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+        </div>
+        <div className="bg-white rounded-2xl p-6 shadow-sm">
+          <div className="h-6 bg-gray-200 rounded w-36 mb-6"></div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            {[...Array(8)].map((_, i) => (
+              <div key={i} className="h-10 bg-gray-100 rounded"></div>
+            ))}
           </div>
         </div>
       </div>
@@ -64,88 +66,104 @@ export default function MyCompany() {
 
   if (error || !company) {
     return (
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        <h1 className="text-2xl font-bold text-gray-800 mb-4">My Company</h1>
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
-          <p className="text-sm text-gray-500">
-            Your account isn't linked to a company code yet, so we can't look up your company automatically.
-            Please contact an administrator to have your account associated with a company.
-          </p>
-        </div>
+      <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-8 text-center">
+        <h1 className="text-xl font-bold text-slate-800 mb-2">My Company</h1>
+        <p className="text-sm text-slate-500 max-w-md mx-auto">
+          Your account isn't linked to a company code yet, so we can't look up your company automatically.
+          Please contact an administrator to have your account associated with a company.
+        </p>
       </div>
     );
   }
 
-  // Helper for avatar initial
-  const initial = company.company_name?.charAt(0).toUpperCase() || '?';
+  const initial = company.company_name?.charAt(0).toUpperCase() || 'A';
 
-  // Fields configuration with icons
   const fields = [
-    { label: 'Email', value: company.email_id, icon: <Mail className="w-4 h-4 text-blue-500" /> },
-    { label: 'Phone', value: company.phone_number, icon: <Phone className="w-4 h-4 text-green-500" /> },
-    { label: 'Website', value: company.website, icon: <Globe className="w-4 h-4 text-indigo-500" /> },
-    { label: 'Industry', value: company.industry_type, icon: <Factory className="w-4 h-4 text-amber-500" /> },
-    { label: 'Company Type', value: company.company_type, icon: <Building2 className="w-4 h-4 text-purple-500" /> },
-    { label: 'Company Size', value: company.company_size, icon: <BarChart3 className="w-4 h-4 text-cyan-500" /> },
-    { label: 'Employees', value: company.employee_count, icon: <Users className="w-4 h-4 text-pink-500" /> },
-    { label: 'Founded', value: company.founded_year, icon: <Calendar className="w-4 h-4 text-orange-500" /> },
-    { label: 'Registration #', value: company.registration_number, icon: <FileText className="w-4 h-4 text-slate-500" /> },
-    { label: 'Tax #', value: company.tax_number, icon: <Receipt className="w-4 h-4 text-emerald-500" /> },
-    { label: 'Contact Person', value: company.contact_person_name, icon: <User className="w-4 h-4 text-blue-500" /> },
-    { label: 'Contact Designation', value: company.contact_person_designation, icon: <Briefcase className="w-4 h-4 text-violet-500" /> },
-    { label: 'LinkedIn', value: company.linkedin_url, icon: <Link2 className="w-4 h-4 text-blue-600" />, className: 'sm:col-span-2' },
-    { label: 'Facebook', value: company.facebook_url, icon: <Share2 className="w-4 h-4 text-blue-700" /> },
-    { label: 'Twitter', value: company.twitter_url, icon: <Share2 className="w-4 h-4 text-sky-500" /> },
-  ];
+    { label: 'EMAIL', value: company.email_id, icon: <Mail className="w-4 h-4 text-[#2563eb]" /> },
+    { label: 'PHONE', value: company.phone_number, icon: <Phone className="w-4 h-4 text-[#059669]" /> },
+    { label: 'INDUSTRY', value: company.industry_type, icon: <Factory className="w-4 h-4 text-[#d97706]" /> },
+    { label: 'COMPANY TYPE', value: company.company_type, icon: <Building2 className="w-4 h-4 text-[#7c3aed]" /> },
+    { label: 'COMPANY SIZE', value: company.company_size, icon: <PieChart className="w-4 h-4 text-[#0284c7]" /> },
+    { label: 'EMPLOYEES', value: company.employee_count, icon: <Users className="w-4 h-4 text-[#ec4899]" /> },
+    { label: 'CONTACT PERSON', value: company.contact_person_name, icon: <User className="w-4 h-4 text-[#2563eb]" /> },
+    { label: 'CONTACT DESIGNATION', value: company.contact_person_designation, icon: <Briefcase className="w-4 h-4 text-[#7c3aed]" /> },
+    { label: 'FOUNDED', value: company.founded_year, icon: <Calendar className="w-4 h-4 text-[#ea580c]" /> },
+    { label: 'REGISTRATION NO.', value: company.registration_number, icon: <FileText className="w-4 h-4 text-[#64748b]" /> },
+    { label: 'TAX NO.', value: company.tax_number, icon: <Receipt className="w-4 h-4 text-[#10b981]" /> },
+    { label: 'WEBSITE', value: company.website, icon: <Globe className="w-4 h-4 text-[#2563eb]" /> },
+    { label: 'LINKEDIN', value: company.linkedin_url, icon: <Link2 className="w-4 h-4 text-[#2563eb]" /> },
+    { label: 'FACEBOOK', value: company.facebook_url, icon: <Share2 className="w-4 h-4 text-[#2563eb]" /> },
+    { label: 'TWITTER', value: company.twitter_url, icon: <Share2 className="w-4 h-4 text-[#0284c7]" /> },
+  ].filter(f => f.value !== undefined);
 
   return (
-    <div className="">
-      <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">
-        {/* Cover gradient */}
-        <div className="h-32 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500"></div>
+    <div className="space-y-6">
+      {/* Top Hero Banner & Company Profile Card */}
+      <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+        {/* Solid Brand Blue Cover */}
+        <div className="h-20  w-full"></div>
 
-        {/* Company header */}
-        <div className="relative px-6 pb-6 m-4">
-          <div className="flex flex-col items-center -mt-12 sm:flex-row sm:items-end sm:gap-5">
-            {/* Avatar */}
-            <div className="w-24 h-24 rounded-full border-4 border-white bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-3xl font-bold shadow-md">
-              {initial}
-            </div>
-            <div className="mt-3 sm:mt-0 text-center sm:text-left flex-1">
-              <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
-                <h1 className="text-3xl font-bold text-gray-800">
-                  {company.company_name}
-                </h1>
-                <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-blue-100 text-blue-700 border border-blue-200">
-                  {company.company_code}
-                </span>
+        {/* Profile Details Bar */}
+        <div className="px-6 pb-6 pt-0 ">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 -mt-12">
+            <div className="flex flex-col sm:flex-row items-start sm:items-end gap-4">
+              {/* Overlapping Avatar */}
+              {/* <div className="w-24 h-24 rounded-full bg-[#dbeafe] text-[#1e40af] border-4 border-white font-bold text-3xl flex items-center justify-center shadow-md flex-shrink-0">
+                {initial}
+              </div> */}
+              <div className="mt-2 sm:mt-0">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h1 className="text-2xl font-bold text-slate-900">{company.company_name}</h1>
+                  {company.company_code && (
+                    <span className="text-xs font-semibold px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200">
+                      {company.company_code}
+                    </span>
+                  )}
+                </div>
+                <div className="flex items-center gap-1 text-sm text-slate-500 mt-1">
+                  <MapPin className="w-4 h-4 text-slate-400 flex-shrink-0" />
+                  <span>
+                    {[company.address, company.city, company.state, company.country]
+                      .filter(Boolean)
+                      .join(', ') || 'Tilottama-3, Nepal'}
+                  </span>
+                </div>
               </div>
-              <p className="text-base text-gray-500 mt-1">
-                {company.address}, {company.city}, {company.state}, {company.country} {company.postal_code}
+            </div>
+
+            <button
+              onClick={() => navigate('/company/edit-profile')}
+              className="border border-slate-200 hover:bg-slate-50 text-slate-700 font-medium px-4 py-2 rounded-xl text-sm flex items-center gap-2 shadow-sm transition-colors self-start sm:self-end"
+            >
+              <Edit3 className="w-4 h-4 text-slate-500" />
+              Edit Profile
+            </button>
+          </div>
+
+          {company.description && (
+            <div className="mt-6 pt-4 border-t border-slate-100 text-sm text-slate-600 leading-relaxed">
+              {company.description}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Company Overview Card */}
+      <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+        <h2 className="text-base font-bold text-slate-900 mb-6">Company Overview</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-6">
+          {fields.map(({ label, value, icon, className }) => (
+            <div key={label} className={className || ''}>
+              <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-400 tracking-wider">
+                {icon}
+                <span>{label}</span>
+              </div>
+              <p className="text-sm font-semibold text-slate-800 mt-1 break-words">
+                {value || '-'}
               </p>
             </div>
-          </div>
+          ))}
         </div>
-        {/* Description */}
-        <div className="m-4 border-t border-gray-100 px-6 py-4 bg-gray-50/50">
-          <p className="text-base text-gray-700">{company.description}</p>
-        </div>
-
-{/* Details grid */}
-<div className="m-4 px-6 py-5 bg-white">
-  <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-5">
-    {fields.map(({ label, value, icon, className }) => (
-      <div key={label} className={className || ''}>
-        <dt className="text-xs uppercase tracking-wider text-gray-400 font-semibold flex items-center gap-1">
-          <span>{icon}</span> {label}
-        </dt>
-        <dd className="text-base font-medium text-gray-800 mt-0.5 break-words">  {/* increased from text-sm */}
-          {value || '-'}
-        </dd>
-      </div>
-    ))}
-  </dl>
-</div>
       </div>
     </div>
   );

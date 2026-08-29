@@ -125,26 +125,36 @@ export default function Applications() {
   const getInitials = (name) => name?.charAt(0).toUpperCase() || '?';
 
   return (
-    <div className="mx-auto">
-      <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">
-        {/* Header */}
-        <div className="h-24 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 flex items-center px-6">
-          <h1 className="text-2xl font-bold text-white">Applied Jobs</h1>
+    <div className="space-y-6">
+      
+      {/* old Ui  */}
+      {/* Blue Hero Banner */}
+      {/* <div className="rounded-2xl px-8 py-6 text-white shadow-sm bg-gradient-to-r from-[#1d4ed8] to-[#2563eb]">
+        <h1 className="text-3xl font-bold text-white tracking-tight">Applied Jobs</h1>
+      </div> */}
+
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Applied Jobs</h1>
+          <p className="text-sm text-slate-500 mt-0.5">See the applications that were applied for the jobs you have posted on this portal.</p>
         </div>
+      </div>
+
+      <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
 
         {/* Search & Filter */}
-        <div className="p-6 bg-gray-50/50 border-b border-gray-100 flex flex-col sm:flex-row gap-3">
-          <div className="relative flex-1 sm:max-w-xs">
+        <div className="p-5 border-b border-slate-100 flex flex-col sm:flex-row items-center gap-3">
+          <div className="relative w-full sm:max-w-md">
+            <Search className="absolute left-3.5 top-3 h-4 w-4 text-slate-400" />
             <input
-              className="w-full pl-10 pr-4 py-2 bg-white border border-gray-300 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-700 placeholder-slate-400"
               placeholder="Search applicant or job title"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
-            <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
           </div>
           <select
-            className="w-full sm:w-44 px-4 py-2 bg-white border border-gray-300 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full sm:w-44 px-4 py-2 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-700"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
           >
@@ -159,66 +169,62 @@ export default function Applications() {
         </div>
 
         {/* Application list */}
-        <div className="p-6 bg-gray-50/50">
+        <div className="p-5">
           {loading ? (
-            <div className="space-y-4">
+            <div className="space-y-3">
               {[...Array(3)].map((_, i) => (
-                <div key={i} className="bg-white rounded-xl shadow-sm p-5 animate-pulse border border-gray-100">
+                <div key={i} className="bg-slate-50 rounded-xl p-5 animate-pulse border border-slate-100">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-gray-200 rounded-full"></div>
+                    <div className="w-10 h-10 bg-slate-200 rounded-full"></div>
                     <div className="flex-1">
-                      <div className="h-4 bg-gray-200 rounded w-1/3"></div>
-                      <div className="h-3 bg-gray-200 rounded w-1/4 mt-1"></div>
+                      <div className="h-4 bg-slate-200 rounded w-1/3"></div>
+                      <div className="h-3 bg-slate-200 rounded w-1/4 mt-1"></div>
                     </div>
-                  </div>
-                  <div className="flex justify-between items-center mt-3">
-                    <div className="h-3 bg-gray-200 rounded w-1/4"></div>
-                    <div className="h-6 bg-gray-200 rounded-full w-20"></div>
                   </div>
                 </div>
               ))}
             </div>
           ) : visibleApps.length === 0 ? (
-            <p className="text-gray-500 text-center py-8">No applications found.</p>
+            <p className="text-slate-400 text-center py-12">No applications found.</p>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-3">
               {visibleApps.map((app) => (
                 <div
                   key={app.id}
-                  className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200 p-5 border border-gray-100"
+                  className="bg-white rounded-xl border border-slate-100 hover:border-slate-200 hover:shadow-sm transition-all duration-200 p-5"
                 >
                   <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white font-bold text-lg flex-shrink-0">
+                    <div className="w-10 h-10 rounded-full bg-[#dbeafe] text-[#2563eb] flex items-center justify-center font-bold text-sm flex-shrink-0">
                       {getInitials(app.applicant_name)}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex flex-wrap items-start justify-between gap-2">
                         <div>
-                          <p className="font-semibold text-gray-800">{app.applicant_name}</p>
-                          <p className="text-xs text-gray-500">{app.applicant_email}</p>
+                          <p className="font-semibold text-slate-900">{app.applicant_name}</p>
+                          <p className="text-xs text-[#2563eb]">{app.applicant_email}</p>
                         </div>
                         {statusBadge(app.status)}
                       </div>
-                      <div className="mt-1 text-sm text-gray-600">
+                      <div className="mt-1 text-sm text-slate-600">
                         Applied for{' '}
-                        <span className="font-medium text-gray-800">
+                        <span className="font-semibold text-slate-800">
                           {jobsById[app.job_id]?.title || `Job #${app.job_id}`}
                         </span>
                         {jobsById[app.job_id]?.company_name && (
-                          <span className="text-gray-500"> · {jobsById[app.job_id].company_name}</span>
+                          <span className="text-slate-500"> · {jobsById[app.job_id].company_name}</span>
                         )}
                       </div>
-                      <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-gray-400">
+                      <div className="mt-1.5 flex flex-wrap items-center gap-2 text-xs text-slate-400">
                         <span>{app.resume_file_name || 'No resume'}</span>
-                        <span className="text-gray-300">·</span>
+                        <span className="text-slate-300">·</span>
                         <span>{new Date(app.applied_date).toLocaleDateString()}</span>
                       </div>
                     </div>
                   </div>
-                  <div className="mt-3 pt-3 border-t border-gray-100 flex justify-end">
+                  <div className="mt-3 pt-3 border-t border-slate-100 flex justify-end">
                     <button
                       onClick={() => openView(app)}
-                      className="text-sm font-medium text-blue-600 hover:text-blue-800 transition"
+                      className="text-sm font-semibold text-[#2563eb] hover:text-[#1d4ed8] transition"
                     >
                       View Details
                     </button>
@@ -234,7 +240,7 @@ export default function Applications() {
       {viewingApp && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl my-8 animate-fade-in-up">
-            <div className="h-20 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 rounded-t-2xl flex items-center justify-between px-6">
+            <div className="h-20 bg-gradient-to-r from-[#1d4ed8] to-[#2563eb] rounded-t-2xl flex items-center justify-between px-6">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white font-bold text-lg">
                   {getInitials(viewingApp.applicant_name)}

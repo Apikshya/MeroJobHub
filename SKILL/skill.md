@@ -15,10 +15,10 @@ npm run dev
 
 
 ### TO WORK ON 
-company creation (itself using existing api used by Admin)
+DONE - company creation (itself using existing api used by Admin) 
 FE input validation 
-required field must be marked with * 
-easy UI
+DONE (partially) -required field must be marked with * 
+DONE (partially) -easy UI
 dashboard ( attractive analytics, totals )
 report
 

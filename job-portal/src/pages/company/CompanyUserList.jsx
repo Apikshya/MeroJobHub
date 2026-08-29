@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
-import { Plus, Search, Info } from 'lucide-react';
+import { Plus, Search, Info, Eye, Pencil, Trash2 } from 'lucide-react';
 import { getUsers, createUser, updateUser, deleteUser } from '../../api/usersApi';
 
 const emptyAddForm = {
@@ -79,15 +79,6 @@ export default function UserList() {
 
   const handleFormChange = (e) => {
     const { name, value } = e.target;
-
-    //if (
-    //  ['firstName', 'middleName', 'lastName', 'first_Name', 'middle_Name', 'last_Name'].includes(name)
-    // ) {
-    //  if (!/^[A-Za-z\s'-]{0,50}$/.test(value)) return;
-    // }
-    // if (name === 'age') {
-    //  if (value !== '' && (Number(value) < 18 || Number(value) > 100)) return;
-    // }
     if (name === 'phoneNumber' || name === 'phone_Number') {
       if (!/^\+?\d{0,15}$/.test(value)) return;
     }
@@ -149,105 +140,106 @@ export default function UserList() {
     return parts.length >= 2 ? `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase() : parts[0][0].toUpperCase();
   };
 
-  const userTypeBadge = (type) => {
-    const config = {
-      ADMIN: { bg: 'bg-purple-100', text: 'text-purple-700', border: 'border-purple-200' },
-      CUSTOMER: { bg: 'bg-blue-100', text: 'text-blue-700', border: 'border-blue-200' },
-      COMPANY_ADMIN: { bg: 'bg-amber-100', text: 'text-amber-700', border: 'border-amber-200' },
-    };
-    const style = config[type] || { bg: 'bg-gray-100', text: 'text-gray-600', border: 'border-gray-200' };
-    return (
-      <span className={`inline-block text-xs font-medium px-2.5 py-0.5 rounded-full border ${style.bg} ${style.text} ${style.border}`}>
-        {type?.replace('_', ' ') || 'Unknown'}
-      </span>
-    );
-  };
-
-  return (   
-      <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">
-        {/* Header — gradient preserved */}
-        <div className="h-24 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 flex items-center justify-between px-6">
-          <h1 className="text-2xl font-bold text-white">Users</h1>
-          <button
-            onClick={openAddModal}
-            className="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white font-medium px-4 py-2 rounded-full shadow-sm transition flex items-center gap-1"
-          >
-            <Plus className="w-4 h-4" />
-            Add User
-          </button>
+  return (
+    <>
+    <div className="space-y-6">
+      {/* Top Header Row with Title and + Add User button */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Users</h1>
+          <p className="text-sm text-slate-500 mt-0.5">Manage individuals who have access to your company portal.</p>
         </div>
+        <button
+          onClick={openAddModal}
+          className="bg-[#2563eb] hover:bg-[#1d4ed8] text-white font-medium px-4 py-2.5 rounded-xl shadow-sm transition flex items-center gap-2 text-sm self-start sm:self-auto"
+        >
+          <Plus className="w-4 h-4" />
+          Add User
+        </button>
+      </div>
 
-        {/* Search & Filter */}
-        <div className="p-6 bg-gray-50/50 border-b border-gray-100 flex flex-col sm:flex-row gap-3">
-          <div className="relative flex-1 sm:max-w-xs">
+      {/* Main Table Card */}
+      <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+        {/* Search & Filter Bar */}
+        <div className="p-5 border-b border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div className="relative w-full sm:max-w-md">
+            <Search className="absolute left-3.5 top-3 h-4 w-4 text-slate-400" />
             <input
-              className="w-full pl-10 pr-4 py-2 bg-white border border-gray-300 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Search by name or email"
+              className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-700 placeholder-slate-400"
+              placeholder="Search by name or email..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
-            <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
           </div>
           <select
-            className="w-full sm:w-48 px-4 py-2 bg-white border border-gray-300 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full sm:w-48 px-4 py-2 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-700"
             value={userType}
             onChange={(e) => setUserType(e.target.value)}
           >
-            <option value="ALL">All</option>
+            <option value="ALL">All Roles</option>
             <option value="COMPANY_ADMIN">Company Admin</option>
           </select>
         </div>
 
-        {/* Table – simplified but with color accents preserved in action buttons */}
+        {/* Table */}
         <div className="overflow-x-auto">
           {loading ? (
-            <div className="p-6 text-center text-gray-500">Loading...</div>
+            <div className="p-8 text-center text-slate-400">Loading users...</div>
           ) : visibleUsers.length === 0 ? (
-            <p className="text-gray-500 text-center py-8">No users found.</p>
+            <p className="text-slate-400 text-center py-12">No users found.</p>
           ) : (
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+            <table className="min-w-full divide-y divide-slate-100">
+              <thead>
+                <tr className="border-b border-slate-100">
+                  <th className="px-6 py-3.5 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">User</th>
+                  <th className="px-6 py-3.5 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Email</th>
+                  <th className="px-6 py-3.5 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Type</th>
+                  <th className="px-6 py-3.5 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Phone</th>
+                  <th className="px-6 py-3.5 text-right text-xs font-semibold text-slate-400 uppercase tracking-wider">Actions</th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {visibleUsers.map((user) => (
-                  <tr key={user.id} className="hover:bg-gray-50 transition">
+              <tbody className="divide-y divide-slate-100 bg-white">
+                {visibleUsers.map((u) => (
+                  <tr key={u.id} className="hover:bg-slate-50/70 transition-colors">
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white font-bold text-sm mr-3">
-                          {getInitials(user.full_name)}
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-full bg-[#dbeafe] text-[#2563eb] font-bold text-xs flex items-center justify-center flex-shrink-0">
+                          {getInitials(u.full_name)}
                         </div>
-                        <span className="font-medium text-gray-900">{user.full_name}</span>
+                        <span className="font-semibold text-slate-900 text-sm">{u.full_name}</span>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{user.email}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">{userTypeBadge(user.user_type)}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{user.phone_number || '-'}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <button
-                        onClick={() => setViewingUser(user)}
-                        className="text-blue-600 hover:text-blue-800 transition px-2 py-1 rounded-full hover:bg-blue-50 mr-2"
-                      >
-                        View
-                      </button>
-                      <button
-                        onClick={() => openEditModal(user)}
-                        className="text-amber-600 hover:text-amber-800 transition px-2 py-1 rounded-full hover:bg-amber-50 mr-2"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => openDeleteModal(user)}
-                        className="text-red-600 hover:text-red-800 transition px-2 py-1 rounded-full hover:bg-red-50"
-                      >
-                        Delete
-                      </button>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{u.email}</td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className="inline-block text-xs font-semibold px-3 py-1 rounded-full bg-[#eff6ff] text-[#2563eb] border border-[#bfdbfe]">
+                        {u.user_type?.replace('_', ' ') || 'COMPANY ADMIN'}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{u.phone_number || '-'}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
+                      <div className="flex items-center justify-end gap-1.5">
+                        <button
+                          onClick={() => setViewingUser(u)}
+                          title="View"
+                          className="text-[#3b82f6] hover:text-[#1d4ed8] p-1.5 rounded-lg hover:bg-blue-50 transition"
+                        >
+                          <Eye className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => openEditModal(u)}
+                          title="Edit"
+                          className="text-[#f59e0b] hover:text-[#d97706] p-1.5 rounded-lg hover:bg-amber-50 transition"
+                        >
+                          <Pencil className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => openDeleteModal(u)}
+                          title="Delete"
+                          className="text-[#ef4444] hover:text-[#dc2626] p-1.5 rounded-lg hover:bg-red-50 transition"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -255,13 +247,37 @@ export default function UserList() {
             </table>
           )}
         </div>
-    
 
-      {/* Add / Edit Modal — with gradient header and button colors */}
+        {/* Table Footer */}
+        <div className="px-6 py-4 border-t border-slate-100 flex items-center justify-between">
+          <p className="text-xs text-slate-500">
+            Showing <span className="font-semibold text-slate-700">1</span> to{' '}
+            <span className="font-semibold text-slate-700">{visibleUsers.length}</span> of{' '}
+            <span className="font-semibold text-slate-700">{users.length}</span> users
+          </p>
+          <div className="flex items-center gap-2">
+            <button
+              disabled
+              className="px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-medium text-slate-400 cursor-not-allowed"
+            >
+              Previous
+            </button>
+            <button
+              disabled
+              className="px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-medium text-slate-400 cursor-not-allowed"
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+      {/* Add / Edit Modal */}
       {modalOpen && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md my-8 animate-fade-in-up">
-            <div className="h-20 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 rounded-t-2xl flex items-center px-6">
+            <div className="h-20 bg-gradient-to-r from-[#1d4ed8] to-[#2563eb] rounded-t-2xl flex items-center px-6">
               <h2 className="text-xl font-bold text-white">
                 {editingUser ? 'Update User' : 'Add User'}
               </h2>
@@ -294,7 +310,7 @@ export default function UserList() {
                 <button
                   type="submit"
                   disabled={saving}
-                  className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:opacity-50 text-white font-semibold py-2.5 rounded-xl shadow-sm transition"
+                  className="flex-1 bg-[#2563eb] hover:bg-[#1d4ed8] disabled:opacity-50 text-white font-semibold py-2.5 rounded-xl shadow-sm transition"
                 >
                   {saving ? 'Saving...' : 'Save'}
                 </button>
@@ -315,7 +331,7 @@ export default function UserList() {
       {viewingUser && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md my-8 animate-fade-in-up">
-            <div className="h-20 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 rounded-t-2xl flex items-center px-6">
+            <div className="h-20 bg-gradient-to-r from-[#1d4ed8] to-[#2563eb] rounded-t-2xl flex items-center px-6">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white font-bold text-lg">
                   {getInitials(viewingUser.full_name)}
@@ -338,7 +354,7 @@ export default function UserList() {
               <div className="flex gap-2 mt-5">
                 <button
                   onClick={() => { setViewingUser(null); openEditModal(viewingUser); }}
-                  className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-2.5 rounded-xl shadow-sm transition"
+                  className="flex-1 bg-[#2563eb] hover:bg-[#1d4ed8] text-white font-semibold py-2.5 rounded-xl shadow-sm transition"
                 >
                   Edit this user
                 </button>
@@ -407,7 +423,7 @@ export default function UserList() {
           animation: fadeInUp 0.2s ease-out;
         }
       `}</style>
-    </div>
+    </>
   );
 }
 
