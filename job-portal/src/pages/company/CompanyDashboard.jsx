@@ -122,26 +122,6 @@ export default function CompanyDashboard() {
             <h1 className="text-3xl font-extrabold text-white tracking-tight">Dashboard</h1>
             <p className="text-white/70 text-sm mt-1">Overview of your recruitment activities</p>
           </div>
-
-          {/* Quick stats inside banner */}
-          <div className="flex flex-wrap gap-3">
-            <div className="bg-white/10 backdrop-blur border border-white/20 rounded-xl px-4 py-3 text-center min-w-[80px]">
-              <p className="text-2xl font-extrabold text-white">{stats.totalJobs}</p>
-              <p className="text-[11px] text-white/70 font-medium mt-0.5">Total Jobs</p>
-            </div>
-            <div className="bg-white/10 backdrop-blur border border-white/20 rounded-xl px-4 py-3 text-center min-w-[80px]">
-              <p className="text-2xl font-extrabold text-white">{stats.openJobsCount}</p>
-              <p className="text-[11px] text-white/70 font-medium mt-0.5">Open Jobs</p>
-            </div>
-            <div className="bg-white/10 backdrop-blur border border-white/20 rounded-xl px-4 py-3 text-center min-w-[80px]">
-              <p className="text-2xl font-extrabold text-white">{stats.totalApplicants}</p>
-              <p className="text-[11px] text-white/70 font-medium mt-0.5">Applicants</p>
-            </div>
-            <div className="bg-white/10 backdrop-blur border border-white/20 rounded-xl px-4 py-3 text-center min-w-[80px]">
-              <p className="text-2xl font-extrabold text-white">{stats.openVacancies}</p>
-              <p className="text-[11px] text-white/70 font-medium mt-0.5">Vacancies</p>
-            </div>
-          </div>
         </div>
       </div>
 

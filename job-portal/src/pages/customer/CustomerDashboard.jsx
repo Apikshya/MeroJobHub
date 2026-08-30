@@ -122,28 +122,6 @@ export default function CustomerDashboard() {
               Track your job applications and explore new career opportunities.
             </p>
           </div>
-
-          {/* Quick Stats inside banner */}
-          <div className="flex flex-wrap gap-3">
-            <div className="bg-white/10 backdrop-blur border border-white/20 rounded-xl px-4 py-3 text-center min-w-[80px]">
-              <p className="text-2xl font-extrabold text-white">{applications.length}</p>
-              <p className="text-[11px] text-white/70 font-medium mt-0.5">Applied</p>
-            </div>
-            <div className="bg-white/10 backdrop-blur border border-white/20 rounded-xl px-4 py-3 text-center min-w-[80px]">
-              <p className="text-2xl font-extrabold text-white">
-                {applications.filter((a) => a.status === 'SELECTED').length}
-              </p>
-              <p className="text-[11px] text-white/70 font-medium mt-0.5">Selected</p>
-            </div>
-            <div className="bg-white/10 backdrop-blur border border-white/20 rounded-xl px-4 py-3 text-center min-w-[80px]">
-              <p className="text-2xl font-extrabold text-white">{openJobsCount}</p>
-              <p className="text-[11px] text-white/70 font-medium mt-0.5">Open Jobs</p>
-            </div>
-            <div className="bg-white/10 backdrop-blur border border-white/20 rounded-xl px-4 py-3 text-center min-w-[80px]">
-              <p className="text-2xl font-extrabold text-white">{profileCompletion}%</p>
-              <p className="text-[11px] text-white/70 font-medium mt-0.5">Profile</p>
-            </div>
-          </div>
         </div>
       </div>
 

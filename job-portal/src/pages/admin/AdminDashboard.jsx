@@ -61,17 +61,6 @@ export default function AdminDashboard() {
               Monitor job portal metrics, user accounts, company registrations, and application activity in real time.
             </p>
           </div>
-
-          <div className="flex flex-wrap items-center gap-3">
-            <div className="bg-white/10 backdrop-blur-md rounded-xl px-4 py-2 border border-white/20">
-              <p className="text-xs text-blue-100">Total Users</p>
-              <p className="text-xl font-bold text-white">{summary.total_users ?? 0}</p>
-            </div>
-            <div className="bg-white/10 backdrop-blur-md rounded-xl px-4 py-2 border border-white/20">
-              <p className="text-xs text-blue-100">Total Companies</p>
-              <p className="text-xl font-bold text-white">{summary.total_companies ?? 0}</p>
-            </div>
-          </div>
         </div>
       </div>
 
