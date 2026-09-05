@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { getMyProfile } from '../../api/profileApi';
 import { User, Type, Mail, Phone, Calendar, MapPin } from 'lucide-react';
+import UserAvatar from '../../components/UserAvatar';
 
 export default function MyProfile() {
   const [profile, setProfile] = useState(null);
@@ -70,9 +71,11 @@ export default function MyProfile() {
         <div className="relative px-6 pb-6 pt-14">
           <div className="flex flex-col items-center -mt-12 sm:flex-row sm:items-end sm:gap-5">
             {/* Avatar */}
-            <div className="w-24 h-24 rounded-full border-4 border-white bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-3xl font-bold shadow-md">
-              {profile.first_name?.[0]?.toUpperCase() || '?'}
-            </div>
+            <UserAvatar
+              user={profile}
+              size="2xl"
+              className="w-24 h-24 border-4 border-white shadow-md"
+            />
             <div className="mt-3 sm:mt-0 text-center sm:text-left">
               <h1 className="text-2xl font-bold text-gray-800">{profile.full_name}</h1>
               <p className="text-sm text-gray-500">{profile.email}</p>

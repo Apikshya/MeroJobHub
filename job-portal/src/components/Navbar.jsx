@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import NotificationBell from './NotificationBell';
 import { useState, useRef, useEffect } from 'react';
 import { ChevronDown, User, UserPen, Lock, LogOut } from 'lucide-react';
+import UserAvatar from './UserAvatar';
 
 export default function Navbar({ portalLabel, variant = 'default' }) {
   const { user, logout } = useAuth();
@@ -71,9 +72,11 @@ export default function Navbar({ portalLabel, variant = 'default' }) {
                 onClick={() => setDropdownOpen(!dropdownOpen)}
                 className="flex items-center gap-2.5 bg-white hover:bg-slate-50 rounded-full pl-1.5 pr-3.5 py-1 transition-all duration-150 border border-slate-200 shadow-sm"
               >
-                <div className="w-8 h-8 rounded-full bg-slate-200 overflow-hidden flex items-center justify-center text-slate-700 font-bold text-xs shadow-inner">
-                  {userInitial}
-                </div>
+                <UserAvatar
+                  user={user}
+                  size="sm"
+                  className="w-8 h-8 ring-1 ring-slate-200"
+                />
                 <span className="hidden sm:inline text-sm font-semibold text-slate-700 truncate max-w-[130px]">
                   {userName}
                 </span>
@@ -83,11 +86,14 @@ export default function Navbar({ portalLabel, variant = 'default' }) {
               </button>
 
               {dropdownOpen && (
-                <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden py-1 z-50 animate-fade-in-up">
-                  <div className="px-4 py-2 border-b border-gray-100">
-                    <p className="text-xs text-gray-400">Signed in as</p>
-                    <p className="text-sm font-semibold text-gray-800 truncate">{userName}</p>
-                    <p className="text-xs text-gray-500 truncate">{user?.email}</p>
+                <div className="absolute right-0 mt-2 w-60 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden py-1 z-50 animate-fade-in-up">
+                  <div className="px-4 py-3 border-b border-gray-100 flex items-center gap-3">
+                    <UserAvatar user={user} size="md" className="w-10 h-10 ring-1 ring-slate-100" />
+                    <div className="min-w-0 flex-1">
+                      <p className="text-xs text-gray-400">Signed in as</p>
+                      <p className="text-sm font-semibold text-gray-800 truncate">{userName}</p>
+                      <p className="text-xs text-gray-500 truncate">{user?.email}</p>
+                    </div>
                   </div>
 
                   <button
@@ -166,9 +172,11 @@ export default function Navbar({ portalLabel, variant = 'default' }) {
               onClick={() => setDropdownOpen(!dropdownOpen)}
               className="flex items-center gap-2 bg-white/20 backdrop-blur-sm hover:bg-white/30 rounded-full pl-1 pr-3 py-1 transition-all duration-200 border border-white/30 shadow-sm"
             >
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-200 to-purple-300 flex items-center justify-center text-gray-800 font-bold text-sm shadow-inner">
-                {userInitial}
-              </div>
+              <UserAvatar
+                user={user}
+                size="sm"
+                className="w-8 h-8 ring-1 ring-white/50"
+              />
               <span className="hidden sm:inline text-sm font-medium text-white truncate max-w-[120px]">
                 {userName}
               </span>
@@ -178,11 +186,14 @@ export default function Navbar({ portalLabel, variant = 'default' }) {
             </button>
 
             {dropdownOpen && (
-              <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden py-1 z-10 animate-fade-in-up">
-                <div className="px-4 py-2 border-b border-gray-100">
-                  <p className="text-xs text-gray-400">Signed in as</p>
-                  <p className="text-sm font-semibold text-gray-800 truncate">{userName}</p>
-                  <p className="text-xs text-gray-500 truncate">{user?.email}</p>
+              <div className="absolute right-0 mt-2 w-60 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden py-1 z-10 animate-fade-in-up">
+                <div className="px-4 py-3 border-b border-gray-100 flex items-center gap-3">
+                  <UserAvatar user={user} size="md" className="w-10 h-10 ring-1 ring-slate-100" />
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs text-gray-400">Signed in as</p>
+                    <p className="text-sm font-semibold text-gray-800 truncate">{userName}</p>
+                    <p className="text-xs text-gray-500 truncate">{user?.email}</p>
+                  </div>
                 </div>
 
                 <button

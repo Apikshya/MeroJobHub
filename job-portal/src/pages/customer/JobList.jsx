@@ -19,6 +19,7 @@ import {
   Users,
   RotateCcw,
 } from 'lucide-react';
+import UserAvatar from '../../components/UserAvatar';
 
 export default function JobList() {
   const [jobs, setJobs] = useState([]);
@@ -497,9 +498,11 @@ export default function JobList() {
                   Applicant Details
                 </p>
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-[#dbeafe] text-[#1d4ed8] flex items-center justify-center font-bold text-sm">
-                    {getInitials(user?.full_name)}
-                  </div>
+                  <UserAvatar
+                    user={user}
+                    size="md"
+                    className="w-10 h-10 ring-2 ring-blue-100 shadow-sm"
+                  />
                   <div>
                     <p className="font-semibold text-slate-900 text-sm">{user?.full_name}</p>
                     <p className="text-xs text-slate-600">{user?.email} · {user?.phone_number || 'No phone'}</p>

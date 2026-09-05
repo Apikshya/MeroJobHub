@@ -13,3 +13,19 @@ export const uploadCv = (file) => {
     headers: { 'Content-Type': 'multipart/form-data' },
   })
 }
+
+export const uploadProfilePicture = (file) => {
+  const formData = new FormData()
+  formData.append('profilePicture', file)
+  return axiosInstance.post('/profile-picture/upload', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  })
+}
+
+export const deleteProfilePicture = () => axiosInstance.delete('/profile-picture/delete')
+
+export const getProfilePictureUrl = (userId, timestamp) => {
+  if (!userId) return null
+  const base = axiosInstance.defaults.baseURL || 'http://localhost:8081/api/v1'
+  return `${base}/profile-picture/view/${userId}${timestamp ? `?t=${timestamp}` : ''}`
+}
