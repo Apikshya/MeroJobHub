@@ -62,7 +62,7 @@ export default function Sidebar({
                   <>
                     {/* Active Indicator Bar on Left */}
                     {isActive && (
-                      <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-7 bg-[#ec4899] rounded-r shadow-sm" />
+                      <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[2px] h-7 bg-[#ffff] rounded-r shadow-sm" />
                     )}
                     {/* Icon */}
                     <span

@@ -14,8 +14,9 @@
 - `/admin/dashboard` - Platform-wide analytics (totals of companies, jobs, users, applications, and status charts)
 - `/admin/companies` - Manage all companies (register new company, view, edit, and delete)
 - `/admin/users` - Manage all system users across all roles (Admin, Customer, Company Admin)
-- `/admin/jobs` - Manage all job postings across the entire platform
+- `/admin/jobs` - Manage all job postings across the entire platform (with category, status, and search filters)
 - `/admin/applications` - Audit and review all candidate applications across all companies
+- `/admin/categories` - Manage platform job categories (create via pop-up modal, edit, and delete)
 
 #### Profile & Account Routes:
 - `/admin/profile` - View admin personal details

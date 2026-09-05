@@ -23,6 +23,7 @@ import UserList from '../pages/admin/UserList'
 import JobCrud from '../pages/admin/JobCrud'
 import Applications from '../pages/admin/Applications'
 import Companies from '../pages/admin/Companies'
+import CategoryList from '../pages/admin/CategoryList'
 
 import CompanyDashboard from '../pages/company/CompanyDashboard'
 import MyCompany from '../pages/company/MyCompany'
@@ -74,6 +75,7 @@ export default function AppRoutes() {
         <Route path="jobs" element={<JobCrud />} />
         <Route path="applications" element={<Applications />} />
         <Route path="companies" element={<Companies />} />
+        <Route path="categories" element={<CategoryList />} />
         {/* Profile routes */}
         <Route path="profile" element={<MyProfile />} />
         <Route path="edit-profile" element={<EditProfile />} />

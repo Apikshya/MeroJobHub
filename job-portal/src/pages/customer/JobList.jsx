@@ -4,6 +4,7 @@ import { getJobs, applyToJob } from '../../api/jobsApi';
 import { useAuth } from '../../context/AuthContext';
 import {
   Search,
+  Filter,
   CheckCircle,
   X,
   Banknote,
@@ -121,18 +122,21 @@ export default function JobList() {
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
-        <select
-          className="w-full sm:w-52 px-4 py-2 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-700"
-          value={categoryFilter}
-          onChange={(e) => setCategoryFilter(e.target.value)}
-        >
-          <option value="">All Categories</option>
-          {categories.map((c) => (
-            <option key={c} value={c}>
-              {c}
-            </option>
-          ))}
-        </select>
+        <div className="relative flex items-center w-full sm:w-60">
+          <Filter className="w-4 h-4 absolute left-3.5 text-slate-400 pointer-events-none" />
+          <select
+            className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-700 font-medium"
+            value={categoryFilter}
+            onChange={(e) => setCategoryFilter(e.target.value)}
+          >
+            <option value="">Filter by Category: All</option>
+            {categories.map((c) => (
+              <option key={c} value={c}>
+                Filter by Category: {c}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
       {/* Jobs List */}

@@ -2,7 +2,7 @@ import { Outlet } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
 
-import { LayoutDashboard, Users, Briefcase, ClipboardList, Building2 } from 'lucide-react';
+import { LayoutDashboard, Users, Briefcase, ClipboardList, Building2, Tags } from 'lucide-react';
 
 const links = [
   { to: '/admin/dashboard', label: 'Dashboard', icon: <LayoutDashboard className="w-5 h-5" /> },
@@ -10,6 +10,7 @@ const links = [
   { to: '/admin/jobs', label: 'Manage Jobs', icon: <Briefcase className="w-5 h-5" /> },
   { to: '/admin/applications', label: 'Applied Jobs', icon: <ClipboardList className="w-5 h-5" /> },
   { to: '/admin/companies', label: 'Company Info', icon: <Building2 className="w-5 h-5" /> },
+  { to: '/admin/categories', label: 'Categories', icon: <Tags className="w-5 h-5" /> },
 ];
 
 export default function AdminLayout() {

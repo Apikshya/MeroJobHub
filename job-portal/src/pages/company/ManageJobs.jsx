@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import toast from 'react-hot-toast';
 import { getJobs, createJob, updateJob, deleteJob, JOB_TYPES, JOB_STATUSES } from '../../api/jobsApi';
 import { getCompanyByCode } from '../../api/companiesApi';
+import { getCategories } from '../../api/categoriesApi';
 import { useAuth } from '../../context/AuthContext';
 import { Plus, Search, AlignLeft, MapPin, Briefcase, Tag, Clock, CheckCircle, BookOpen, Zap, DollarSign, Users, CalendarDays, Info, Folder, Banknote, Target, GraduationCap, Calendar } from 'lucide-react';
 
@@ -406,15 +407,25 @@ export default function ManageJobs() {
                 </div>
 
                 {/* Category */}
-                <Field
-                  label="Category"
-                  name="category"
-                  value={form.category}
-                  onChange={handleChange}
-                  placeholder="e.g. Software"
-                  required
-                  icon={<Tag className="w-4 h-4 text-gray-400" />}
-                />
+                <div>
+                  <label className="text-xs font-semibold text-gray-700 uppercase tracking-wider block mb-1 flex items-center gap-1.5">
+                    <Tag className="w-4 h-4 text-gray-400" /> Category <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    name="category"
+                    value={form.category}
+                    onChange={handleChange}
+                    required
+                    className="w-full border border-gray-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                  >
+                    <option value="">Select Category</option>
+                    {getCategories().map((cat) => (
+                      <option key={cat} value={cat}>
+                        {cat}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
                 {/* Experience required */}
                 <Field

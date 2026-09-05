@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import { getApplications, updateApplicationStatus, APPLICATION_STATUSES } from '../../api/applicationsApi';
 import { getJobs } from '../../api/jobsApi';
-import { Search } from 'lucide-react';
+import { Search, Filter } from 'lucide-react';
 import { getDocumentsByEmail } from '../../api/documentsApi';
 import DocumentViewButton from '../../components/DocumentViewButton';
 
@@ -22,28 +22,14 @@ export default function Applications() {
 
   const loadData = () => {
     setLoading(true);
-    getApplications()
-      .then((res) => {
-        const apps = res.data?.data?.job_applications ?? res.data?.data?.jobApplications ?? res.data?.data?.applications ?? [];
-        if (!Array.isArray(apps)) {
-          console.error('Unexpected applications response shape:', res.data);
-        }
-        setApplications(Array.isArray(apps) ? apps : []);
-      })
-      .catch((err) => {
-        console.error('Failed to load applications:', err);
-        toast.error(err.response?.data?.message || 'Could not load applications');
-      })
-      .finally(() => setLoading(false));
-
-    getJobs()
-      .then((res) => {
-        const jobs = res.data?.data?.jobs || [];
+    Promise.all([getApplications(), getJobs()])
+      .then(([appsRes, jobsRes]) => {
+        setApplications(appsRes.data?.data?.job_applications || []);
+        const jobs = jobsRes.data?.data?.jobs || [];
         setJobsById(Object.fromEntries(jobs.map((j) => [j.id, j])));
       })
-      .catch((err) => {
-        console.error('Failed to load jobs (job titles will show as "Job #id"):', err);
-      });
+      .catch(() => toast.error('Could not load applications'))
+      .finally(() => setLoading(false));
   };
 
   useEffect(() => {
@@ -59,20 +45,28 @@ export default function Applications() {
         a.applicant_name?.toLowerCase().includes(term) ||
         a.applicant_email?.toLowerCase().includes(term) ||
         job?.title?.toLowerCase().includes(term);
+
       const matchesStatus = !statusFilter || a.status === statusFilter;
       return matchesSearch && matchesStatus;
     });
   }, [applications, jobsById, search, statusFilter]);
 
-  const openView = (app) => {
+  const openViewModal = (app) => {
     setViewingApp(app);
     setSelectedStatus(app.status);
     setApplicantDocs([]);
     setDocsLoading(true);
+
     getDocumentsByEmail(app.applicant_email)
-      .then((res) => setApplicantDocs(res.data?.data?.documents || []))
-      .catch(() => toast.error('Could not load applicant documents'))
-      .finally(() => setDocsLoading(false));
+      .then((res) => {
+        setApplicantDocs(res.data?.data?.documents || []);
+      })
+      .catch(() => {
+        toast.error('Could not load applicant documents');
+      })
+      .finally(() => {
+        setDocsLoading(false);
+      });
   };
 
   const handleStatusSave = async () => {
@@ -93,11 +87,11 @@ export default function Applications() {
         cover_Letter: viewingApp.cover_letter,
         status: selectedStatus,
       });
-      toast.success('Application status updated');
+      toast.success('Status updated');
       setViewingApp(null);
       loadData();
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Could not update status');
+      toast.error(err.response?.data?.message || 'Update failed');
     } finally {
       setSaving(false);
     }
@@ -127,12 +121,6 @@ export default function Applications() {
   return (
     <div className="space-y-6">
       
-      {/* old Ui  */}
-      {/* Blue Hero Banner */}
-      {/* <div className="rounded-2xl px-8 py-6 text-white shadow-sm bg-gradient-to-r from-[#1d4ed8] to-[#2563eb]">
-        <h1 className="text-3xl font-bold text-white tracking-tight">Applied Jobs</h1>
-      </div> */}
-
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Applied Jobs</h1>
@@ -153,19 +141,22 @@ export default function Applications() {
               onChange={(e) => setSearch(e.target.value)}
             />
           </div>
-          <select
-            className="w-full sm:w-44 px-4 py-2 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-700"
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-          >
-            <option value="">All statuses</option>
-            <option value="APPLIED">Applied</option>
-            {APPLICATION_STATUSES.map((s) => (
-              <option key={s} value={s}>
-                {s}
-              </option>
-            ))}
-          </select>
+          <div className="relative flex items-center w-full sm:w-60">
+            <Filter className="w-4 h-4 absolute left-3.5 text-slate-400 pointer-events-none" />
+            <select
+              className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-700 font-medium"
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+            >
+              <option value="">Filter by Status: All</option>
+              <option value="APPLIED">Filter by Status: Applied</option>
+              {APPLICATION_STATUSES.map((s) => (
+                <option key={s} value={s}>
+                  Filter by Status: {s}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
         {/* Application list */}
