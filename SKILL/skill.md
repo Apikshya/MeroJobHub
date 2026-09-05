@@ -2,7 +2,8 @@
 
 ### For Backend
 
-1. nagivate to ums  // yo folder bhitra project cha yeha gayem suru ma
+1. nagivate to ums 
+cd clz-project/jwtToken/ums
 2. Run this command on terminal to execute backend
    export JAVA_HOME="/c/Program Files/Eclipse Adoptium/jdk-21.0.11.10-hotspot"
    ./mvnw spring-boot:run
@@ -10,6 +11,7 @@
 ### For Frontend
 
 1. Navigate to job-portal
+ cd clz-project/job-portal
 2. Run this command on terminal
    npm run dev
 
@@ -48,6 +50,9 @@ xosoyiw431@mapsguy.com
 
 Email: hocosa4455@mapsguy.com
 Password: 26397649 
+
+Email: rokov73300@mapsguy.com
+Password: 12345678
 
 varew13825@mapsguy.com
 98156156

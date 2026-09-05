@@ -157,13 +157,14 @@ export default function UserList() {
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Users</h1>
           <p className="text-sm text-slate-500 mt-0.5">Manage individuals who have access to your company portal.</p>
         </div>
-        <button
+        {/* DISABLED since its wrongly working */}
+        {/* <button
           onClick={openAddModal}
           className="bg-[#2563eb] hover:bg-[#1d4ed8] text-white font-medium px-4 py-2.5 rounded-xl shadow-sm transition flex items-center gap-2 text-sm self-start sm:self-auto"
         >
           <Plus className="w-4 h-4" />
-          Add User
-        </button>
+          Add Company Staff
+        </button> */}
       </div>
 
       {/* Main Table Card */}

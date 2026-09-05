@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import toast from 'react-hot-toast'
 import { getJobs, createJob, updateJob, deleteJob, JOB_TYPES, JOB_STATUSES } from '../../api/jobsApi'
 import { getAllCompanies } from '../../api/companiesApi'
-import { Plus } from 'lucide-react'
+import { getCategories } from '../../api/categoriesApi'
+import { Plus, Search, Filter } from 'lucide-react'
 
 const emptyForm = {
   title: '',
@@ -47,6 +48,9 @@ export default function JobCrud() {
   const [jobs, setJobs] = useState([])
   const [companies, setCompanies] = useState([])
   const [loading, setLoading] = useState(true)
+  const [search, setSearch] = useState('')
+  const [categoryFilter, setCategoryFilter] = useState('')
+  const [statusFilter, setStatusFilter] = useState('ALL')
   const [modalOpen, setModalOpen] = useState(false)
   const [editingJob, setEditingJob] = useState(null)
   const [form, setForm] = useState(emptyForm)
@@ -55,6 +59,29 @@ export default function JobCrud() {
   const [deletingJob, setDeletingJob] = useState(null)
   const [deleteRemarks, setDeleteRemarks] = useState('')
   const [deleting, setDeleting] = useState(false)
+
+  const availableCategories = useMemo(() => getCategories(), [])
+
+  const visibleJobs = useMemo(() => {
+    const term = search.trim().toLowerCase()
+    return jobs.filter((j) => {
+      const matchesSearch =
+        !term ||
+        j.title?.toLowerCase().includes(term) ||
+        j.company_name?.toLowerCase().includes(term) ||
+        j.location?.toLowerCase().includes(term)
+
+      const matchesCategory =
+        !categoryFilter ||
+        j.category?.toLowerCase() === categoryFilter.toLowerCase()
+
+      const matchesStatus =
+        statusFilter === 'ALL' ||
+        j.status?.toUpperCase() === statusFilter.toUpperCase()
+
+      return matchesSearch && matchesCategory && matchesStatus
+    })
+  }, [jobs, search, categoryFilter, statusFilter])
 
   const loadJobs = () => {
     setLoading(true)
@@ -188,6 +215,53 @@ export default function JobCrud() {
         </button>
       </div>
 
+      {/* Filter Toolbar (Search, Category Filter, Status Filter) */}
+      <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex flex-col md:flex-row gap-3">
+        {/* Search */}
+        <div className="relative flex-1">
+          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+          <input
+            type="text"
+            placeholder="Search by job title, company, or location..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full pl-10 pr-4 py-2 bg-gray-50/50 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+
+        {/* Category Filter */}
+        <div className="relative flex items-center md:w-60">
+          <Filter className="w-4 h-4 absolute left-3.5 text-gray-400 pointer-events-none" />
+          <select
+            value={categoryFilter}
+            onChange={(e) => setCategoryFilter(e.target.value)}
+            className="w-full pl-10 pr-4 py-2 bg-gray-50/50 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700 font-medium"
+          >
+            <option value="">Category: All</option>
+            {availableCategories.map((cat) => (
+              <option key={cat} value={cat}>
+                Category: {cat}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Status Filter */}
+        <div className="relative flex items-center md:w-48">
+          <Filter className="w-4 h-4 absolute left-3.5 text-gray-400 pointer-events-none" />
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="w-full pl-10 pr-4 py-2 bg-gray-50/50 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700 font-medium"
+          >
+            <option value="ALL">Status: All</option>
+            <option value="OPEN">Status: OPEN</option>
+            <option value="CLOSED">Status: CLOSED</option>
+            <option value="EXPIRED">Status: EXPIRED</option>
+          </select>
+        </div>
+      </div>
+
       {/* Job Cards Grid */}
       {loading ? (
         <div className="p-12 text-center bg-white rounded-2xl border border-gray-100">
@@ -196,7 +270,7 @@ export default function JobCrud() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {jobs.map((job) => (
+          {visibleJobs.map((job) => (
             <div
               key={job.id}
               className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition flex flex-col justify-between"
@@ -240,12 +314,6 @@ export default function JobCrud() {
                   View
                 </button>
                 <button
-                  onClick={() => openEditModal(job)}
-                  className="flex-1 text-center text-amber-600 hover:text-amber-800 text-xs font-semibold py-1.5 rounded-lg hover:bg-amber-50 transition"
-                >
-                  Edit
-                </button>
-                <button
                   onClick={() => openDeleteModal(job)}
                   className="flex-1 text-center text-red-600 hover:text-red-800 text-xs font-semibold py-1.5 rounded-lg hover:bg-red-50 transition"
                 >
@@ -254,9 +322,9 @@ export default function JobCrud() {
               </div>
             </div>
           ))}
-          {jobs.length === 0 && (
+          {visibleJobs.length === 0 && (
             <div className="bg-white rounded-2xl p-12 text-center col-span-full border border-gray-100">
-              <p className="text-gray-400">No jobs created yet.</p>
+              <p className="text-gray-400">No matching jobs found.</p>
             </div>
           )}
         </div>
@@ -370,14 +438,23 @@ export default function JobCrud() {
                   </div>
                 )}
 
-                <Field
-                  label="Category"
-                  name="category"
-                  value={form.category}
-                  onChange={handleChange}
-                  placeholder="Software Development"
-                  required
-                />
+                <div>
+                  <label className="text-sm font-medium text-gray-700">Category <span className="text-red-500">*</span></label>
+                  <select
+                    name="category"
+                    value={form.category}
+                    onChange={handleChange}
+                    required
+                    className="mt-1 w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                  >
+                    <option value="">Select category</option>
+                    {availableCategories.map((cat) => (
+                      <option key={cat} value={cat}>
+                        {cat}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
                 <Field
                   label="Experience required"

@@ -2,7 +2,8 @@ import { useEffect, useMemo, useState } from 'react'
 import toast from 'react-hot-toast'
 import { addCompany, getAllCompanies, updateCompany, deleteCompany } from '../../api/companiesApi'
 import { INDUSTRY_TYPES, COMPANY_TYPES, COMPANY_SIZES } from '../../api/companyOptions'
-import { Plus } from 'lucide-react'
+import { getCategories } from '../../api/categoriesApi'
+import { Plus, SlidersHorizontal } from 'lucide-react'
 import { validatePhoneNumber } from '../../utils/validators'
 
 const emptyForm = {
@@ -35,6 +36,7 @@ export default function Companies() {
   const [companies, setCompanies] = useState([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
+  const [categoryFilter, setCategoryFilter] = useState('')
   const [modalOpen, setModalOpen] = useState(false)
   const [editingCompany, setEditingCompany] = useState(null)
   const [form, setForm] = useState(emptyForm)
@@ -43,6 +45,11 @@ export default function Companies() {
   const [deletingCompany, setDeletingCompany] = useState(null)
   const [deleteRemarks, setDeleteRemarks] = useState('')
   const [deleting, setDeleting] = useState(false)
+
+  const categoryOptions = useMemo(() => {
+    const custom = getCategories()
+    return Array.from(new Set([...custom, ...INDUSTRY_TYPES]))
+  }, [])
 
   const loadCompanies = () => {
     setLoading(true)
@@ -58,15 +65,21 @@ export default function Companies() {
 
   const visibleCompanies = useMemo(() => {
     const term = search.trim().toLowerCase()
-    if (!term) return companies
-    return companies.filter(
-      (c) =>
+    return companies.filter((c) => {
+      const matchesSearch =
+        !term ||
         c.company_name?.toLowerCase().includes(term) ||
         c.company_code?.toLowerCase().includes(term) ||
         c.email_id?.toLowerCase().includes(term) ||
         c.city?.toLowerCase().includes(term)
-    )
-  }, [companies, search])
+
+      const matchesCategory =
+        !categoryFilter ||
+        c.industry_type?.toLowerCase() === categoryFilter.toLowerCase()
+
+      return matchesSearch && matchesCategory
+    })
+  }, [companies, search, categoryFilter])
 
   const openAddModal = () => {
     setEditingCompany(null)
@@ -173,14 +186,29 @@ export default function Companies() {
         </button>
       </div>
 
-      {/* ——— Search bar ——— */}
-      <div className="m-4">
+      {/* ——— Filter bar (Search & Category filter) ——— */}
+      <div className="m-4 flex flex-col sm:flex-row gap-3">
         <input
-          className="input-field w-full sm:max-w-xs rounded-full pl-10 pr-4 py-2 bg-white border border-gray-300 text-sm focus:ring-2 focus:ring-blue-500"
+          className="input-field w-full sm:max-w-xs rounded-full pl-6 pr-4 py-2 bg-white border border-gray-300 text-sm focus:ring-2 focus:ring-blue-500"
           placeholder="Search by name, code, city..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
+        <div className="relative flex items-center w-full sm:max-w-xs">
+          <SlidersHorizontal className="w-4 h-4 absolute left-3.5 text-gray-400 pointer-events-none" />
+          <select
+            className="w-full rounded-full pl-10 pr-4 py-2 bg-white border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700 font-medium"
+            value={categoryFilter}
+            onChange={(e) => setCategoryFilter(e.target.value)}
+          >
+            <option value="">Filter by Category: All</option>
+            {categoryOptions.map((cat) => (
+              <option key={cat} value={cat}>
+                {cat}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
       {/* ——— Company cards ——— */}
@@ -214,21 +242,9 @@ export default function Companies() {
               <div className="flex gap-3 mt-4 pt-3 border-t border-gray-100">
                 <button
                   onClick={() => setViewingCompany(company)}
-                  className="text-blue-600 hover:text-blue-800 text-sm font-semibold transition px-2 py-1 rounded-full hover:bg-blue-50"
+                  className="flex-1 text-center text-blue-600 hover:text-blue-800 text-sm font-semibold transition py-1.5 rounded-xl hover:bg-blue-50 border border-blue-100"
                 >
-                  View
-                </button>
-                <button
-                  onClick={() => openEditModal(company)}
-                  className="text-amber-600 hover:text-amber-800 text-sm font-semibold transition px-2 py-1 rounded-full hover:bg-amber-50"
-                >
-                  Edit
-                </button>
-                <button
-                  onClick={() => openDeleteModal(company)}
-                  className="text-red-600 hover:text-red-800 text-sm font-semibold transition px-2 py-1 rounded-full hover:bg-red-50"
-                >
-                  Delete
+                  View Details
                 </button>
               </div>
             </div>
@@ -302,7 +318,7 @@ export default function Companies() {
                   value={form.industry_type}
                   onChange={handleChange}
                   required
-                  options={INDUSTRY_TYPES}
+                  options={categoryOptions}
                 />
 
                 <Select
@@ -525,17 +541,8 @@ export default function Companies() {
               {/* Footer Actions */}
               <div className="flex gap-3 pt-2 border-t border-gray-100">
                 <button
-                  onClick={() => {
-                    setViewingCompany(null);
-                    openEditModal(viewingCompany);
-                  }}
-                  className="flex-1 bg-[#1d4ed8] hover:bg-[#1e40af] text-white font-semibold py-2.5 rounded-xl shadow-sm transition"
-                >
-                  Edit Company Details
-                </button>
-                <button
                   onClick={() => setViewingCompany(null)}
-                  className="flex-1 border border-gray-200 hover:bg-gray-50 text-gray-700 font-medium py-2.5 rounded-xl transition"
+                  className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2.5 rounded-xl transition"
                 >
                   Close
                 </button>

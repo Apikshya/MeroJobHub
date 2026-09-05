@@ -4,7 +4,13 @@ import { getApplications, updateApplicationStatus, APPLICATION_STATUSES } from '
 import { getJobs } from '../../api/jobsApi'
 import { getDocumentsByEmail } from '../../api/documentsApi'
 import DocumentViewButton from '../../components/DocumentViewButton'
-import { Search } from 'lucide-react'
+// import { useEffect, useMemo, useState } from 'react'
+// import toast from 'react-hot-toast'
+// import { getApplications, updateApplicationStatus, APPLICATION_STATUSES } from '../../api/applicationsApi'
+// import { getJobs } from '../../api/jobsApi'
+// import { getDocumentsByEmail } from '../../api/documentsApi'
+// import DocumentViewButton from '../../components/DocumentViewButton'
+import { Search, Filter } from 'lucide-react'
 
 // Helper: status badge with consistent colors (like userTypeBadge)
 const statusBadge = (status) => {
@@ -118,8 +124,8 @@ export default function Applications() {
       </div>
 
       {/* Search & Filter Bar */}
-      <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex flex-col sm:flex-row gap-3">
-        <div className="relative flex-1">
+      <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex flex-col sm:flex-row items-center gap-3">
+        <div className="relative flex-1 w-full">
           <input
             className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2563eb] focus:bg-white transition"
             placeholder="Search by applicant name, email, or job title..."
@@ -128,16 +134,21 @@ export default function Applications() {
           />
           <Search className="absolute left-3.5 top-2.5 h-4 w-4 text-gray-400" />
         </div>
-        <select
-          className="w-full sm:w-52 px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2563eb] focus:bg-white transition text-gray-700 font-medium"
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-        >
-          <option value="">All Statuses</option>
-          {allStatuses.filter(s => s !== '').map((s) => (
-            <option key={s} value={s}>{s}</option>
-          ))}
-        </select>
+        
+        {/* Status Filter with Filter Icon & Label */}
+        <div className="relative flex items-center w-full sm:w-60">
+          <Filter className="absolute left-3.5 w-4 h-4 text-gray-400 pointer-events-none" />
+          <select
+            className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2563eb] focus:bg-white transition text-gray-700 font-medium"
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+          >
+            <option value="">Filter by Status: All</option>
+            {allStatuses.filter(s => s !== '').map((s) => (
+              <option key={s} value={s}>Filter by Status: {s}</option>
+            ))}
+          </select>
+        </div>
       </div>
 
       {/* Applications Table */}
@@ -154,7 +165,6 @@ export default function Applications() {
                 <tr>
                   <th className="py-3.5 px-6">Applicant</th>
                   <th className="py-3.5 px-4">Applied Job</th>
-                  <th className="py-3.5 px-4">Resume File</th>
                   <th className="py-3.5 px-4">Status</th>
                   <th className="py-3.5 px-6 text-right">Actions</th>
                 </tr>
@@ -172,9 +182,6 @@ export default function Applications() {
                         <p className="text-xs text-gray-400">{jobsById[app.job_id].company_name}</p>
                       )}
                     </td>
-                    <td className="py-3.5 px-4 text-xs text-gray-600 font-mono">
-                      {app.resume_file_name || 'No file attached'}
-                    </td>
                     <td className="py-3.5 px-4">{statusBadge(app.status)}</td>
                     <td className="py-3.5 px-6 text-right">
                       <button
@@ -188,7 +195,7 @@ export default function Applications() {
                 ))}
                 {visibleApps.length === 0 && (
                   <tr>
-                    <td colSpan={5} className="py-12 text-center text-gray-400">
+                    <td colSpan={4} className="py-12 text-center text-gray-400">
                       No applications match your search filters.
                     </td>
                   </tr>
