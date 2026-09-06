@@ -1,0 +1,13 @@
+package com.auth.ums.enums;
+
+public enum OtpPurpose {
+    FORGOT_PASSWORD,
+    RESET_PASSWORD,
+    TRANSACTION_PASSWORD,
+    LOGIN_2FA,
+    EMAIL_VERIFICATION,
+    PHONE_VERIFICATION,
+    ACCOUNT_UNLOCK,
+    CHANGE_MOBILE_NUMBER,
+    KYC_VERIFICATION
+}

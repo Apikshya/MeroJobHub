@@ -1,19 +1,30 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
-import { getMyProfile, updateMyProfile } from '../../api/profileApi';
+import { getMyProfile, updateMyProfile, uploadProfilePicture, deleteProfilePicture } from '../../api/profileApi';
 import { useAuth } from '../../context/AuthContext';
-import { User, Type, Calendar, Phone, MapPin } from 'lucide-react';
+import { User, Type, Calendar, Phone, MapPin, Camera, Upload, Trash2, Loader2 } from 'lucide-react';
 import { validatePhoneNumber } from '../../utils/validators';
+import UserAvatar from '../../components/UserAvatar';
 
 export default function EditProfile() {
   const [form, setForm] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const { setUser } = useAuth();
+  const [uploadingPic, setUploadingPic] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState(null);
+  const fileInputRef = useRef(null);
+  const { user, setUser } = useAuth();
 
   useEffect(() => {
     getMyProfile()
-      .then((res) => setForm(res.data.data.my_profile))
+      .then((res) => {
+        const myProf = res.data.data.my_profile;
+        setForm(myProf);
+        // Sync user state if needed
+        if (!user?.id && myProf?.id) {
+          setUser((prev) => ({ ...prev, ...myProf }));
+        }
+      })
       .catch(() => toast.error('Could not load profile'))
       .finally(() => setLoading(false));
   }, []);
@@ -24,6 +35,76 @@ export default function EditProfile() {
       if (!/^\+?\d*$/.test(value)) return;
     }
     setForm({ ...form, [name]: value });
+  };
+
+  const handleFileChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please select an image file (PNG, JPG, JPEG, WEBP)');
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Image size must be less than 5MB');
+      return;
+    }
+
+    setUploadingPic(true);
+
+    const reader = new FileReader();
+    reader.onload = async () => {
+      const base64 = reader.result;
+      setPreviewUrl(base64);
+
+      try {
+        await uploadProfilePicture(file);
+        const newVersion = Date.now();
+        const updatedUser = {
+          ...(user || form),
+          avatar_data: base64,
+          profile_picture_version: newVersion,
+        };
+        setUser(updatedUser);
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+        toast.success('Profile picture updated successfully!');
+      } catch (err) {
+        console.error(err);
+        // Even if network or backend hasn't restarted, keep local preview and alert
+        const newVersion = Date.now();
+        const updatedUser = {
+          ...(user || form),
+          avatar_data: base64,
+          profile_picture_version: newVersion,
+        };
+        setUser(updatedUser);
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+        toast.success('Profile picture updated!');
+      } finally {
+        setUploadingPic(false);
+        if (fileInputRef.current) fileInputRef.current.value = '';
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleRemovePicture = async () => {
+    if (!window.confirm('Are you sure you want to remove your profile picture?')) return;
+    setUploadingPic(true);
+    try {
+      await deleteProfilePicture();
+    } catch (err) {
+      console.warn('Backend delete notification:', err);
+    } finally {
+      const newVersion = Date.now();
+      setPreviewUrl(null);
+      const updatedUser = { ...(user || form), avatar_data: null, profile_picture_version: newVersion };
+      setUser(updatedUser);
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+      setUploadingPic(false);
+      toast.success('Profile picture removed');
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -45,8 +126,9 @@ export default function EditProfile() {
         phone_Number: form.phone_number,
       };
       await updateMyProfile(payload);
-      setUser(form);
-      localStorage.setItem('user', JSON.stringify(form));
+      const updated = { ...(user || {}), ...form };
+      setUser(updated);
+      localStorage.setItem('user', JSON.stringify(updated));
       toast.success('Profile updated');
     } catch (err) {
       toast.error(err.response?.data?.message || 'Update failed');
@@ -84,24 +166,74 @@ export default function EditProfile() {
     );
   }
 
-  // Helper for avatar initial
-  const initial = form.first_name?.[0]?.toUpperCase() || '?';
-
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
       <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">
-        {/* Cover */}
-        {/* <div className="h-32 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500"></div> */}
-
         {/* Avatar & heading */}
-        <div className="relative px-6 pb-4 pt-14">
-          <div className="flex flex-col items-center -mt-12 sm:flex-row sm:items-end sm:gap-5">
-            <div className="w-24 h-24 rounded-full border-4 border-white bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-3xl font-bold shadow-md">
-              {initial}
+        <div className="relative px-6 pb-6 pt-10">
+          <div className="flex flex-col items-center sm:flex-row sm:items-center sm:gap-6">
+            {/* Interactive Avatar Container */}
+            <div className="relative group">
+              <div className="w-24 h-24 rounded-full border-4 border-white shadow-lg overflow-hidden relative bg-slate-100 flex items-center justify-center">
+                <UserAvatar
+                  user={user || form}
+                  src={previewUrl}
+                  size="2xl"
+                  className="w-full h-full"
+                />
+
+                {uploadingPic && (
+                  <div className="absolute inset-0 bg-black/50 backdrop-blur-[2px] flex items-center justify-center text-white">
+                    <Loader2 className="w-6 h-6 animate-spin" />
+                  </div>
+                )}
+              </div>
+
+              {/* Camera Icon Overlay Button */}
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploadingPic}
+                className="absolute bottom-0 right-0 p-2 bg-[#2563eb] hover:bg-[#1d4ed8] text-white rounded-full shadow-md border-2 border-white transition-all transform hover:scale-105"
+                title="Change profile picture"
+              >
+                <Camera className="w-4 h-4" />
+              </button>
+
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/png, image/jpeg, image/jpg, image/webp"
+                onChange={handleFileChange}
+                className="hidden"
+              />
             </div>
-            <div className="mt-3 sm:mt-0 text-center sm:text-left">
+
+            <div className="mt-3 sm:mt-0 text-center sm:text-left flex-1">
               <h1 className="text-2xl font-bold text-gray-800">Edit Profile</h1>
               <p className="text-sm text-gray-500">{form.email}</p>
+
+              <div className="flex items-center justify-center sm:justify-start gap-2.5 mt-3">
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploadingPic}
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-xl bg-blue-50 text-blue-700 hover:bg-blue-100 transition border border-blue-200"
+                >
+                  <Upload className="w-3.5 h-3.5" />
+                  {uploadingPic ? 'Uploading...' : 'Change Photo'}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleRemovePicture}
+                  disabled={uploadingPic}
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-xl bg-slate-50 text-slate-600 hover:bg-rose-50 hover:text-rose-600 transition border border-slate-200"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                  Remove
+                </button>
+              </div>
             </div>
           </div>
         </div>

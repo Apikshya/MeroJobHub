@@ -6,6 +6,7 @@ import { getJobs } from '../../api/jobsApi';
 import { getDocumentsByEmail } from '../../api/documentsApi';
 import { getMyApplications } from '../../api/applicationsApi';
 import { CheckCircle, FileText, Briefcase, ShieldCheck, ArrowRight, TrendingUp, Sparkles, Clock, Send, Star, Award, XCircle, Undo2 } from 'lucide-react';
+import UserAvatar from '../../components/UserAvatar';
 
 const STATUS_STYLES = {
   APPLIED: { bar: '#2563eb', bg: '#eff6ff', border: '#bfdbfe', label: 'Applied', icon: Send },
@@ -110,17 +111,24 @@ export default function CustomerDashboard() {
         <div className="absolute -bottom-12 -left-8 w-40 h-40 bg-white/5 rounded-full pointer-events-none" />
 
         <div className="relative flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-          <div>
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-xs font-semibold uppercase tracking-widest text-white/90 mb-2">
-              <Sparkles className="w-3.5 h-3.5" />
-              Welcome Back
+          <div className="flex items-center gap-4 sm:gap-5">
+            <UserAvatar
+              user={profile}
+              size="2xl"
+              className="w-16 h-16 sm:w-20 sm:h-20 ring-4 ring-white/30 shadow-lg"
+            />
+            <div>
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-xs font-semibold uppercase tracking-widest text-white/90 mb-1.5">
+                <Sparkles className="w-3.5 h-3.5" />
+                Welcome Back
+              </div>
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+                Hello, {greetingName}!
+              </h1>
+              <p className="text-white/80 text-sm mt-1">
+                Track your job applications and explore new career opportunities.
+              </p>
             </div>
-            <h1 className="text-3xl font-extrabold text-white tracking-tight">
-              Hello, {greetingName}!
-            </h1>
-            <p className="text-white/80 text-sm mt-1">
-              Track your job applications and explore new career opportunities.
-            </p>
           </div>
         </div>
       </div>
