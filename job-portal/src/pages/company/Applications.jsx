@@ -5,6 +5,7 @@ import { getJobs } from '../../api/jobsApi';
 import { Search, Filter } from 'lucide-react';
 import { getDocumentsByEmail } from '../../api/documentsApi';
 import DocumentViewButton from '../../components/DocumentViewButton';
+import UserAvatar from '../../components/UserAvatar';
 
 // The backend is expected to scope job-application/get-all to jobs belonging to
 // the logged-in COMPANY_ADMIN's own company automatically — no client-side filtering here.
@@ -148,11 +149,11 @@ export default function Applications() {
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
             >
-              <option value="">Filter by Status: All</option>
-              <option value="APPLIED">Filter by Status: Applied</option>
+              <option value="">Status: All</option>
+              <option value="APPLIED">APPLIED</option>
               {APPLICATION_STATUSES.map((s) => (
                 <option key={s} value={s}>
-                  Filter by Status: {s}
+                  {s}
                 </option>
               ))}
             </select>
@@ -185,9 +186,12 @@ export default function Applications() {
                   className="bg-white rounded-xl border border-slate-100 hover:border-slate-200 hover:shadow-sm transition-all duration-200 p-5"
                 >
                   <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 rounded-full bg-[#dbeafe] text-[#2563eb] flex items-center justify-center font-bold text-sm flex-shrink-0">
-                      {getInitials(app.applicant_name)}
-                    </div>
+                    <UserAvatar
+                      userId={app.applicant_id}
+                      name={app.applicant_name}
+                      size="md"
+                      className="w-10 h-10 shadow-sm"
+                    />
                     <div className="flex-1 min-w-0">
                       <div className="flex flex-wrap items-start justify-between gap-2">
                         <div>
@@ -214,7 +218,7 @@ export default function Applications() {
                   </div>
                   <div className="mt-3 pt-3 border-t border-slate-100 flex justify-end">
                     <button
-                      onClick={() => openView(app)}
+                      onClick={() => openViewModal(app)}
                       className="text-sm font-semibold text-[#2563eb] hover:text-[#1d4ed8] transition"
                     >
                       View Details
@@ -229,19 +233,28 @@ export default function Applications() {
 
       {/* View Modal */}
       {viewingApp && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl my-8 animate-fade-in-up">
-            <div className="h-20 bg-gradient-to-r from-[#1d4ed8] to-[#2563eb] rounded-t-2xl flex items-center justify-between px-6">
+        <div
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto"
+          onClick={() => setViewingApp(null)}
+        >
+          <div
+            className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl my-auto max-h-[92vh] flex flex-col animate-fade-in-up overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="shrink-0 h-20 bg-blue-700 rounded-t-2xl flex items-center justify-between px-6">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white font-bold text-lg">
-                  {getInitials(viewingApp.applicant_name)}
-                </div>
+                <UserAvatar
+                  userId={viewingApp.applicant_id}
+                  name={viewingApp.applicant_name}
+                  size="lg"
+                  className="w-12 h-12 border-2 border-white/40 shadow-sm"
+                />
                 <h2 className="text-xl font-bold text-white">{viewingApp.applicant_name}</h2>
               </div>
               {statusBadge(viewingApp.status)}
             </div>
 
-            <div className="p-6 bg-gray-50/50">
+            <div className="flex-1 overflow-y-auto p-6 bg-gray-50/50">
               <div className="mb-4">
                 <p className="text-sm text-gray-500">
                   Applied for{' '}
@@ -314,7 +327,7 @@ export default function Applications() {
                 <button
                   onClick={handleStatusSave}
                   disabled={saving}
-                  className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:opacity-50 text-white font-semibold py-2.5 rounded-xl shadow-sm transition"
+                  className="flex-1 bg-blue-700 hover:from-blue-700 hover:to-purple-700 disabled:opacity-50 text-white font-semibold py-2.5 rounded-xl shadow-sm transition"
                 >
                   {saving ? 'Saving...' : 'Save status'}
                 </button>

@@ -3,6 +3,7 @@ import toast from 'react-hot-toast'
 import { getUsers, createUser, updateUser, deleteUser } from '../../api/usersApi'
 import { Plus, Search, Info } from 'lucide-react'
 import { validatePhoneNumber } from '../../utils/validators'
+import UserAvatar from '../../components/UserAvatar'
 
 const emptyAddForm = {
   firstName: '',
@@ -233,9 +234,7 @@ export default function UserList() {
                   <tr key={u.id} className="hover:bg-blue-50/30 transition">
                     <td className="py-3.5 px-6">
                       <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-sm shadow-sm">
-                          {getInitials(u.full_name)}
-                        </div>
+                        <UserAvatar user={u} size="sm" className="w-9 h-9 shadow-sm" />
                         <span className="font-semibold text-gray-900">{u.full_name}</span>
                       </div>
                     </td>
@@ -333,13 +332,17 @@ export default function UserList() {
 
       {/* ——— View Modal (gradient header) ——— */}
       {viewingUser && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md my-8 animate-fade-in-up">
+        <div
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto"
+          onClick={() => setViewingUser(null)}
+        >
+          <div
+            className="bg-white rounded-2xl shadow-2xl w-full max-w-md my-8 animate-fade-in-up overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="h-20 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 rounded-t-2xl flex items-center px-6">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white font-bold text-lg">
-                  {getInitials(viewingUser.full_name)}
-                </div>
+                <UserAvatar user={viewingUser} size="lg" className="w-12 h-12 border-2 border-white/40 shadow-sm" />
                 <h2 className="text-xl font-bold text-white">{viewingUser.full_name}</h2>
               </div>
             </div>

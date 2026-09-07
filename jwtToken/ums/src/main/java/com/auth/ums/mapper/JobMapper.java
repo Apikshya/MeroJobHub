@@ -3,8 +3,10 @@ import com.auth.ums.models.Job;
 import com.auth.ums.requestmodels.JobRequestModel.AddJobRequest;
 import com.auth.ums.requestmodels.JobRequestModel.DeleteJobRequest;
 import com.auth.ums.requestmodels.JobRequestModel.UpdateJobRequest;
+import com.auth.ums.enums.JobStatus;
 import com.auth.ums.responsemodels.job.JobDTO;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -92,7 +94,13 @@ public class JobMapper {
         dto.setVacancyCount(job.getVacancyCount());
         dto.setPostedDate(job.getPostedDate());
         dto.setExpiryDate(job.getExpiryDate());
-        dto.setStatus(job.getStatus());
+
+        boolean isExpired = (job.getExpiryDate() != null && job.getExpiryDate().isBefore(LocalDateTime.now()))
+                || job.getStatus() == JobStatus.EXPIRED
+                || Boolean.TRUE.equals(job.getIsExpired());
+
+        dto.setIsExpired(isExpired);
+        dto.setStatus(isExpired && job.getStatus() == JobStatus.OPEN ? JobStatus.EXPIRED : job.getStatus());
 
         return dto;
     }

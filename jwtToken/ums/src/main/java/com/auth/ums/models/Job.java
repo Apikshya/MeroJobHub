@@ -68,19 +68,21 @@ public class Job extends BaseEntity {
     @Column(name = "company_code")
     private String companyCode;
 
+    @Column(name = "is_expired")
+    private Boolean isExpired = false;
+
     /**
      * Auto-flip status to EXPIRED whenever the entity is loaded/updated
-     * and the expiry date has already passed. The authoritative sweep
-     * still happens via the scheduled job (see JobExpiryScheduler),
-     * this is just a safety net for reads/writes in between runs.
+     * and the expiry date has already passed.
      */
     @PrePersist
     @PreUpdate
     public void syncStatusWithExpiry() {
-        if (expiryDate != null
-                && expiryDate.isBefore(LocalDateTime.now())
-                && status == JobStatus.OPEN) {
+        if ((expiryDate != null && expiryDate.isBefore(LocalDateTime.now())) || status == JobStatus.EXPIRED) {
             this.status = JobStatus.EXPIRED;
+            this.isExpired = true;
+        } else {
+            this.isExpired = false;
         }
     }
 }

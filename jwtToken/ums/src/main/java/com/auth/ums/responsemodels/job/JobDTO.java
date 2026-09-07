@@ -58,4 +58,7 @@ public class JobDTO extends BaseDTO {
 
     @JsonProperty("status")
     private JobStatus status;
+
+    @JsonProperty("is_expired")
+    private Boolean isExpired;
 }

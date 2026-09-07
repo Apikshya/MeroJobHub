@@ -273,6 +273,7 @@ export default function EditProfile() {
               min={1}
               max={99}
               onChange={handleChange}
+              required
               icon={<Calendar className="w-4 h-4 text-gray-400" />}
             />
             <Field

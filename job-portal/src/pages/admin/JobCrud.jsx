@@ -240,7 +240,7 @@ export default function JobCrud() {
             <option value="">Category: All</option>
             {availableCategories.map((cat) => (
               <option key={cat} value={cat}>
-                Category: {cat}
+                {cat}
               </option>
             ))}
           </select>
@@ -255,9 +255,9 @@ export default function JobCrud() {
             className="w-full pl-10 pr-4 py-2 bg-gray-50/50 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700 font-medium"
           >
             <option value="ALL">Status: All</option>
-            <option value="OPEN">Status: OPEN</option>
-            <option value="CLOSED">Status: CLOSED</option>
-            <option value="EXPIRED">Status: EXPIRED</option>
+            <option value="OPEN"> OPEN</option>
+            <option value="CLOSED"> CLOSED</option>
+            <option value="EXPIRED"> EXPIRED</option>
           </select>
         </div>
       </div>

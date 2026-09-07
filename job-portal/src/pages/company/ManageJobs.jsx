@@ -176,6 +176,21 @@ export default function ManageJobs() {
     }
   };
 
+  const isJobExpired = (job) => {
+    if (!job) return false;
+    if (job.status === 'EXPIRED' || job.is_expired) return true;
+    if (job.expiry_date) {
+      const exp = new Date(job.expiry_date);
+      return exp < new Date();
+    }
+    return false;
+  };
+
+  const getJobDisplayStatus = (job) => {
+    if (isJobExpired(job)) return 'EXPIRED';
+    return job?.status || 'OPEN';
+  };
+
   const statusBadge = (status) => {
     const config = {
       OPEN: { bg: 'bg-green-50', text: 'text-green-700', border: 'border-green-200', label: 'Open' },
@@ -266,7 +281,7 @@ export default function ManageJobs() {
                       <div className="flex-1 min-w-0">
                         <div className="flex flex-wrap items-start justify-between gap-2">
                           <h2 className="font-semibold text-slate-900 text-base truncate">{job.title}</h2>
-                          {statusBadge(job.status)}
+                          {statusBadge(getJobDisplayStatus(job))}
                         </div>
                         <div className="flex flex-wrap items-center gap-2 mt-0.5">
                           <span className="text-sm text-slate-500">{job.company_name}</span>
@@ -556,11 +571,17 @@ export default function ManageJobs() {
 
       {/* View Modal */}
       {viewingJob && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl my-8 animate-fade-in-up">
+        <div
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto"
+          onClick={() => setViewingJob(null)}
+        >
+          <div
+            className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl my-8 animate-fade-in-up overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="h-20 bg-gradient-to-r from-[#1d4ed8] to-[#2563eb] rounded-t-2xl flex items-center justify-between px-6">
               <h2 className="text-xl font-bold text-white truncate">{viewingJob.title}</h2>
-              {statusBadge(viewingJob.status)}
+              {statusBadge(getJobDisplayStatus(viewingJob))}
             </div>
             <div className="p-6 bg-gray-50/50">
               <div className="flex flex-wrap items-center gap-2 text-sm text-gray-500 mb-4">
@@ -581,7 +602,7 @@ export default function ManageJobs() {
               <p className="text-sm text-gray-700 whitespace-pre-line mb-5">{viewingJob.description}</p>
               <dl className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <DetailRow label="Job ID" value={viewingJob.id} />
-                <DetailRow label="Status" value={viewingJob.status} />
+                <DetailRow label="Status" value={getJobDisplayStatus(viewingJob)} />
                 <DetailRow label="Experience" value={viewingJob.experience_required} />
                 <DetailRow label="Qualification" value={viewingJob.qualification} />
                 <DetailRow

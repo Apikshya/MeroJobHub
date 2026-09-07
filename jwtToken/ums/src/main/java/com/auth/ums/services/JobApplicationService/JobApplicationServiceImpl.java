@@ -1,5 +1,6 @@
 package com.auth.ums.services.JobApplicationService;
 import com.auth.ums.enums.ApplicationStatus;
+import com.auth.ums.enums.JobStatus;
 import com.auth.ums.enums.NotificationAction;
 import com.auth.ums.jwtsecurity.JwtUtil;
 import com.auth.ums.mapper.JobApplicationMapper;
@@ -71,6 +72,15 @@ public class JobApplicationServiceImpl implements JobApplicationService {
 
             if (optional.get().getIsDeleted()) {
                 return ApiResponse.failure(ÄpiMessageCodes.NO_RESULT_FOUND.toString());
+            }
+
+            Job targetJob = optional.get();
+            boolean isExpired = (targetJob.getExpiryDate() != null && targetJob.getExpiryDate().isBefore(LocalDateTime.now()))
+                    || targetJob.getStatus() == JobStatus.EXPIRED
+                    || Boolean.TRUE.equals(targetJob.getIsExpired());
+
+            if (isExpired) {
+                return ApiResponse.failure("This job has expired and is no longer accepting applications");
             }
 
             if (jobApplicationRepository.existsByApplicantIdAndJobIdAndIsDeletedFalse(

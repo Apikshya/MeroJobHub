@@ -74,10 +74,20 @@ export default function JobList() {
     return false;
   };
 
+  const isJobExpired = (job) => {
+    if (!job) return false;
+    if (job.status === 'EXPIRED' || job.is_expired) return true;
+    if (job.expiry_date) {
+      const exp = new Date(job.expiry_date);
+      return exp < new Date();
+    }
+    return false;
+  };
+
   const visibleJobs = useMemo(() => {
     const term = search.trim().toLowerCase();
-    const openJobs = jobs.filter((j) => j.status === 'OPEN');
-    return openJobs.filter((j) => {
+    const displayableJobs = jobs.filter((j) => j.status !== 'CLOSED');
+    return displayableJobs.filter((j) => {
       // 1. Keyword search
       const matchesSearch =
         !term ||
@@ -148,6 +158,10 @@ export default function JobList() {
   };
 
   const openApplyModal = (job) => {
+    if (isJobExpired(job)) {
+      toast.error('This job has expired and is no longer accepting applications');
+      return;
+    }
     if (isJobApplied(job)) {
       toast.error('You have already applied for this job');
       return;
@@ -161,7 +175,12 @@ export default function JobList() {
 
   const submitApplication = async (e) => {
     e.preventDefault();
-    if (!applyingJob || isJobApplied(applyingJob)) {
+    if (!applyingJob || isJobExpired(applyingJob)) {
+      toast.error('This job has expired and is no longer accepting applications');
+      setApplyingJob(null);
+      return;
+    }
+    if (isJobApplied(applyingJob)) {
       toast.error('You have already applied for this job');
       setApplyingJob(null);
       return;
@@ -384,12 +403,7 @@ export default function JobList() {
                   </div>
 
                   <div className="flex items-center gap-2 flex-wrap justify-end">
-                    {/* {isJobApplied(job) && (
-                      <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 inline-flex items-center gap-1">
-                        <CheckCircle className="w-3.5 h-3.5 text-emerald-600" />
-                        Applied
-                      </span>
-                    )} */}
+                    
                     <span className="text-xs font-semibold px-3 py-1 rounded-full bg-[#eff6ff] text-[#2563eb] border border-[#bfdbfe] whitespace-nowrap">
                       {job.job_type?.replace('_', ' ') || 'FULL TIME'}
                     </span>
@@ -415,10 +429,17 @@ export default function JobList() {
                     <GraduationCap className="w-3.5 h-3.5 text-indigo-500" />
                     {job.qualification || 'Any qualification'}
                   </span>
-                  <span className="inline-flex items-center gap-1.5 text-xs bg-slate-50 border border-slate-100 text-slate-700 px-3 py-1 rounded-full">
-                    <CalendarDays className="w-3.5 h-3.5 text-amber-500" />
-                    Apply by: {job.expiry_date?.substring(0, 10) || 'Open'}
-                  </span>
+                  {isJobExpired(job) ? (
+                    <span className="inline-flex items-center gap-1.5 text-xs bg-red-50 border border-red-100 text-red-600 px-3 py-1 rounded-full">
+                      <CalendarDays className="w-3.5 h-3.5 text-red-500" />
+                      Expired: {job.expiry_date?.substring(0, 10) || 'Date passed'}
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1.5 text-xs bg-slate-50 border border-slate-100 text-slate-700 px-3 py-1 rounded-full">
+                      <CalendarDays className="w-3.5 h-3.5 text-amber-500" />
+                      Apply by: {job.expiry_date?.substring(0, 10) || 'Open'}
+                    </span>
+                  )}
                 </div>
 
                 {/* Skills tags */}
@@ -450,6 +471,14 @@ export default function JobList() {
                       <CheckCircle className="w-4 h-4 text-emerald-600" />
                       Applied
                     </button>
+                  ) : isJobExpired(job) ? (
+                    <button
+                      disabled
+                      aria-disabled="true"
+                      className="inline-flex items-center gap-1.5 bg-red-50 text-red-600 border border-red-200 text-sm font-semibold px-5 py-2 rounded-xl cursor-not-allowed shadow-none select-none"
+                    >
+                      Expired
+                    </button>
                   ) : (
                     <button
                       onClick={() => openApplyModal(job)}
@@ -468,8 +497,14 @@ export default function JobList() {
 
       {/* Apply Modal */}
       {applyingJob && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-xl w-full my-8 animate-fade-in-up overflow-hidden">
+        <div
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto"
+          onClick={() => setApplyingJob(null)}
+        >
+          <div
+            className="bg-white rounded-2xl shadow-2xl max-w-xl w-full my-8 animate-fade-in-up overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
             {/* Royal blue modal header */}
             <div className="h-16 bg-gradient-to-r from-[#1d4ed8] to-[#2563eb] flex items-center justify-between px-6">
               <h2 className="text-lg font-bold text-white">Apply for Position</h2>
