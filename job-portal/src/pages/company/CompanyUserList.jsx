@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import { Plus, Search, Info, Eye, Pencil, Trash2 } from 'lucide-react';
 import { getUsers, createUser, updateUser, deleteUser } from '../../api/usersApi';
-import { validatePhoneNumber } from '../../utils/validators';
+import { validatePhoneNumber, validatePassword } from '../../utils/validators';
 import UserAvatar from '../../components/UserAvatar';
 
 const emptyAddForm = {
@@ -100,6 +100,14 @@ export default function UserList() {
     if (phoneError) {
       toast.error(phoneError);
       return;
+    }
+
+    if (!editingUser) {
+      const passwordError = validatePassword(form.password);
+      if (passwordError) {
+        toast.error(passwordError);
+        return;
+      }
     }
 
     setSaving(true);
