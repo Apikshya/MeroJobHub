@@ -4,12 +4,7 @@ import { getApplications, updateApplicationStatus, APPLICATION_STATUSES } from '
 import { getJobs } from '../../api/jobsApi'
 import { getDocumentsByEmail } from '../../api/documentsApi'
 import DocumentViewButton from '../../components/DocumentViewButton'
-// import { useEffect, useMemo, useState } from 'react'
-// import toast from 'react-hot-toast'
-// import { getApplications, updateApplicationStatus, APPLICATION_STATUSES } from '../../api/applicationsApi'
-// import { getJobs } from '../../api/jobsApi'
-// import { getDocumentsByEmail } from '../../api/documentsApi'
-// import DocumentViewButton from '../../components/DocumentViewButton'
+import UserAvatar from '../../components/UserAvatar'
 import { Search, Filter } from 'lucide-react'
 
 // Helper: status badge with consistent colors (like userTypeBadge)
@@ -143,9 +138,9 @@ export default function Applications() {
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
           >
-            <option value="">Filter by Status: All</option>
+            <option value="">Status: All</option>
             {allStatuses.filter(s => s !== '').map((s) => (
-              <option key={s} value={s}>Filter by Status: {s}</option>
+              <option key={s} value={s}>{s}</option>
             ))}
           </select>
         </div>
@@ -173,8 +168,13 @@ export default function Applications() {
                 {visibleApps.map((app) => (
                   <tr key={app.id} className="hover:bg-blue-50/30 transition">
                     <td className="py-3.5 px-6">
-                      <p className="font-semibold text-gray-900">{app.applicant_name}</p>
-                      <p className="text-xs text-gray-500">{app.applicant_email}</p>
+                      <div className="flex items-center gap-3">
+                        <UserAvatar userId={app.applicant_id} name={app.applicant_name} size="sm" className="w-9 h-9 shadow-sm" />
+                        <div>
+                          <p className="font-semibold text-gray-900">{app.applicant_name}</p>
+                          <p className="text-xs text-gray-500">{app.applicant_email}</p>
+                        </div>
+                      </div>
                     </td>
                     <td className="py-3.5 px-4">
                       <p className="font-medium text-gray-800">{jobsById[app.job_id]?.title || `Job #${app.job_id}`}</p>
@@ -208,14 +208,23 @@ export default function Applications() {
 
       {/* View/Edit Modal */}
       {viewingApp && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl my-8 max-h-[90vh] overflow-y-auto animate-fade-in-up overflow-hidden">
-            <div className="sticky top-0 z-10 h-16 bg-gradient-to-r from-[#1d4ed8] to-[#2563eb] flex items-center justify-between px-6">
-              <h2 className="text-lg font-bold text-white">{viewingApp.applicant_name}</h2>
+        <div
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto"
+          onClick={() => setViewingApp(null)}
+        >
+          <div
+            className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl my-auto max-h-[90vh] flex flex-col animate-fade-in-up overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="shrink-0 h-16 bg-gradient-to-r from-[#1d4ed8] to-[#2563eb] flex items-center justify-between px-6">
+              <div className="flex items-center gap-3">
+                <UserAvatar userId={viewingApp.applicant_id} name={viewingApp.applicant_name} size="md" className="w-10 h-10 border border-white/40 shadow-sm" />
+                <h2 className="text-lg font-bold text-white">{viewingApp.applicant_name}</h2>
+              </div>
               {statusBadge(viewingApp.status)}
             </div>
 
-            <div className="p-6 bg-gray-50/50 space-y-4">
+            <div className="flex-1 overflow-y-auto p-6 bg-gray-50/50 space-y-4">
               <p className="text-sm text-gray-600">
                 Applied for <span className="font-semibold text-gray-900">{jobsById[viewingApp.job_id]?.title || `Job #${viewingApp.job_id}`}</span>
                 {jobsById[viewingApp.job_id]?.company_name && ` at ${jobsById[viewingApp.job_id].company_name}`}

@@ -201,7 +201,7 @@ export default function Companies() {
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
           >
-            <option value="">Filter by Category: All</option>
+            <option value="">Category: All</option>
             {categoryOptions.map((cat) => (
               <option key={cat} value={cat}>
                 {cat}
