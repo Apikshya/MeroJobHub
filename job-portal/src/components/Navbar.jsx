@@ -61,7 +61,13 @@ export default function Navbar({ portalLabel, variant = 'default' }) {
       <header className="sticky top-0 z-30 bg-white border-b border-gray-100 shadow-none">
         <div className="w-full px-6 sm:px-8 h-16 flex items-center justify-between">
           {/* Left: Portal Title */}
-          <h1 className="text-xl font-bold text-slate-800 tracking-tight">{portalLabel}</h1>
+           <div className="w-16 h-18  overflow-hidden  flex items-center justify-center  shrink-0">
+              <img
+                src="/images/logo_png1.png"
+                alt="MeroJobHub Logo"
+                className="w-full h-full object-cover "
+              />
+            </div><h1 className="text-xl font-bold text-slate-800 tracking-tight">{portalLabel}</h1>
 
           {/* Right: User area & notifications */}
           <div className="flex items-center gap-4">
