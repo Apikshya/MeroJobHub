@@ -2,8 +2,9 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { signup } from '../../api/authApi';
-import { User, Briefcase, Mail, Lock, Phone, MapPin, Loader2 } from 'lucide-react';
-import { validatePhoneNumber } from '../../utils/validators';
+import { User, Briefcase, Mail, Lock, Phone, MapPin, Loader2, Eye, EyeOff } from 'lucide-react';
+import { validatePhoneNumber, validatePassword, evaluatePasswordStrength } from '../../utils/validators';
+import PasswordStrengthIndicator from '../../components/PasswordStrengthIndicator';
 
 const initialForm = {
   firstName: '',
@@ -19,6 +20,7 @@ const initialForm = {
 export default function Signup() {
   const [form, setForm] = useState(initialForm);
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -34,6 +36,12 @@ export default function Signup() {
     const phoneError = validatePhoneNumber(form.phoneNumber);
     if (phoneError) {
       toast.error(phoneError);
+      return;
+    }
+
+    const passwordError = validatePassword(form.password);
+    if (passwordError) {
+      toast.error(passwordError);
       return;
     }
 
@@ -117,16 +125,34 @@ export default function Signup() {
               icon={<Mail className="w-4 h-4 text-gray-400" />}
               placeholder="you@example.com"
             />
-            <Field
-              label="Password"
-              name="password"
-              type="password"
-              value={form.password}
-              onChange={handleChange}
-              required
-              icon={<Lock className="w-4 h-4 text-gray-400" />}
-              placeholder="••••••••"
-            />
+            <div className="sm:col-span-2">
+              <label className="text-sm font-medium text-gray-700 flex items-center justify-between">
+                <span className="flex items-center gap-1.5">
+                  <Lock className="w-4 h-4 text-gray-400" />
+                  Password <span className="text-red-500">*</span>
+                </span>
+              </label>
+              <div className="relative mt-1">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  name="password"
+                  value={form.password}
+                  onChange={handleChange}
+                  required
+                  placeholder="Create a strong password"
+                  className="w-full border border-gray-300 rounded-xl px-4 py-2.5 pr-11 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition bg-white"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition"
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
+              <PasswordStrengthIndicator password={form.password} showCriteria={true} />
+            </div>
             <Field
               label="Phone number"
               name="phoneNumber"

@@ -32,13 +32,6 @@ export default function Sidebar({
         <div className="flex flex-col flex-1 min-h-0">
           {/* Brand header */}
           <div className="p-6 flex items-center gap-3.5 border-b border-white/5 shrink-0">
-            <div className="w-10 h-10 rounded-full overflow-hidden bg-[#4f46e5] flex items-center justify-center p-1.5 shadow-sm shrink-0">
-              <img
-                src="/images/logo_png1.png"
-                alt="MeroJobHub Logo"
-                className="w-full h-full object-cover rounded-full"
-              />
-            </div>
             <div className="min-w-0">
               <h1 className="font-bold text-white text-base tracking-tight leading-tight">{brandName}</h1>
               <p className="text-[11px] text-slate-400 tracking-wide mt-0.5">{brandSubtitle}</p>

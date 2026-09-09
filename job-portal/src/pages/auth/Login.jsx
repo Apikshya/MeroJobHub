@@ -37,7 +37,7 @@ export default function Login() {
       <div className="w-full max-w-md">
         {/* Brand */}
         <div className="flex items-center justify-center mb-8">
-  <Link to="/" className="block w-auto h-40 rounded-full border-4  border-white  overflow-hidden transition-transform hover:scale-105">
+  <Link to="/" className="block w-50 h-40  border-4  border-white  overflow-hidden transition-transform hover:scale-105">
     <img
       src="/images/logo_png1.png"
       alt="JobPortal"

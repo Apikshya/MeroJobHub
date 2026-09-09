@@ -8,6 +8,7 @@ import CustomerLayout from '../layouts/CustomerLayout'
 import AdminLayout from '../layouts/AdminLayout'
 import CompanyAdminLayout from '../layouts/CompanyAdminLayout'
 import ProtectedRoute from '../components/ProtectedRoute'
+import { useAuth } from '../context/AuthContext'
 
 import MyProfile from '../pages/shared/MyProfile'
 import EditProfile from '../pages/shared/EditProfile'
@@ -32,6 +33,13 @@ import CompanyManageJobs from '../pages/company/ManageJobs'
 import CompanyApplications from '../pages/company/Applications'
 import CompanyUserList from '../pages/company/CompanyUserList'
 
+function ChangePasswordRedirect() {
+  const { user } = useAuth();
+  if (user?.user_type === 'ADMIN') return <Navigate to="/admin/change-password" replace />;
+  if (user?.user_type === 'COMPANY_ADMIN') return <Navigate to="/company/change-password" replace />;
+  return <Navigate to="/customer/change-password" replace />;
+}
+
 export default function AppRoutes() {
   return (
     <Routes>
@@ -40,6 +48,16 @@ export default function AppRoutes() {
       <Route path="/signup" element={<Signup />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
+
+      {/* Direct shortcut to role-based change-password */}
+      <Route
+        path="/change-password"
+        element={
+          <ProtectedRoute>
+            <ChangePasswordRedirect />
+          </ProtectedRoute>
+        }
+      />
       
       {/* Customer portal */}
       <Route
