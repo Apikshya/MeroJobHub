@@ -90,8 +90,6 @@ export default function MyApplications() {
       .sort((a, b) => new Date(b.applied_date) - new Date(a.applied_date));
   }, [applications, search, statusFilter]);
 
-  const getInitials = (title) => title?.charAt(0).toUpperCase() || '?';
-
   return (
     <div className="space-y-6">
       {/* Header Row */}
@@ -138,13 +136,8 @@ export default function MyApplications() {
           <div className="space-y-3">
             {[...Array(3)].map((_, i) => (
               <div key={i} className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm animate-pulse">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-slate-200 rounded-full"></div>
-                  <div className="flex-1">
-                    <div className="h-4 bg-slate-200 rounded w-1/3"></div>
-                    <div className="h-3 bg-slate-200 rounded w-1/4 mt-1.5"></div>
-                  </div>
-                </div>
+                <div className="h-4 bg-slate-200 rounded w-1/3"></div>
+                <div className="h-3 bg-slate-200 rounded w-1/4 mt-2"></div>
               </div>
             ))}
           </div>
@@ -175,13 +168,7 @@ export default function MyApplications() {
                   key={app.id}
                   className="bg-white rounded-2xl border border-slate-100 hover:border-slate-200 hover:shadow-sm transition-all duration-200 p-6"
                 >
-                  <div className="flex items-start gap-4">
-                    {/* Avatar */}
-                    <div className="w-12 h-12 rounded-xl bg-[#dbeafe] text-[#1d4ed8] flex items-center justify-center font-bold text-lg flex-shrink-0 shadow-inner">
-                      {getInitials(app.job_title)}
-                    </div>
-
-                    <div className="flex-1 min-w-0">
+                  <div className="w-full">
                       {/* Title & Status Badge */}
                       <div className="flex flex-wrap items-start justify-between gap-2">
                         <h3 className="font-bold text-slate-900 text-lg leading-snug truncate">
@@ -243,7 +230,6 @@ export default function MyApplications() {
                       </div>
                     </div>
                   </div>
-                </div>
               );
             })}
           </div>

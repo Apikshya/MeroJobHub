@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { getMyProfile } from '../../api/profileApi';
 import { User, Type, Mail, Phone, Calendar, MapPin } from 'lucide-react';
@@ -7,6 +8,8 @@ import UserAvatar from '../../components/UserAvatar';
 export default function MyProfile() {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
+  const location = useLocation();
+  const isCompanyRoute = location.pathname.startsWith('/company');
 
   useEffect(() => {
     getMyProfile()
@@ -17,15 +20,18 @@ export default function MyProfile() {
 
   if (loading) {
     return (
-      <div className="max-w-5xl mx-auto px-4 py-8">
+      <div className="max-w-4xl mx-auto px-4 py-8">
         <div className="bg-white rounded-2xl shadow-md p-6 animate-pulse">
-          <div className="h-32 bg-gray-200 rounded-xl"></div>
-          <div className="flex flex-col items-center -mt-12">
-            <div className="w-24 h-24 bg-gray-200 rounded-full border-4 border-white"></div>
-            <div className="h-6 bg-gray-200 rounded w-48 mt-4"></div>
-            <div className="h-4 bg-gray-200 rounded w-32 mt-2"></div>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-8">
+          {!isCompanyRoute && (
+            <div className="flex flex-col items-center mb-6">
+              <div className="w-24 h-24 bg-gray-200 rounded-full"></div>
+              <div className="h-6 bg-gray-200 rounded w-48 mt-4"></div>
+            </div>
+          )}
+          {isCompanyRoute && (
+            <div className="h-6 bg-gray-200 rounded w-48 mb-6"></div>
+          )}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="h-4 bg-gray-200 rounded w-3/4"></div>
             <div className="h-4 bg-gray-200 rounded w-3/4"></div>
             <div className="h-4 bg-gray-200 rounded w-3/4"></div>
@@ -45,15 +51,12 @@ export default function MyProfile() {
   }
 
   // Prepare rows with icons for better visual appeal
-
   const fullName = [profile.first_name, profile.middle_name, profile.last_name]
-    .filter(Boolean) // drops null, undefined, ''
+    .filter(Boolean)
     .join(' ');
 
   const fields = [
     { label: 'Full Name', value: fullName, icon: <User className="w-4 h-4 text-blue-500" /> },
-    // { label: 'Middle Name', value: profile.middle_name || '-', icon: <Type className="w-4 h-4 text-purple-500" /> },
-    // { label: 'Last Name', value: profile.last_name, icon: <User className="w-4 h-4 text-blue-500" /> },
     { label: 'Email', value: profile.email, icon: <Mail className="w-4 h-4 text-pink-500" /> },
     { label: 'Phone', value: profile.phone_number, icon: <Phone className="w-4 h-4 text-green-500" /> },
     { label: 'Age', value: profile.age, icon: <Calendar className="w-4 h-4 text-amber-500" /> },
@@ -64,27 +67,19 @@ export default function MyProfile() {
     <div className="max-w-4xl mx-auto px-4 py-8">
       {/* Profile card */}
       <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">
-        {/* Cover image (gradient placeholder) */}
-     
-
-        {/* Avatar & name section */}
-        <div className="relative px-6 pb-6 pt-14">
-          <div className="flex flex-col items-center -mt-12 sm:flex-row sm:items-end sm:gap-5">
-            {/* Avatar */}
-            <UserAvatar
-              user={profile}
-              size="2xl"
-              className="w-24 h-24 border-4 border-white shadow-md"
-            />
-            <div className="mt-3 sm:mt-0 text-center sm:text-left">
+        {/* Name section */}
+        <div className="relative px-6 py-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:gap-5">
+            {!isCompanyRoute && profile.user_type !== 'COMPANY_ADMIN' && (
+              <UserAvatar
+                user={profile}
+                size="2xl"
+                className="w-24 h-24 border-4 border-white shadow-md mb-3 sm:mb-0"
+              />
+            )}
+            <div className="text-center sm:text-left">
               <h1 className="text-2xl font-bold text-gray-800">{profile.full_name}</h1>
               <p className="text-sm text-gray-500">{profile.email}</p>
-            </div>
-            {/* Edit button (non‑functional) */}
-            <div className="ml-auto mt-4 sm:mt-0 hidden">
-              <button className="px-5 py-2 text-sm font-medium text-blue-600 border border-blue-300 rounded-full hover:bg-blue-50 transition">
-                Edit Profile
-              </button>
             </div>
           </div>
         </div>
