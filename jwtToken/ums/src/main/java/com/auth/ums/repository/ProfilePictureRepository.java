@@ -13,11 +13,11 @@ public interface ProfilePictureRepository extends JpaRepository<ProfilePicture, 
     @Query("SELECT p FROM ProfilePicture p WHERE p.user.id = :userId AND p.isCurrent = true AND (p.isDeleted = false OR p.isDeleted IS NULL) ORDER BY p.id DESC")
     List<ProfilePicture> findCurrentPictures(@Param("userId") Long userId);
 
-    @Modifying
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query("""
         UPDATE ProfilePicture p
-        SET p.isCurrent = false
-        WHERE p.user.id = :userId AND p.isCurrent = true
+        SET p.isCurrent = false, p.isDeleted = true, p.isActive = false
+        WHERE p.user.id = :userId
     """)
     void deactivateOldProfilePictures(@Param("userId") Long userId);
 

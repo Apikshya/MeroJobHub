@@ -2,7 +2,19 @@ import { useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import { getApplications, updateApplicationStatus, APPLICATION_STATUSES } from '../../api/applicationsApi';
 import { getJobs } from '../../api/jobsApi';
-import { Search, Filter } from 'lucide-react';
+import {
+  Search,
+  Filter,
+  FileText,
+  Copy,
+  Check,
+  X,
+  Maximize2,
+  Mail,
+  Phone,
+  Calendar,
+  Eye,
+} from 'lucide-react';
 import { getDocumentsByEmail } from '../../api/documentsApi';
 import DocumentViewButton from '../../components/DocumentViewButton';
 import UserAvatar from '../../components/UserAvatar';
@@ -20,6 +32,16 @@ export default function Applications() {
   const [saving, setSaving] = useState(false);
   const [applicantDocs, setApplicantDocs] = useState([]);
   const [docsLoading, setDocsLoading] = useState(false);
+  const [coverLetterApp, setCoverLetterApp] = useState(null);
+  const [copied, setCopied] = useState(false);
+
+  const handleCopyCoverLetter = () => {
+    if (!coverLetterApp?.cover_letter) return;
+    navigator.clipboard.writeText(coverLetterApp.cover_letter);
+    setCopied(true);
+    toast.success('Cover letter copied to clipboard');
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   const loadData = () => {
     setLoading(true);
@@ -121,7 +143,7 @@ export default function Applications() {
 
   return (
     <div className="space-y-6">
-      
+
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Applied Jobs</h1>
@@ -183,7 +205,7 @@ export default function Applications() {
               {visibleApps.map((app) => (
                 <div
                   key={app.id}
-                  className="bg-white rounded-xl border border-slate-100 hover:border-slate-200 hover:shadow-sm transition-all duration-200 p-5"
+                  className="bg-white rounded-xl border border-slate-100 hover:border-slate-200 shadow-md hover:shadow-lg transition-all duration-200 p-5"
                 >
                   <div className="flex items-start gap-3">
                     <UserAvatar
@@ -196,7 +218,13 @@ export default function Applications() {
                       <div className="flex flex-wrap items-start justify-between gap-2">
                         <div>
                           <p className="font-semibold text-slate-900">{app.applicant_name}</p>
-                          <p className="text-xs text-[#2563eb]">{app.applicant_email}</p>
+                          <a
+                            href={`mailto:${app.applicant_email}`}
+                            className="text-xs text-[#2563eb] hover:text-[#1d4ed8] hover:underline transition inline-block"
+                            title={`Send email to ${app.applicant_email}`}
+                          >
+                            {app.applicant_email}
+                          </a>
                         </div>
                         {statusBadge(app.status)}
                       </div>
@@ -210,13 +238,31 @@ export default function Applications() {
                         )}
                       </div>
                       <div className="mt-1.5 flex flex-wrap items-center gap-2 text-xs text-slate-400">
-                        <span>{app.resume_file_name || 'No resume'}</span>
-                        <span className="text-slate-300">·</span>
-                        <span>{new Date(app.applied_date).toLocaleDateString()}</span>
+                        {app.resume_file_name && <span>{app.resume_file_name}</span>}
+                        {app.resume_file_name && app.applied_date && !isNaN(new Date(app.applied_date)) && (
+                          <span className="text-slate-300">·</span>
+                        )}
+                        {app.applied_date && !isNaN(new Date(app.applied_date)) && (
+                          <span>{new Date(app.applied_date).toLocaleDateString()}</span>
+                        )}
                       </div>
                     </div>
                   </div>
-                  <div className="mt-3 pt-3 border-t border-slate-100 flex justify-end">
+                  <div className="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+                    <div>
+                      {app.cover_letter ? (
+                        <button
+                          type="button"
+                          onClick={() => setCoverLetterApp(app)}
+                          className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#2563eb] hover:text-[#1d4ed8] bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-xl transition border border-blue-100"
+                        >
+                          <FileText className="w-3.5 h-3.5" />
+                          View Cover Letter
+                        </button>
+                      ) : (
+                        <span className="text-xs text-slate-400 italic">No cover letter</span>
+                      )}
+                    </div>
                     <button
                       onClick={() => openViewModal(app)}
                       className="text-sm font-semibold text-[#2563eb] hover:text-[#1d4ed8] transition"
@@ -270,17 +316,44 @@ export default function Applications() {
               <dl className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                 <DetailRow label="Application ID" value={viewingApp.id} />
                 <DetailRow label="Applicant ID" value={viewingApp.applicant_id} />
-                <DetailRow label="Email" value={viewingApp.applicant_email} />
-                <DetailRow label="Phone" value={viewingApp.applicant_phone} />
+                <DetailRow label="Email" value={viewingApp.applicant_email} isEmail />
+                <DetailRow label="Phone" value={viewingApp.applicant_phone} isPhone />
                 <DetailRow label="Resume file" value={viewingApp.resume_file_name} className="sm:col-span-2" />
               </dl>
 
               <div className="mb-4">
-                <dt className="text-xs uppercase tracking-wider text-gray-400 font-semibold mb-1">Cover letter</dt>
-                <dd className="text-sm text-gray-700 whitespace-pre-line bg-white rounded-xl border border-gray-200 p-3 max-h-40 overflow-y-auto">
-                  {viewingApp.cover_letter || '-'}
-                </dd>
+                <dt className="text-xs uppercase tracking-wider text-gray-400 font-semibold mb-2">
+                  Cover letter
+                </dt>
+                {viewingApp.cover_letter ? (
+                  <div className="bg-white rounded-xl border border-gray-200 px-4 py-3 flex items-center justify-between gap-3 shadow-sm">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-8 h-8 rounded-lg bg-blue-50 text-[#2563eb] flex items-center justify-center shrink-0 border border-blue-100">
+                        <FileText className="w-4 h-4" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-sm font-semibold text-slate-800 truncate">
+                          Cover Letter
+                        </p>
+                        <p className="text-xs text-slate-400 truncate">
+                          Click to view full cover letter
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setCoverLetterApp(viewingApp)}
+                      className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg bg-[#2563eb] hover:bg-[#1d4ed8] text-white shadow-sm transition"
+                    >
+                      <Eye className="w-3.5 h-3.5" />
+                      View
+                    </button>
+                  </div>
+                ) : (
+                  <p className="text-sm text-gray-400">No cover letter submitted.</p>
+                )}
               </div>
+
 
               <div className="mb-4">
                 <dt className="text-xs uppercase tracking-wider text-gray-400 font-semibold mb-2">
@@ -338,6 +411,131 @@ export default function Applications() {
                   Close
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Cover Letter Modal */}
+      {coverLetterApp && (
+        <div
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6 z-50"
+          onClick={() => setCoverLetterApp(null)}
+        >
+          <div
+            className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl h-[88vh] flex flex-col animate-fade-in-up overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="shrink-0 bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#2563eb] flex items-center justify-center shrink-0 border border-blue-100 shadow-sm">
+                  <FileText className="w-5 h-5" />
+                </div>
+                <div className="min-w-0">
+                  <h3 className="font-bold text-slate-900 text-base sm:text-lg truncate">
+                    Cover Letter : {coverLetterApp.applicant_name}
+                  </h3>
+                  <p className="text-xs text-slate-500 truncate">
+                    Applied for{' '}
+                    <span className="font-semibold text-slate-700">
+                      {jobsById[coverLetterApp.job_id]?.title || `Job #${coverLetterApp.job_id}`}
+                    </span>
+                    {jobsById[coverLetterApp.job_id]?.company_name && (
+                      <span> · {jobsById[coverLetterApp.job_id].company_name}</span>
+                    )}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handleCopyCoverLetter}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 transition"
+                  title="Copy cover letter text"
+                >
+                  {copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+                  <span>{copied ? 'Copied!' : 'Copy Text'}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setCoverLetterApp(null)}
+                  className="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition"
+                  title="Close"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+
+            {/* Scrollable Content */}
+            <div className="flex-1 overflow-y-auto p-6 sm:p-8 space-y-6 bg-slate-50/50">
+              {/* Applicant Header Info */}
+              <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
+                <p className="font-bold text-slate-900 text-base">{coverLetterApp.applicant_name}</p>
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-500 mt-1.5">
+                  {coverLetterApp.applicant_email && (
+                    <a
+                      href={`mailto:${coverLetterApp.applicant_email}`}
+                      className="flex items-center gap-1 text-[#2563eb] hover:text-[#1d4ed8] hover:underline transition"
+                      title={`Send email to ${coverLetterApp.applicant_email}`}
+                    >
+                      <Mail className="w-3.5 h-3.5 text-slate-400" />
+                      {coverLetterApp.applicant_email}
+                    </a>
+                  )}
+                  {coverLetterApp.applicant_phone && (
+                    <a
+                      href={`tel:${coverLetterApp.applicant_phone}`}
+                      className="flex items-center gap-1 text-[#2563eb] hover:text-[#1d4ed8] hover:underline transition"
+                    >
+                      <Phone className="w-3.5 h-3.5 text-slate-400" />
+                      {coverLetterApp.applicant_phone}
+                    </a>
+                  )}
+                  {coverLetterApp.applied_date && !isNaN(new Date(coverLetterApp.applied_date)) && (
+                    <span className="flex items-center gap-1">
+                      <Calendar className="w-3.5 h-3.5 text-slate-400" />
+                      {new Date(coverLetterApp.applied_date).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                      })}
+                    </span>
+                  )}
+                </div>
+              </div>
+
+
+
+              {/* Body */}
+              <div className="bg-white rounded-xl border border-slate-200 p-6 sm:p-8 shadow-sm">
+                <div className="text-sm sm:text-base text-slate-800 leading-relaxed whitespace-pre-wrap">
+                  {coverLetterApp.cover_letter || (
+                    <span className="text-slate-400 italic">No cover letter text provided.</span>
+                  )}
+                </div>
+
+                <div className="border-t border-slate-100 pt-6 mt-8">
+                  <p className="text-xs sm:text-sm text-slate-500">Sincerely,</p>
+                  <p className="text-sm sm:text-base font-bold text-slate-900 mt-1">
+                    {coverLetterApp.applicant_name}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="shrink-0 bg-white border-t border-slate-200 px-6 py-3 flex justify-end">
+              <button
+                type="button"
+                onClick={() => setCoverLetterApp(null)}
+                className="px-5 py-2 text-sm font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition"
+              >
+                Close
+              </button>
             </div>
           </div>
         </div>

@@ -26,7 +26,6 @@ export default function JobList() {
   const navigate = useNavigate();
   const [jobs, setJobs] = useState([]);
   const [appliedJobIds, setAppliedJobIds] = useState(new Set());
-  const [appliedJobTitles, setAppliedJobTitles] = useState(new Set());
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
@@ -52,13 +51,11 @@ export default function JobList() {
         if (appsRes.status === 'fulfilled') {
           const apps = appsRes.value.data?.data?.recent_applications || [];
           const ids = new Set();
-          const titles = new Set();
           apps.forEach((a) => {
-            if (a.job_id) ids.add(Number(a.job_id));
-            if (a.job_title) titles.add(a.job_title.trim().toLowerCase());
+            const jId = a.job_id ?? a.jobId;
+            if (jId != null) ids.add(Number(jId));
           });
           setAppliedJobIds(ids);
-          setAppliedJobTitles(titles);
         }
       })
       .catch(() => toast.error('Could not load jobs'))
@@ -71,9 +68,7 @@ export default function JobList() {
 
   const isJobApplied = (job) => {
     if (!job) return false;
-    if (job.id && appliedJobIds.has(Number(job.id))) return true;
-    if (job.title && appliedJobTitles.has(job.title.trim().toLowerCase())) return true;
-    return false;
+    return job.id && appliedJobIds.has(Number(job.id));
   };
 
   const isJobExpired = (job) => {
@@ -89,7 +84,7 @@ export default function JobList() {
   const visibleJobs = useMemo(() => {
     const term = search.trim().toLowerCase();
     const displayableJobs = jobs.filter((j) => j.status !== 'CLOSED');
-    return displayableJobs.filter((j) => {
+    const filtered = displayableJobs.filter((j) => {
       // 1. Keyword search
       const matchesSearch =
         !term ||
@@ -149,7 +144,7 @@ export default function JobList() {
       const vA = isNaN(dateA) ? 0 : dateA;
       const vB = isNaN(dateB) ? 0 : dateB;
       if (vB !== vA) return vB - vA;
-      
+
       // 3. Fallback to ID (newest first)
       return (Number(b.id) || 0) - (Number(a.id) || 0);
     });
@@ -162,9 +157,8 @@ export default function JobList() {
     minSalary,
     maxSalary,
     appliedJobIds,
-    appliedJobTitles,
   ]);
-  
+
   const hasActiveFilters = Boolean(
     search || categoryFilter || jobTypeFilter || appliedFilter || minSalary !== '' || maxSalary !== ''
   );
@@ -218,11 +212,8 @@ export default function JobList() {
         cover_Letter: applyForm.cover_Letter,
       });
       toast.success('Application submitted successfully!');
-      if (applyingJob.id) {
+      if (applyingJob?.id) {
         setAppliedJobIds((prev) => new Set([...prev, Number(applyingJob.id)]));
-      }
-      if (applyingJob.title) {
-        setAppliedJobTitles((prev) => new Set([...prev, applyingJob.title.trim().toLowerCase()]));
       }
       setApplyingJob(null);
     } catch (err) {
@@ -232,7 +223,7 @@ export default function JobList() {
     }
   };
 
-// Helper to format date to "time ago" style (simple)
+  // Helper to format date to "time ago" style (simple)
   const timeAgo = (dateStr) => {
     if (!dateStr) return '';
     const diff = Date.now() - new Date(dateStr).getTime();
@@ -399,7 +390,7 @@ export default function JobList() {
                   <div>
                     <h2 className="text-lg font-bold text-slate-900 leading-snug">{job.title}</h2>
                     <div className="flex flex-wrap items-center gap-x-2 text-xs text-slate-500 mt-1">
-                      <span 
+                      <span
                         onClick={() => {
                           if (job.company_code) {
                             navigate(`/customer/company/${job.company_code}`);
@@ -537,7 +528,17 @@ export default function JobList() {
               <div className="bg-slate-50 rounded-xl p-4 border border-slate-100">
                 <h3 className="font-bold text-slate-900">{applyingJob.title}</h3>
                 <p className="text-xs text-slate-500 mt-0.5 flex items-center gap-2">
-                  <span>{applyingJob.company_name}</span>
+                  {/* Company name */}
+
+                  <span
+                    onClick={(e) => {
+                      navigate(`/customer/company/${applyingJob.company_code}`);
+                    }}
+                    className={`font-semibold text-[#2563eb] ${(applyingJob.company_code || applyingJob.company_name) ? 'hover:text-blue-600 hover:underline cursor-pointer' : ''}`}
+                  >
+                    {applyingJob.company_name || 'View Company'}
+                  </span>
+
                   <span>·</span>
                   <span>{applyingJob.location}</span>
                 </p>

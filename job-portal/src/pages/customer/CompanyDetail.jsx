@@ -41,7 +41,6 @@ export default function CompanyDetail() {
   const [jobs, setJobs] = useState([]);
   const [jobsLoading, setJobsLoading] = useState(true);
   const [appliedJobIds, setAppliedJobIds] = useState(new Set());
-  const [appliedJobTitles, setAppliedJobTitles] = useState(new Set());
   
   const [applyingJob, setApplyingJob] = useState(null);
   const [applyForm, setApplyForm] = useState({ resume_File_Name: '', cover_Letter: '' });
@@ -87,13 +86,11 @@ export default function CompanyDetail() {
         if (appsRes.status === 'fulfilled') {
           const apps = appsRes.value.data?.data?.recent_applications || [];
           const ids = new Set();
-          const titles = new Set();
           apps.forEach((a) => {
-            if (a.job_id) ids.add(Number(a.job_id));
-            if (a.job_title) titles.add(a.job_title.trim().toLowerCase());
+            const jId = a.job_id ?? a.jobId;
+            if (jId != null) ids.add(Number(jId));
           });
           setAppliedJobIds(ids);
-          setAppliedJobTitles(titles);
         }
       })
       .catch(() => console.error('Could not load jobs or applications'))
@@ -101,10 +98,8 @@ export default function CompanyDetail() {
   }, [company]);
 
   const isJobApplied = (job) => {
-    if (!job) return false;
-    if (job.id && appliedJobIds.has(Number(job.id))) return true;
-    if (job.title && appliedJobTitles.has(job.title.trim().toLowerCase())) return true;
-    return false;
+    if (!job || !job.id) return false;
+    return appliedJobIds.has(Number(job.id));
   };
 
   const isJobExpired = (job) => {
@@ -145,8 +140,7 @@ export default function CompanyDetail() {
         cover_Letter: applyForm.cover_Letter,
       });
       toast.success('Application submitted successfully!');
-      if (applyingJob.id) setAppliedJobIds((prev) => new Set([...prev, Number(applyingJob.id)]));
-      if (applyingJob.title) setAppliedJobTitles((prev) => new Set([...prev, applyingJob.title.trim().toLowerCase()]));
+      if (applyingJob?.id) setAppliedJobIds((prev) => new Set([...prev, Number(applyingJob.id)]));
       setApplyingJob(null);
     } catch (err) {
       toast.error(err.response?.data?.message || 'Could not apply');
@@ -181,7 +175,7 @@ export default function CompanyDetail() {
       if (vB !== vA) return vB - vA;
       return (Number(b.id) || 0) - (Number(a.id) || 0);
     });
-  }, [jobs, appliedJobIds, appliedJobTitles]);
+  }, [jobs, appliedJobIds]);
 
   if (loading) {
     return (
@@ -223,8 +217,8 @@ export default function CompanyDetail() {
 
   // Explicitly excluding registration_number and tax_number (Private details)
   const fields = [
-    { label: 'EMAIL', value: company.email_id, icon: <Mail className="w-4 h-4 text-[#2563eb]" /> },
-    { label: 'PHONE', value: company.phone_number, icon: <Phone className="w-4 h-4 text-[#059669]" /> },
+    { label: 'EMAIL', value: company.email_id || company.email, icon: <Mail className="w-4 h-4 text-[#2563eb]" /> },
+    { label: 'PHONE', value: company.phone_number || company.phone, icon: <Phone className="w-4 h-4 text-[#059669]" /> },
     { label: 'INDUSTRY', value: company.industry_type, icon: <Factory className="w-4 h-4 text-[#d97706]" /> },
     { label: 'COMPANY TYPE', value: company.company_type, icon: <Building2 className="w-4 h-4 text-[#7c3aed]" /> },
     { label: 'COMPANY SIZE', value: company.company_size, icon: <PieChart className="w-4 h-4 text-[#0284c7]" /> },
@@ -261,13 +255,34 @@ export default function CompanyDetail() {
             </span>
           )}
         </div>
-        <div className="flex items-center gap-2 text-sm text-blue-100">
-          <MapPin className="w-4 h-4" />
-          <span>
-            {[company.address, company.city, company.state, company.country]
-              .filter(Boolean)
-              .join(', ') || 'Location not specified'}
-          </span>
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm text-blue-100">
+          <div className="flex items-center gap-1.5">
+            <MapPin className="w-4 h-4 text-blue-200" />
+            <span>
+              {[company.address, company.city, company.state, company.country]
+                .filter(Boolean)
+                .join(', ') || 'Location not specified'}
+            </span>
+          </div>
+          {(company.email_id || company.email) && (
+            <a
+              href={`mailto:${company.email_id || company.email}`}
+              className="flex items-center gap-1.5 text-blue-100 hover:text-white hover:underline transition"
+              title={`Send email to ${company.email_id || company.email}`}
+            >
+              <Mail className="w-4 h-4 text-blue-200" />
+              <span>{company.email_id || company.email}</span>
+            </a>
+          )}
+          {(company.phone_number || company.phone) && (
+            <a
+              href={`tel:${company.phone_number || company.phone}`}
+              className="flex items-center gap-1.5 text-blue-100 hover:text-white hover:underline transition"
+            >
+              <Phone className="w-4 h-4 text-blue-200" />
+              <span>{company.phone_number || company.phone}</span>
+            </a>
+          )}
         </div>
       </div>
 
@@ -349,6 +364,13 @@ export default function CompanyDetail() {
                   </div>
                 </div>
 
+                {/* Job Description */}
+                {job.description && (
+                  <p className="text-slate-600 text-sm mt-3 line-clamp-3 leading-relaxed">
+                    {job.description}
+                  </p>
+                )}
+
                 <div className="flex flex-wrap gap-2 mt-4">
                   <span className="inline-flex items-center gap-1.5 text-xs bg-slate-50 border border-slate-100 text-slate-700 px-3 py-1 rounded-full">
                     <Banknote className="w-3.5 h-3.5 text-emerald-600" />
@@ -358,6 +380,12 @@ export default function CompanyDetail() {
                     <Target className="w-3.5 h-3.5 text-rose-500" />
                     {job.experience_required || 'Any experience'}
                   </span>
+                  {job.qualification && (
+                    <span className="inline-flex items-center gap-1.5 text-xs bg-slate-50 border border-slate-100 text-slate-700 px-3 py-1 rounded-full">
+                      <GraduationCap className="w-3.5 h-3.5 text-indigo-500" />
+                      {job.qualification}
+                    </span>
+                  )}
                   {isJobExpired(job) ? (
                     <span className="inline-flex items-center gap-1.5 text-xs bg-red-50 border border-red-100 text-red-600 px-3 py-1 rounded-full">
                       <CalendarDays className="w-3.5 h-3.5 text-red-500" />
@@ -370,6 +398,20 @@ export default function CompanyDetail() {
                     </span>
                   )}
                 </div>
+
+                {/* Skills tags */}
+                {job.skills_required && (
+                  <div className="flex flex-wrap gap-1.5 mt-3">
+                    {job.skills_required.split(',').map((skill, idx) => (
+                      <span
+                        key={idx}
+                        className="text-xs bg-[#eff6ff] text-[#2563eb] px-2.5 py-0.5 rounded-full border border-[#bfdbfe]"
+                      >
+                        {skill.trim()}
+                      </span>
+                    ))}
+                  </div>
+                )}
 
                 <div className="flex items-center justify-between mt-4 pt-4 border-t border-slate-100">
                   <span className="text-xs text-slate-400 flex items-center gap-1.5">
