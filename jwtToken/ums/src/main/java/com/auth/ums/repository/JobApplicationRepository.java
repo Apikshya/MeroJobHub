@@ -47,7 +47,9 @@ public interface JobApplicationRepository extends JpaRepository<JobApplication,L
             ja.created_date AS applied_date,
             j.category ,
             j.description,
-            ja.job_id
+            ja.job_id,
+            j.company_name,
+            j.company_code
         FROM job_application ja
         JOIN users u ON u.id = ja.applicant_id
         JOIN job j ON j.id = ja.job_id

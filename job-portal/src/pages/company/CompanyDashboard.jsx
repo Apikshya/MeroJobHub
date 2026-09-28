@@ -83,11 +83,6 @@ export default function CompanyDashboard() {
     };
   }, [jobs, applications]);
 
-  const companyInitial =
-    company?.company_name?.charAt(0)?.toUpperCase() ||
-    user?.first_name?.charAt(0)?.toUpperCase() ||
-    'A';
-
   const companyCode = company?.company_code || user?.system_code || 'ANN01';
 
   if (loading) {
@@ -126,10 +121,7 @@ export default function CompanyDashboard() {
       </div>
 
       {/* 2. Company Info Card */}
-      <div className="bg-white border border-slate-100 rounded-2xl p-5 shadow-sm flex flex-col sm:flex-row sm:items-center gap-5">
-        <div className="w-14 h-14 rounded-xl bg-[#dbeafe] text-[#1d4ed8] flex items-center justify-center text-2xl font-extrabold flex-shrink-0 shadow-inner">
-          {companyInitial}
-        </div>
+      <div className="bg-white border border-slate-100 rounded-2xl p-5 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-5">
         <div className="flex-1 min-w-0">
           <h2 className="text-lg font-bold text-slate-900 leading-tight">
             {company?.company_name || 'Annapurna Training Center'}

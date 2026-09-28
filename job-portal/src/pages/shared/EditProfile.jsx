@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { getMyProfile, updateMyProfile, uploadProfilePicture, deleteProfilePicture } from '../../api/profileApi';
 import { useAuth } from '../../context/AuthContext';
@@ -14,6 +15,8 @@ export default function EditProfile() {
   const [previewUrl, setPreviewUrl] = useState(null);
   const fileInputRef = useRef(null);
   const { user, setUser } = useAuth();
+  const location = useLocation();
+  const isCompanyRoute = location.pathname.startsWith('/company') || user?.user_type === 'COMPANY_ADMIN';
 
   useEffect(() => {
     getMyProfile()
@@ -141,13 +144,16 @@ export default function EditProfile() {
     return (
       <div className="max-w-4xl mx-auto px-4 py-8">
         <div className="bg-white rounded-2xl shadow-md p-6 animate-pulse">
-          <div className="h-32 bg-gray-200 rounded-xl"></div>
-          <div className="flex flex-col items-center -mt-12">
-            <div className="w-24 h-24 bg-gray-200 rounded-full border-4 border-white"></div>
-            <div className="h-6 bg-gray-200 rounded w-48 mt-4"></div>
-            <div className="h-4 bg-gray-200 rounded w-32 mt-2"></div>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-8">
+          {!isCompanyRoute && (
+            <div className="flex flex-col items-center mb-6">
+              <div className="w-24 h-24 bg-gray-200 rounded-full"></div>
+              <div className="h-6 bg-gray-200 rounded w-48 mt-4"></div>
+            </div>
+          )}
+          {isCompanyRoute && (
+            <div className="h-6 bg-gray-200 rounded w-48 mb-6"></div>
+          )}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="h-10 bg-gray-200 rounded"></div>
             <div className="h-10 bg-gray-200 rounded"></div>
             <div className="h-10 bg-gray-200 rounded"></div>
@@ -169,71 +175,77 @@ export default function EditProfile() {
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
       <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">
-        {/* Avatar & heading */}
-        <div className="relative px-6 pb-6 pt-10">
-          <div className="flex flex-col items-center sm:flex-row sm:items-center sm:gap-6">
-            {/* Interactive Avatar Container */}
-            <div className="relative group">
-              <div className="w-24 h-24 rounded-full border-4 border-white shadow-lg overflow-hidden relative bg-slate-100 flex items-center justify-center">
-                <UserAvatar
-                  user={user || form}
-                  src={previewUrl}
-                  size="2xl"
-                  className="w-full h-full"
-                />
+        {/* Header */}
+        <div className="relative px-6 py-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:gap-6">
+            {!isCompanyRoute && (
+              <>
+                {/* Interactive Avatar Container */}
+                <div className="relative group mb-3 sm:mb-0">
+                  <div className="w-24 h-24 rounded-full border-4 border-white shadow-lg overflow-hidden relative bg-slate-100 flex items-center justify-center">
+                    <UserAvatar
+                      user={user || form}
+                      src={previewUrl}
+                      size="2xl"
+                      className="w-full h-full"
+                    />
 
-                {uploadingPic && (
-                  <div className="absolute inset-0 bg-black/50 backdrop-blur-[2px] flex items-center justify-center text-white">
-                    <Loader2 className="w-6 h-6 animate-spin" />
+                    {uploadingPic && (
+                      <div className="absolute inset-0 bg-black/50 backdrop-blur-[2px] flex items-center justify-center text-white">
+                        <Loader2 className="w-6 h-6 animate-spin" />
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
 
-              {/* Camera Icon Overlay Button */}
-              <button
-                type="button"
-                onClick={() => fileInputRef.current?.click()}
-                disabled={uploadingPic}
-                className="absolute bottom-0 right-0 p-2 bg-[#2563eb] hover:bg-[#1d4ed8] text-white rounded-full shadow-md border-2 border-white transition-all transform hover:scale-105"
-                title="Change profile picture"
-              >
-                <Camera className="w-4 h-4" />
-              </button>
+                  {/* Camera Icon Overlay Button */}
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={uploadingPic}
+                    className="absolute bottom-0 right-0 p-2 bg-[#2563eb] hover:bg-[#1d4ed8] text-white rounded-full shadow-md border-2 border-white transition-all transform hover:scale-105"
+                    title="Change profile picture"
+                  >
+                    <Camera className="w-4 h-4" />
+                  </button>
 
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/png, image/jpeg, image/jpg, image/webp"
-                onChange={handleFileChange}
-                className="hidden"
-              />
-            </div>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/png, image/jpeg, image/jpg, image/webp"
+                    onChange={handleFileChange}
+                    className="hidden"
+                  />
+                </div>
+              </>
+            )}
 
-            <div className="mt-3 sm:mt-0 text-center sm:text-left flex-1">
+            <div className="text-center sm:text-left flex-1">
               <h1 className="text-2xl font-bold text-gray-800">Edit Profile</h1>
               <p className="text-sm text-gray-500">{form.email}</p>
 
-              <div className="flex items-center justify-center sm:justify-start gap-2.5 mt-3">
-                <button
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={uploadingPic}
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-xl bg-blue-50 text-blue-700 hover:bg-blue-100 transition border border-blue-200"
-                >
-                  <Upload className="w-3.5 h-3.5" />
-                  {uploadingPic ? 'Uploading...' : 'Change Photo'}
-                </button>
+              {!isCompanyRoute && (
+                <div className="flex items-center justify-center sm:justify-start gap-2.5 mt-3">
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={uploadingPic}
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-xl bg-blue-50 text-blue-700 hover:bg-blue-100 transition border border-blue-200"
+                  >
+                    <Upload className="w-3.5 h-3.5" />
+                    {uploadingPic ? 'Uploading...' : 'Change Photo'}
+                  </button>
 
-                <button
-                  type="button"
-                  onClick={handleRemovePicture}
-                  disabled={uploadingPic}
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-xl bg-slate-50 text-slate-600 hover:bg-rose-50 hover:text-rose-600 transition border border-slate-200"
-                >
-                  <Trash2 className="w-3.5 h-3.5" />
-                  Remove
-                </button>
-              </div>
+                  <button
+                    type="button"
+                    onClick={handleRemovePicture}
+                    disabled={uploadingPic}
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-xl bg-slate-50 text-slate-600 hover:bg-rose-50 hover:text-rose-600 transition border border-slate-200"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                    Remove
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>

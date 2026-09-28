@@ -46,11 +46,8 @@ export default function MyCompany() {
     return (
       <div className="space-y-6 animate-pulse">
         <div className="bg-white rounded-2xl p-6 shadow-sm">
-          <div className="h-36 bg-gray-200 rounded-xl"></div>
-          <div className="flex items-end gap-5 -mt-10 ml-6">
-            <div className="w-24 h-24 bg-gray-300 rounded-full border-4 border-white"></div>
-            <div className="h-6 bg-gray-200 rounded w-48 mb-2"></div>
-          </div>
+          <div className="h-6 bg-gray-200 rounded w-48 mb-4"></div>
+          <div className="h-4 bg-gray-100 rounded w-72"></div>
         </div>
         <div className="bg-white rounded-2xl p-6 shadow-sm">
           <div className="h-6 bg-gray-200 rounded w-36 mb-6"></div>
@@ -76,8 +73,6 @@ export default function MyCompany() {
     );
   }
 
-  const initial = company.company_name?.charAt(0).toUpperCase() || 'A';
-
   const fields = [
     { label: 'EMAIL', value: company.email_id, icon: <Mail className="w-4 h-4 text-[#2563eb]" /> },
     { label: 'PHONE', value: company.phone_number, icon: <Phone className="w-4 h-4 text-[#059669]" /> },
@@ -98,54 +93,42 @@ export default function MyCompany() {
 
   return (
     <div className="space-y-6">
-      {/* Top Hero Banner & Company Profile Card */}
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-        {/* Solid Brand Blue Cover */}
-        <div className="h-20  w-full"></div>
-
-        {/* Profile Details Bar */}
-        <div className="px-6 pb-6 pt-0 ">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 -mt-12">
-            <div className="flex flex-col sm:flex-row items-start sm:items-end gap-4">
-              {/* Overlapping Avatar */}
-              {/* <div className="w-24 h-24 rounded-full bg-[#dbeafe] text-[#1e40af] border-4 border-white font-bold text-3xl flex items-center justify-center shadow-md flex-shrink-0">
-                {initial}
-              </div> */}
-              <div className="mt-2 sm:mt-0">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <h1 className="text-2xl font-bold text-slate-900">{company.company_name}</h1>
-                  {company.company_code && (
-                    <span className="text-xs font-semibold px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200">
-                      {company.company_code}
-                    </span>
-                  )}
-                </div>
-                <div className="flex items-center gap-1 text-sm text-slate-500 mt-1">
-                  <MapPin className="w-4 h-4 text-slate-400 flex-shrink-0" />
-                  <span>
-                    {[company.address, company.city, company.state, company.country]
-                      .filter(Boolean)
-                      .join(', ') || 'Tilottama-3, Nepal'}
-                  </span>
-                </div>
-              </div>
+      {/* Top Company Profile Card */}
+      <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-2 flex-wrap">
+              <h1 className="text-2xl font-bold text-slate-900">{company.company_name}</h1>
+              {company.company_code && (
+                <span className="text-xs font-semibold px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200">
+                  {company.company_code}
+                </span>
+              )}
             </div>
-
-            <button
-              onClick={() => navigate('/company/edit-company')}
-              className="border border-slate-200 hover:bg-slate-50 text-slate-700 font-medium px-4 py-2 rounded-xl text-sm flex items-center gap-2 shadow-sm transition-colors self-start sm:self-end"
-            >
-              <Edit3 className="w-4 h-4 text-slate-500" />
-              Edit Company
-            </button>
+            <div className="flex items-center gap-1 text-sm text-slate-500 mt-1.5">
+              <MapPin className="w-4 h-4 text-slate-400 flex-shrink-0" />
+              <span>
+                {[company.address, company.city, company.state, company.country]
+                  .filter(Boolean)
+                  .join(', ') || 'Tilottama-3, Nepal'}
+              </span>
+            </div>
           </div>
 
-          {company.description && (
-            <div className="mt-6 pt-4 border-t border-slate-100 text-sm text-slate-600 leading-relaxed">
-              {company.description}
-            </div>
-          )}
+          <button
+            onClick={() => navigate('/company/edit-company')}
+            className="border border-slate-200 hover:bg-slate-50 text-slate-700 font-medium px-4 py-2 rounded-xl text-sm flex items-center gap-2 shadow-sm transition-colors self-start sm:self-center"
+          >
+            <Edit3 className="w-4 h-4 text-slate-500" />
+            Edit Company
+          </button>
         </div>
+
+        {company.description && (
+          <div className="mt-6 pt-4 border-t border-slate-100 text-sm text-slate-600 leading-relaxed">
+            {company.description}
+          </div>
+        )}
       </div>
 
       {/* Company Overview Card */}

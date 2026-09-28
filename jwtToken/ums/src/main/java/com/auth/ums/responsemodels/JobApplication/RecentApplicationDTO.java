@@ -31,4 +31,10 @@ public class RecentApplicationDTO {
 
     @JsonProperty("job_id")
     private Long jobId;
+
+    @JsonProperty("company_name")
+    private String companyName;
+
+    @JsonProperty("company_code")
+    private String companyCode;
 }

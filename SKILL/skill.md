@@ -17,23 +17,21 @@ cd clz-project/jwtToken/ums
 
 ### TO WORK ON
 
-need to check the screenshorts (for error )
-dashboard ( attractive analytics, totals ) (check for error)
-Data and funtionality correctness
 rejection reason
 like can we implement (weight based algorithm like recommendation engine)
-profile picture upload functionality
 admin approval functionality (while creating a company)
 
-report
-At last UI check
-
-DONE- FE input validation
-DONE -required field must be marked with \*
+DONE - FE input validation
+DONE - required field must be marked with \*
 DONE - easy UI (company ,job seeker ,admin)
 DONE - Company info update option
 DONE - company creation (itself using existing api used by Admin)
-
+DONE - need to check the screenshorts (for error )
+DONE - dashboard (attractive analytics, totals) (check for error)
+DONE - Data and funtionality correctness
+DONE - profile picture upload functionality
+DONE - remove this route /company/users since a company will be used by 1 person
+DONE - forgot password - incorrect
 #### donot remove these CREDENTIALS
 
 Role
@@ -55,7 +53,6 @@ Email: rokov73300@mapsguy.com
 Password: 12345678
 
 Email: kijid33795@crybio.com
-
 Password: 12345678
 
 varew13825@mapsguy.com

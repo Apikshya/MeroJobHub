@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { getMyApplications } from '../../api/applicationsApi';
 import {
@@ -14,6 +15,7 @@ import {
   Pin,
   FileText,
   Briefcase,
+  Building2,
 } from 'lucide-react';
 
 const STATUS_CONFIG = {
@@ -60,6 +62,7 @@ const STATUS_CONFIG = {
 };
 
 export default function MyApplications() {
+  const navigate = useNavigate();
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -89,8 +92,6 @@ export default function MyApplications() {
       .filter((a) => !statusFilter || a.status === statusFilter)
       .sort((a, b) => new Date(b.applied_date) - new Date(a.applied_date));
   }, [applications, search, statusFilter]);
-
-  const getInitials = (title) => title?.charAt(0).toUpperCase() || '?';
 
   return (
     <div className="space-y-6">
@@ -138,13 +139,8 @@ export default function MyApplications() {
           <div className="space-y-3">
             {[...Array(3)].map((_, i) => (
               <div key={i} className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm animate-pulse">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-slate-200 rounded-full"></div>
-                  <div className="flex-1">
-                    <div className="h-4 bg-slate-200 rounded w-1/3"></div>
-                    <div className="h-3 bg-slate-200 rounded w-1/4 mt-1.5"></div>
-                  </div>
-                </div>
+                <div className="h-4 bg-slate-200 rounded w-1/3"></div>
+                <div className="h-3 bg-slate-200 rounded w-1/4 mt-2"></div>
               </div>
             ))}
           </div>
@@ -175,18 +171,15 @@ export default function MyApplications() {
                   key={app.id}
                   className="bg-white rounded-2xl border border-slate-100 hover:border-slate-200 hover:shadow-sm transition-all duration-200 p-6"
                 >
-                  <div className="flex items-start gap-4">
-                    {/* Avatar */}
-                    <div className="w-12 h-12 rounded-xl bg-[#dbeafe] text-[#1d4ed8] flex items-center justify-center font-bold text-lg flex-shrink-0 shadow-inner">
-                      {getInitials(app.job_title)}
-                    </div>
+                  <div className="w-full">
+                    {/* Title & Status Badge */}
+                    <div className="flex flex-wrap items-start justify-between gap-2">
+                      <h3 className="font-bold text-slate-900 text-lg leading-snug truncate">
+                        {app.job_title}
+                      </h3>
+                      {/* Application status */}
 
-                    <div className="flex-1 min-w-0">
-                      {/* Title & Status Badge */}
-                      <div className="flex flex-wrap items-start justify-between gap-2">
-                        <h3 className="font-bold text-slate-900 text-lg leading-snug truncate">
-                          {app.job_title}
-                        </h3>
+                      <div className="flex items-center gap-2">
                         <span
                           className={`inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-full border ${config.bg} ${config.text} ${config.border} whitespace-nowrap`}
                         >
@@ -194,60 +187,79 @@ export default function MyApplications() {
                           {config.label}
                         </span>
                       </div>
+                    </div>
 
-                      {/* Category */}
-                      {app.category && (
-                        <div className="mt-1">
-                          <span className="inline-flex items-center gap-1 text-xs bg-[#eff6ff] text-[#2563eb] px-2.5 py-0.5 rounded-full border border-[#bfdbfe]">
-                            <Folder className="w-3 h-3" />
-                            {app.category}
-                          </span>
-                        </div>
-                      )}
+{/* Company name */}
+                    <div className="flex items-center gap-1.5 text-xs text-slate-500 mt-1">
+                      <Building2 className="w-3.5 h-3.5 text-slate-400" />
+                      <span
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          const target = app.company_code || app.company_name;
+                          if (target) {
+                            navigate(`/customer/company/${encodeURIComponent(target)}`);
+                          }
+                        }}
+                        className={`font-semibold text-[#2563eb] ${(app.company_code || app.company_name) ? 'hover:text-blue-600 hover:underline cursor-pointer' : ''}`}
+                      >
+                        {app.company_name || 'View Company'}
+                      </span>
+                    </div>
 
-                      {/* Description snippet */}
-                      {app.description && (
-                        <p className="text-sm text-slate-600 line-clamp-2 mt-2 leading-relaxed">
-                          {app.description}
-                        </p>
-                      )}
 
-                      {/* Footer Details */}
-                      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-3.5 pt-3 border-t border-slate-100 text-xs text-slate-500">
-                        <span className="flex items-center gap-1.5 font-medium">
-                          <CalendarDays className="w-3.5 h-3.5 text-slate-400" />
-                          Applied on{' '}
-                          {new Date(app.applied_date).toLocaleDateString('en-US', {
-                            year: 'numeric',
-                            month: 'short',
-                            day: 'numeric',
-                          })}
+                    {/* Category */}
+                    {/* {app.category && (
+                      <div className="mt-1">
+                        <span className="inline-flex items-center gap-1 text-xs bg-[#eff6ff] text-[#2563eb] px-2.5 py-0.5 rounded-full border border-[#bfdbfe]">
+                          <Folder className="w-3 h-3" />
+                          {app.category}
                         </span>
-                        <span className="text-slate-300">·</span>
-                        <span className="flex items-center gap-1.5">
-                          <Clock className="w-3.5 h-3.5 text-slate-400" />
-                          {new Date(app.applied_date).toLocaleTimeString('en-US', {
-                            hour: '2-digit',
-                            minute: '2-digit',
-                          })}
-                        </span>
-                        {app.resume_file_name && (
-                          <>
-                            <span className="text-slate-300">·</span>
-                            <span className="flex items-center gap-1.5 text-slate-600">
-                              <FileText className="w-3.5 h-3.5 text-[#2563eb]" />
-                              {app.resume_file_name}
-                            </span>
-                          </>
-                        )}
                       </div>
+                    )} */}
+
+                    {/* Description snippet */}
+                    {app.description && (
+                      <p className="text-sm text-slate-600 line-clamp-2 mt-2 leading-relaxed">
+                        {app.description}
+                      </p>
+                    )}
+
+                    {/* Footer Details */}
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-3.5 pt-3 border-t border-slate-100 text-xs text-slate-500">
+                      <span className="flex items-center gap-1.5 font-medium">
+                        <CalendarDays className="w-3.5 h-3.5 text-slate-400" />
+                        Applied on{' '}
+                        {new Date(app.applied_date).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric',
+                        })}
+                      </span>
+                      <span className="text-slate-300">·</span>
+                      <span className="flex items-center gap-1.5">
+                        <Clock className="w-3.5 h-3.5 text-slate-400" />
+                        {new Date(app.applied_date).toLocaleTimeString('en-US', {
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })}
+                      </span>
+                      {app.resume_file_name && (
+                        <>
+                          <span className="text-slate-300">·</span>
+                          <span className="flex items-center gap-1.5 text-slate-600">
+                            <FileText className="w-3.5 h-3.5 text-[#2563eb]" />
+                            {app.resume_file_name}
+                          </span>
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>
               );
             })}
           </div>
-        )}
+        )
+        }
       </div>
     </div>
   );

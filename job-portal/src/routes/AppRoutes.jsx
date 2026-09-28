@@ -18,6 +18,7 @@ import CustomerDashboard from '../pages/customer/CustomerDashboard'
 import JobList from '../pages/customer/JobList'
 import MyDocuments from '../pages/customer/MyDocuments'
 import MyApplications from '../pages/customer/MyApplications'
+import CompanyDetail from '../pages/customer/CompanyDetail'
 
 import AdminDashboard from '../pages/admin/AdminDashboard'
 import UserList from '../pages/admin/UserList'
@@ -71,6 +72,7 @@ export default function AppRoutes() {
         <Route path="dashboard" element={<CustomerDashboard />} />
         <Route path="jobs" element={<JobList />} />
         <Route path="applications" element={<MyApplications />} />
+        <Route path="company/:companyCode" element={<CompanyDetail />} />
         {/* Profile routes */}
         <Route path="profile" element={<MyProfile />} />
         <Route path="edit-profile" element={<EditProfile />} />

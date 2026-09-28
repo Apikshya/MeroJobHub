@@ -25,7 +25,6 @@ const emptyForm = {
   state: '',
   country: '',
   postal_code: '',
-  logo: '',
   description: '',
   linkedin_url: '',
   facebook_url: '',
@@ -302,14 +301,6 @@ export default function Companies() {
                   value={form.website}
                   onChange={handleChange}
                   placeholder="https://www.acme.com"
-                />
-
-                <Field
-                  label="Logo URL"
-                  name="logo"
-                  value={form.logo}
-                  onChange={handleChange}
-                  placeholder="https://www.acme.com/logo.png"
                 />
 
                 <Select

@@ -288,6 +288,12 @@ public class JobApplicationServiceImpl implements JobApplicationService {
                         if (row.length > 7 && row[7] != null) {
                             dto.setJobId(((Number) row[7]).longValue());
                         }
+                        if (row.length > 8 && row[8] != null) {
+                            dto.setCompanyName((String) row[8]);
+                        }
+                        if (row.length > 9 && row[9] != null) {
+                            dto.setCompanyCode((String) row[9]);
+                        }
 
                         return dto;
                     })
