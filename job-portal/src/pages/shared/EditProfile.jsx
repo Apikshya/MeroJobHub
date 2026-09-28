@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { getMyProfile, updateMyProfile, uploadProfilePicture, deleteProfilePicture } from '../../api/profileApi';
+import { getMyProfile, updateMyProfile, uploadProfilePicture, deleteProfilePicture, getCurrentProfilePicture } from '../../api/profileApi';
 import { useAuth } from '../../context/AuthContext';
 import { User, Type, Calendar, Phone, MapPin, Camera, Upload, Trash2, Loader2 } from 'lucide-react';
 import { validatePhoneNumber } from '../../utils/validators';
@@ -13,6 +13,7 @@ export default function EditProfile() {
   const [saving, setSaving] = useState(false);
   const [uploadingPic, setUploadingPic] = useState(false);
   const [previewUrl, setPreviewUrl] = useState(null);
+  const [hasServerPic, setHasServerPic] = useState(false);
   const fileInputRef = useRef(null);
   const { user, setUser } = useAuth();
   const location = useLocation();
@@ -28,7 +29,17 @@ export default function EditProfile() {
           setUser((prev) => ({ ...prev, ...myProf }));
         }
       })
-      .catch(() => toast.error('Could not load profile'))
+      .catch(() => toast.error('Could not load profile'));
+
+    getCurrentProfilePicture()
+      .then((res) => {
+        if (res.data?.data?.profile_picture) {
+          setHasServerPic(true);
+        }
+      })
+      .catch(() => {
+        // It's normal to get 400 or 404 if no picture exists, ignore
+      })
       .finally(() => setLoading(false));
   }, []);
 
@@ -71,6 +82,7 @@ export default function EditProfile() {
         };
         setUser(updatedUser);
         localStorage.setItem('user', JSON.stringify(updatedUser));
+        setHasServerPic(true);
         toast.success('Profile picture updated successfully!');
       } catch (err) {
         console.error(err);
@@ -83,6 +95,7 @@ export default function EditProfile() {
         };
         setUser(updatedUser);
         localStorage.setItem('user', JSON.stringify(updatedUser));
+        setHasServerPic(true);
         toast.success('Profile picture updated!');
       } finally {
         setUploadingPic(false);
@@ -105,6 +118,7 @@ export default function EditProfile() {
       const updatedUser = { ...(user || form), avatar_data: null, profile_picture_version: newVersion };
       setUser(updatedUser);
       localStorage.setItem('user', JSON.stringify(updatedUser));
+      setHasServerPic(false);
       setUploadingPic(false);
       toast.success('Profile picture removed');
     }
@@ -129,7 +143,8 @@ export default function EditProfile() {
         phone_Number: form.phone_number,
       };
       await updateMyProfile(payload);
-      const updated = { ...(user || {}), ...form };
+      const newFullName = [form.first_name, form.middle_name, form.last_name].filter(Boolean).join(' ');
+      const updated = { ...(user || {}), ...form, full_name: newFullName };
       setUser(updated);
       localStorage.setItem('user', JSON.stringify(updated));
       toast.success('Profile updated');
@@ -198,16 +213,17 @@ export default function EditProfile() {
                   </div>
 
                   {/* Camera Icon Overlay Button */}
-                  <button
-                    type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    disabled={uploadingPic}
-                    className="absolute bottom-0 right-0 p-2 bg-[#2563eb] hover:bg-[#1d4ed8] text-white rounded-full shadow-md border-2 border-white transition-all transform hover:scale-105"
-                    title="Change profile picture"
-                  >
-                    <Camera className="w-4 h-4" />
-                  </button>
-
+                  {!(hasServerPic || previewUrl) && (
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={uploadingPic}
+                      className="absolute bottom-0 right-0 p-2 bg-[#2563eb] hover:bg-[#1d4ed8] text-white rounded-full shadow-md border-2 border-white transition-all transform hover:scale-105"
+                      title="Change profile picture"
+                    >
+                      <Camera className="w-4 h-4" />
+                    </button>
+                  )}
                   <input
                     ref={fileInputRef}
                     type="file"
@@ -225,25 +241,30 @@ export default function EditProfile() {
 
               {!isCompanyRoute && (
                 <div className="flex items-center justify-center sm:justify-start gap-2.5 mt-3">
-                  <button
-                    type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    disabled={uploadingPic}
-                    className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-xl bg-blue-50 text-blue-700 hover:bg-blue-100 transition border border-blue-200"
-                  >
-                    <Upload className="w-3.5 h-3.5" />
-                    {uploadingPic ? 'Uploading...' : 'Change Photo'}
-                  </button>
+                  {/* COMMENTED */}
+                  {/* {(hasServerPic || previewUrl) && (
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={uploadingPic}
+                      className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-xl bg-blue-50 text-blue-700 hover:bg-blue-100 transition border border-blue-200"
+                    >
+                      <Upload className="w-3.5 h-3.5" />
+                      {uploadingPic ? 'Uploading...' : 'Change Photo'}
+                    </button>
+                  )} */}
 
-                  <button
-                    type="button"
-                    onClick={handleRemovePicture}
-                    disabled={uploadingPic}
-                    className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-xl bg-slate-50 text-slate-600 hover:bg-rose-50 hover:text-rose-600 transition border border-slate-200"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                    Remove
-                  </button>
+                  {(hasServerPic || previewUrl) && (
+                    <button
+                      type="button"
+                      onClick={handleRemovePicture}
+                      disabled={uploadingPic}
+                      className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 transition border border-red-200"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                      Remove Image
+                    </button>
+                  )}
                 </div>
               )}
             </div>

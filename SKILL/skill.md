@@ -41,19 +41,10 @@ Role
 email : admin@admin.com
 pasword: admin123
 
-xosoyiw431@mapsguy.com
-41082030
 
 # company
 
-Email: hocosa4455@mapsguy.com
-Password: 26397649 
 
-Email: rokov73300@mapsguy.com
-Password: 12345678
-
-Email: kijid33795@crybio.com
-Password: 12345678
 
 varew13825@mapsguy.com
 98156156

@@ -24,6 +24,8 @@ export const uploadProfilePicture = (file) => {
 
 export const deleteProfilePicture = () => axiosInstance.delete('/profile-picture/delete')
 
+export const getCurrentProfilePicture = () => axiosInstance.get('/profile-picture/current')
+
 export const getProfilePictureUrl = (userId, timestamp) => {
   if (!userId) return null
   const base = axiosInstance.defaults.baseURL || 'http://localhost:8081/api/v1'
