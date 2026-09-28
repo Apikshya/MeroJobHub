@@ -13,7 +13,7 @@ import {
 const links = [
   { to: '/company/dashboard', label: 'Dashboard', icon: <LayoutDashboard className="w-5 h-5" /> },
   { to: '/company/company-info', label: 'My Company', icon: <Building2 className="w-5 h-5" /> },
-  { to: '/company/users', label: 'Company Users', icon: <Users className="w-5 h-5" /> },
+  // { to: '/company/users', label: 'Company Users', icon: <Users className="w-5 h-5" /> },
   { to: '/company/jobs', label: 'Manage Jobs', icon: <Briefcase className="w-5 h-5" /> },
   { to: '/company/applications', label: 'Applied Jobs', icon: <ClipboardList className="w-5 h-5" /> },
 ];

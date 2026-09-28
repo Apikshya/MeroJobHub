@@ -208,8 +208,7 @@ export default function ManageJobs() {
     );
   };
 
-  // Helper for avatar initials
-  const getInitials = (title) => title?.charAt(0).toUpperCase() || '?';
+
 
   // Format salary
   const formatSalary = (num) => num?.toLocaleString() || '';
@@ -274,10 +273,7 @@ export default function ManageJobs() {
                     className="bg-white rounded-xl border border-slate-100 hover:border-slate-200 hover:shadow-sm transition-all duration-200 p-5"
                   >
                     <div className="flex items-start gap-3">
-                      {/* Avatar */}
-                      <div className="w-10 h-10 rounded-full bg-[#dbeafe] text-[#2563eb] flex items-center justify-center font-bold text-sm flex-shrink-0">
-                        {getInitials(job.title)}
-                      </div>
+                    
                       <div className="flex-1 min-w-0">
                         <div className="flex flex-wrap items-start justify-between gap-2">
                           <h2 className="font-semibold text-slate-900 text-base truncate">{job.title}</h2>

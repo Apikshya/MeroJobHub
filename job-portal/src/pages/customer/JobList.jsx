@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { getJobs, applyToJob, JOB_TYPES } from '../../api/jobsApi';
 import { getMyApplications } from '../../api/applicationsApi';
 import { useAuth } from '../../context/AuthContext';
+import UserAvatar from '../../components/UserAvatar';
 import {
   Search,
   Filter,
@@ -21,6 +23,7 @@ import {
 } from 'lucide-react';
 
 export default function JobList() {
+  const navigate = useNavigate();
   const [jobs, setJobs] = useState([]);
   const [appliedJobIds, setAppliedJobIds] = useState(new Set());
   const [appliedJobTitles, setAppliedJobTitles] = useState(new Set());
@@ -131,6 +134,25 @@ export default function JobList() {
 
       return matchesSearch && matchesCategory && matchesJobType && matchesApplied && matchesSalary;
     });
+
+    return filtered.sort((a, b) => {
+      // 1. Direct string comparison for ISO dates (newest first)
+      const aStr = String(a.posted_date || a.postedDate || '');
+      const bStr = String(b.posted_date || b.postedDate || '');
+      if (aStr && bStr && aStr !== bStr) {
+        return aStr > bStr ? -1 : 1;
+      }
+
+      // 2. Fallback to getTime()
+      const dateA = new Date(aStr).getTime();
+      const dateB = new Date(bStr).getTime();
+      const vA = isNaN(dateA) ? 0 : dateA;
+      const vB = isNaN(dateB) ? 0 : dateB;
+      if (vB !== vA) return vB - vA;
+      
+      // 3. Fallback to ID (newest first)
+      return (Number(b.id) || 0) - (Number(a.id) || 0);
+    });
   }, [
     jobs,
     search,
@@ -142,7 +164,7 @@ export default function JobList() {
     appliedJobIds,
     appliedJobTitles,
   ]);
-
+  
   const hasActiveFilters = Boolean(
     search || categoryFilter || jobTypeFilter || appliedFilter || minSalary !== '' || maxSalary !== ''
   );
@@ -330,7 +352,7 @@ export default function JobList() {
           <div className="flex items-center gap-3">
             <span className="text-xs text-slate-500">
               Showing <span className="font-semibold text-slate-800">{visibleJobs.length}</span> of{' '}
-              <span className="font-semibold text-slate-800">{jobs.filter((j) => j.status === 'OPEN').length}</span> jobs
+              <span className="font-semibold text-slate-800">{jobs.filter((j) => j.status !== 'CLOSED').length}</span> jobs
             </span>
 
             {hasActiveFilters && (
@@ -377,7 +399,16 @@ export default function JobList() {
                   <div>
                     <h2 className="text-lg font-bold text-slate-900 leading-snug">{job.title}</h2>
                     <div className="flex flex-wrap items-center gap-x-2 text-xs text-slate-500 mt-1">
-                      <span className="font-semibold text-slate-700">{job.company_name}</span>
+                      <span 
+                        onClick={() => {
+                          if (job.company_code) {
+                            navigate(`/customer/company/${job.company_code}`);
+                          }
+                        }}
+                        className={`font-semibold text-slate-700 ${job.company_code ? 'hover:text-blue-600 hover:underline cursor-pointer' : ''}`}
+                      >
+                        {job.company_name}
+                      </span>
                       <span>·</span>
                       <span className="flex items-center gap-1">
                         <MapPin className="w-3 h-3 text-slate-400" />
